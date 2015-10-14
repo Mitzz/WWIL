@@ -1,0 +1,762 @@
+/* Full TreeGrid CSS, to know how to modify it, see TreeGridStyles.htm documentation. */
+
+/* -------------
+--- Sections --- 
+------------- */
+
+.GBodyLeft, .GBodyMid, .GBodyRight, .GHeadLeft, .GHeadMid, .GHeadRight, .GFootLeft, .GFootMid, .GFootRight {
+	
+	}
+.GBodyLeft, .GBodyMid, .GBodyRight { 
+	
+	}
+.GHeadLeft, .GHeadMid, .GHeadRight { 
+	
+	}
+.GFootLeft, .GFootMid, .GFootRight { 
+	border-top:1px solid #d0d0d0;
+	}
+.GVScroll {
+   
+   }
+.GXScroll {
+   background:#F4F4F4;
+   
+   }
+.GHScroll {
+	
+	}
+
+/* -----------------
+--- Special rows --- 
+----------------- */
+	
+.GFillRow {
+	background:#F4F4F4;
+	}
+.GFillUserRow {
+	border-bottom:1px solid #d0d0c0;
+	background:#F4F4F4;
+	}	
+.GSpace,.GGroup,.GSearch,.GPager {
+	background:#F0F0E0;
+	white-space:nowrap;
+	}
+/* ----------
+--- Cells --- 
+---------- */
+
+
+/* Header */
+.GHeader, .GHeaderNoSort,.GHeaderHover,.GHeaderNoSortHover,.GPanelTopHover,.GPanelTop, 
+.GHeaderGroup, .GHeaderGroupFocus,.GHeaderGroupDelete,
+.GHeaderMulti,.GHeaderMultiHover,.GHeaderMultiEven,.GHeaderMultiEvenHover {
+	border-top:1px solid #ffffff;
+	border-left:1px solid #ffffff;
+	border-bottom:1px solid #e0e0ff;
+	border-right:1px solid #e0e0ff;
+	vertical-align:top;
+	cursor:pointer;
+	_cursor:hand;
+	background: #F0F0E0;
+	white-space:nowrap;
+	overflow:hidden;
+	}
+.GHeader, .GHeaderNoSort, .GPanelTop {
+	padding-bottom:1px;
+	}
+.GHeaderGroup,.GHeaderGroupFocus,.GHeaderGroupDelete {
+    background: #E0E0D0;
+    border-right:1px solid #b0b0a0;
+    cursor:default;
+    }
+.GHeaderGroupFocus {
+    background: #C0C0A0;
+    }
+.GHeaderGroupDelete {
+    background: #F0F0E0;
+    color: #F0F0E0;
+    }
+.GHeaderFocus {
+	background: #DEDFD8; 
+	}
+.GHeaderNoSort,.GHeaderNoSortHover,.GHeaderMulti,.GHeaderMultiEven,.GHeaderMultiHover,.GHeaderMultiEvenHover {
+   cursor:default;
+   }
+.GHeaderHover,.GHeaderNoSortHover,.GPanelTopHover,.GHeaderMultiHover,.GHeaderMultiEvenHover {
+	border-bottom:1px solid #FCC247;
+	background: #FAF8F3; 
+	}
+
+/* Panel */
+
+.GPanel,.GPanelHover,.GSpacePanel,.GSpacePanelHover,.GFixedPanel,.GFixedPanelHover,.GFilterPanel,.GFilterPanelHover {
+	border-top:1px solid #ffffff;
+	border-left:1px solid #ffffff;
+	border-bottom:1px solid #e0e0ff;
+	border-right:1px solid #e0e0ff;
+	vertical-align:top;
+   background: #F0F0E0; 
+	cursor:pointer;
+	_cursor:hand;
+	}
+.GPanelHover,.GPanelTopHover,.GSpacePanelHover,.GFixedPanelHover,.GFilterPanelHover {
+	border-right:1px solid #FCC247;
+	background: #FAF8F3; 
+	}
+.GSpacePanel,.GSpacePanelHover {
+   border-right:1px solid #e0e0ff;
+   border-left:1px solid #ffffff;
+   border-top:1px solid #ffffff;
+	border-bottom:1px solid #e0e0ff;
+   }   
+   
+/* Cells */
+
+.GCell,.GCellNE,.GFixedCell,.GFixedCellNE,.GFilterCell,.GFilterCellNE { 
+	border-top:1px solid #ffffff;
+	border-left:1px solid #ffffff;
+	border-bottom:1px solid #e0e0ff;
+	border-right:1px solid #e0e0ff;
+	vertical-align:top;
+	}
+.GSpaceCell,.GSpaceCellNE,.GSpaceSelectCell,.GSpaceCheckboxCell {
+   border-top:1px solid #ffffff;
+	border-bottom:1px solid #e0e0ff;
+	vertical-align:top;
+	white-space:nowrap;
+   }	
+.GCellNE,.GSpaceCellNE,.GFixedCellNE,.GFilterCellNE {
+	cursor:default;
+	}
+	
+/* Other */	
+
+.GRightButton, .GFilterButton, .GTreeIcon {
+	vertical-align:top;
+	}
+.GCellSpaceButton {
+	overflow:hidden;
+	height:18px;
+	width:42px;
+	}
+   
+/* -----------------
+--- Cell content --- 
+----------------- */
+.GHeadText,.GGroupText { 
+	font-family:"Times New Roman";
+	font-size:13px;
+	padding-left:3px;
+	padding-right:3px;
+	white-space:nowrap;
+	}
+.GHeadSort { 
+	cursor:pointer;
+	_cursor:hand;
+	}
+.GText,.GTextB,.GTextM,.GNumber,.GNumberB,.GNumberM,.GIText,.GINumber,.GLines,.GTextArea, .GHtml,.GRadio, .GIHtml {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	padding-left:3px;
+	padding-right:3px;
+	border:0px solid;
+	background:inherit;
+	}
+.GRadio {
+	padding-left:0px;
+	padding-right:5px;
+	}
+.GText,.GTextB,.GTextM {
+	white-space:nowrap;
+	padding-top:2px;
+	}
+.GHtml {
+	padding-top:2px;
+	cursor:default;
+	}
+.GIText,.GINumber, .GIHtml, .GIList {
+	display:block;
+	white-space:nowrap;
+	margin-top:-1px!IE;
+	margin-bottom:-1px!IE;
+	padding-top:2px;
+	padding-bottom:0px;
+	}
+.GNumber,.GNumberB,.GNumberM,.GINumber {
+	text-align:right;
+	white-space:nowrap;
+	padding-top:2px;
+	padding-bottom:0px;
+	}
+.GTextB,.GNumberB,.GNumberM {
+	color:blue;
+	}
+.GTextM,.GNumberM {
+	font-weight:bold;
+	}
+.GLines {
+	padding-top:1px;
+	padding-bottom:1px;
+	}
+.GTextArea {
+	margin:0px;
+	padding-top:1px;
+	padding-bottom:1px;	
+	padding-top:0px!IE;
+	padding-bottom:0px!IE;
+	line-height:13px;
+	}
+.GSelect {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:10px;
+	}
+.GButton,.GButtonSpace,.GButtonSpaceChecked {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:9px;
+	height:18px; 
+	cursor:pointer;
+	_cursor:hand;	
+	padding-bottom:3px;
+	margin-bottom:4px;
+	}
+.GButtonImg {
+	cursor:pointer;
+	_cursor:hand;
+	text-align:right;
+	}
+.GGroupCustom {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	color:#BBB;
+	font-style:italic;
+	padding-left:5px;
+	cursor:default;
+	white-space:nowrap;
+	height:17px;
+   }
+.GButtonSpace {
+	width:42px;
+   }
+.GButtonSpaceChecked {
+	color:blue;
+	font-weight:700;
+	width:42px;
+	}
+
+/* ------------
+--- Toolbar --- 
+------------ */
+
+.GToolbar {
+	border-top:1px solid #808070;
+	padding-top:1px;
+	padding-bottom:1px;
+	background: #F0F0E0;
+	}
+.GToolbarCell {
+	background: #F0F0E0;
+	}
+.GToolbarImg,.GToolbarImgHover,.GToolbarImgChecked,.GToolbarImgHoverChecked {
+	cursor:pointer;	
+	_cursor:hand;
+	margin-top:2px;
+	margin-bottom:2px;
+	padding-top:2px;
+	padding-left:2px;
+	padding-right:2px;
+	border-right:1px solid #d0d0c0;
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GToolbarImgHover,.GToolbarImgHoverChecked {
+	margin-top:0px;
+	margin-bottom:1px;
+	padding-top:3px;
+	padding-bottom:1px;
+	border-bottom:1px solid #FCC247;
+	background: #FFFFFF; 
+	}
+.GToolbarImgChecked,.GToolbarImgHoverChecked {
+	color:#8080FF;
+	font-weight:700;
+	}
+.GToolbarFormula {
+	padding-left:5px;
+	padding-right:5px;
+	white-space:nowrap;
+   }
+.GToolbarButton {
+
+   }
+
+/* -------------
+--- Cfg menu --- 
+------------- */
+
+.GCfgMenu {
+	border:1px solid black;
+	padding:6px;
+	background:#ddddff;
+	margin:3px;
+	}
+.GCfgMenuHeader {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:12px;
+	padding-left:3px;
+	padding-right:3px;
+	white-space:nowrap;
+	cursor:default;
+	}
+.GCfgMenuSeparator {	
+   height:1px; overflow:hidden;
+   border-top:1px solid black;
+   background:#EEE;
+   padding:0px;
+   margin-top:5px;
+   margin-bottom:5px;
+   }
+.GCfgMenuItem {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	height:20px;
+	}
+.GCfgMenuHover {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	background:#ffeeaa;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	height:20px;
+	}
+.GCfgMenuButton {
+	width:70px;
+	font-size:11px;
+	margin:2px;
+	}
+
+
+/* ----------------
+--- Popup menus --- 
+---------------- */
+
+.GMenu {
+	border:1px solid #aaaadd;
+	background:#eeeeee;
+	margin-top:1px;
+   cursor:pointer;
+	_cursor:hand;
+	overflow:hidden;
+	}
+.GMenuItem {
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GMenuHover {
+	background:#ffeeaa;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GMenuButton {
+	width:40px;
+	font-size:11px;
+	margin:2px;
+	}
+.GMenuIcon {
+   border-top:1px solid #aaaadd;
+   border-left:1px solid #aaaadd;
+   border-right:1px solid #aaaadd;
+   padding-bottom:3px;
+   background:#eeeeee;
+   cursor:pointer;
+   }
+   
+/* ---------------------
+--- Custom Enum type --- 
+--------------------- */
+
+.GEnumCell {
+   cursor:pointer;
+	_cursor:hand;
+   }
+.GEnum {
+	border:1px solid #aaaadd;
+	background:white;
+	padding:1px;
+   cursor:pointer;
+	_cursor:hand;
+	overflow:hidden;
+	padding-top:2px;
+	margin-left:1px;
+	}
+.GEnumItem {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GEnumHover {
+	background:#ffeeaa;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GEnumIcon {
+   border:1px solid #b0b0c0;
+   background:white;
+   cursor:pointer;
+   }
+   
+/* ----------------
+--- Date picker --- 
+---------------- */
+
+.GPickTag {
+	background:#EEE;
+	padding-bottom:5px;
+	border:1px solid black;
+	}
+.GPickBorder {
+   width:5px;
+   }
+.GPickHeader,.GPickFooter {
+   background:white;
+   }
+.GPickHeadText,.GPickFootText {
+   padding-left:5px;
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	color:blue;
+	padding-top:5px;
+	padding-bottom:3px;
+	cursor:default;
+   }
+.GPickClose {
+   cursor:pointer;
+   _cursor:hand;
+   text-align:right;
+   }
+.GPickSep {
+   display:none;
+   }    
+
+.GPickDate {
+   background:#E7F4FF;
+   }
+.GPickMY {
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	font-weight:bold;
+	color:black;
+	cursor:pointer;
+	_cursor:hand;
+	padding-top:2px;
+	padding-bottom:4px;
+   }   
+.GPickBL {
+   padding-left:1px;
+   padding-top:3px;     
+   float:left;
+   cursor:pointer;
+	_cursor:hand;
+   }
+.GPickBR {
+   text-align:right;
+   padding-right:1px;
+   padding-top:3px;
+   text-align:right;
+   float:right;
+   cursor:pointer;
+	_cursor:hand;
+   }
+
+.GPickRow {
+   background:#EEE;
+   }
+.GPickRowW {
+   background:#EEE;
+   }   
+.GPickCell {
+   padding-left:3px;
+   padding-right:3px;
+   padding-top:2px;
+   padding-bottom:2px;
+   width:20px;
+   }
+.GPickWDN {
+	background-color:#bbbbbb;
+	text-align:center; 
+	width:20px; 
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	cursor:default;
+	margin-top:6px;
+	padding:1px;
+	}
+.GPickHover,.GPickSelHover,.GPickWD, .GPickSa, .GPickSu, .GPickSel, .GPickNow, .GPickWDNE, .GPickSaNE, .GPickSuNE, .GPickSelNE, .GPickNowNE, .GPickOM, .GPickOMNE {
+	text-align:center; 
+	width:20px;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:12px;
+	border:1px solid #DDD;
+	cursor:pointer;
+	_cursor:hand;
+	}
+.GPickWDNE, .GPickSaNE, .GPickSuNE, .GPickSelNE, .GPickNowNE {
+	cursor:default;
+	}
+.GPickWD {	background-color:#ffffff;	}
+.GPickSa {	background-color:#ddddff;	}
+.GPickSu {	background-color:#aaaaff;	}
+.GPickSel {	background-color:#ffff77;	}
+.GPickSelNE {	background-color:#ffffdd;	}
+.GPickNow {	background-color:#dd44dd;	}
+.GPickNowNE {	background-color:#ffe0ff;	}
+.GPickOM {	background-color:inherit; color:black;	}
+.GPickOMNE { color:#aaaaaa; }
+.GPickHover {
+   background-color:#DDD;	
+   border:1px solid #AAA;
+   }
+.GPickSelHover {
+   background-color:#eeee77;	
+   border:1px solid #AAA;
+   }
+
+.GPickTimeCell {
+	text-align:right;
+	background-color:#ffffff;
+	padding-bottom:4px;
+	padding-top:6px;
+	padding-right:5px;
+   }
+.GPickTime {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	border:0px solid;
+	white-space:nowrap;
+	text-align:right;
+	}
+.GPickButton {
+	width:59px;
+	font-size:11px;
+	margin:2px;
+	text-align:center;
+	}
+
+.GPick2Cell {
+   height:25px;   
+   }
+.GPick2M,.GPick2Y,.GPick2MSel,.GPick2YSel,.GPick2MHover,.GPick2YHover,.GPick2MSelHover,.GPick2YSelHover {
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	padding-left:3px;
+	padding-right:3px;
+	margin-left:5px;
+	margin-right:5px;
+	border:1px solid #DDD;
+	width:30px;
+	text-align:center;
+	background-color:white; 
+   }
+.GPick2MSel,.GPick2YSel {
+   background-color:#c0f3ff; 
+   }
+.GPick2MHover,.GPick2YHover {
+   background-color:#DDD;	
+   border:1px solid #AAA;
+   }
+.GPick2MSelHover,.GPick2YSelHover {
+   background-color:#80e0f0;	
+   border:1px solid #AAA;
+   }   
+.GPick2SepH {
+   width:1px; 
+   height:1px;
+   overflow:hidden;
+   }
+.GPick2Sep {
+   width:1px; 
+   background:#777;
+   overflow:hidden;
+   margin-right:2px; 
+   margin-left:1px; 
+   height:25px;
+   }    
+.GPick2BL,.GPick2BR {
+	padding-left:3px;
+	padding-right:3px;
+	margin-left:5px;
+	margin-right:5px;
+	padding-top:5px;
+	width:25px;
+	cursor:pointer;
+	_cursor:hand;  
+   }
+.GPick2BR {
+   padding-left:10px;
+   }
+
+
+/* ----------
+--- Pager --- 
+---------- */
+
+.GPagerBody {
+	border-left:1px solid #a0a090;
+	background: #F0F0E0;
+	}
+.GPagerHeader {
+	border-left:1px solid #a0a090;
+	border-top:1px solid #ffffff;
+	border-bottom:1px solid #e0e0ff;
+	border-right:1px solid #e0e0ff;
+	vertical-align:top;
+	padding-bottom:1px;
+	background: #F0F0E0;
+	height:20px;
+	}
+.GPagerCaption {
+   font-family:Times New Roman;
+	font-size:13px;
+	padding-left:3px;
+	padding-right:3px;
+	white-space:nowrap;
+	cursor:default;
+   }
+.GPagerItem, .GPagerHover {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	padding-left:3px;
+	padding-right:3px;
+	cursor:pointer;
+	_cursor:hand;
+	border-bottom:1px solid #e0e0ff;
+	border-top:1px solid #ffffff;
+	background:#f8f8f8;
+	}
+.GPagerHover {
+	cursor:pointer;
+	_cursor:hand;
+	background: #DCF0FF;
+	}
+.GPagerCursor {
+	cursor:pointer;
+	_cursor:hand;
+	background:#aFaF00;
+	opacity:0.5;              /* Mozilla */
+	filter:alpha(opacity=50); /* IE */
+	}
+.GPagerSort1 {
+	color: #006600;
+	}
+.GPagerSort2 {
+	color: #00AE00;
+	}
+.GPagerSort3 {
+	color: #00FF00;
+	}
+.GPagerSortS {
+	color: black;
+	}
+
+/* -----------------
+--- Simple pager --- 
+----------------- */
+
+
+.GSimplePager,.GSimplePagerActive {
+   padding-left:3px;
+   padding-top:2px;
+   padding-bottom:2px;
+   margin-top:2px;
+   margin-bottom:2px;
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	color:blue;
+	display:inline-block;
+   }
+.GSimplePager:visited {
+   color:blue;
+   }
+.GSimplePager:hover {
+   color:red;
+   }
+.GSimplePagerActive {
+   color:black;
+   font-weight:bold;
+   border:1px dotted black;
+   margin-top:1px;
+   margin-bottom:1px;
+   }
+
+
+/* ----------
+--- Other --- 
+---------- */
+
+.GMessage {
+	background:#F0F0E0;
+	border:1px solid #d0d0d0;
+	padding:10px;
+	white-space:nowrap;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:13px;
+	}
+.GPageMessage {
+	background:#FaFaFa;
+	border:1px solid #f77;
+	padding:10px;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:13px;
+	}
+.GPage {
+	border-top:1px solid #d0d0c0;
+	}
+.GPageOne {
+	
+	}
+.GTable {
+	xbackground:white;	
+	xbackground:#f8f8f8;
+	border:1px solid #d0d0d0;
+	}
+
+.GHint {
+   background:white;
+   border-bottom:1px solid #d0d0d0;
+   border-top:1px solid white;
+   border-left:1px solid white;
+   position:relative;
+   top:-1px!IE;
+   left:-1px;
+   cursor:default;
+   padding-bottom:2px;
+   }
+.GTip {
+   background:#f4f4f4;
+   border:1px solid #d0d0d0;
+   
+  	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	padding-top:1px;
+	padding:3px;
+   }
+.GShadow {
+	background:#888;
+	opacity:0.5;              /* Mozilla */
+	filter:alpha(opacity=50); /* IE */
+	}
+.GPagerEdit  {
+	font-size:11px;
+	border:0px solid;
+   background:white;
+   margin-top:3px;
+   padding-top:1px;
+   padding-bottom:1px;
+   text-align:center;
+  	font-family:"Microsoft Sans Serif",Verdana,Arial;
+   }

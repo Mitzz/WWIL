@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contact-hierarchy>
+	<contact>
+		<contact-priority> First Contact Point </contact-priority>
+		<name> DJ.Sharma</name>
+		<designation> Head - Customer Relationship Management </designation>
+		<email-id> dinesh.sharma@windworldindia.com </email-id>
+		<contact-number> 9820071182</contact-number>
+	</contact>
+
+	<contact>
+		<contact-priority> Second Contact Point </contact-priority>
+		<name> Manjit Bhagira </name>
+		<designation> Head - Central Support </designation>
+		<email-id> manjit.bhagira@windworldindia.com</email-id>
+		<contact-number> 9967783313</contact-number>
+	</contact>
+
+	<contact>
+		<contact-priority> Third Contact Point </contact-priority>
+		<name> Brig.YVR vijay </name>
+		<designation> Head - WWO </designation>
+		<email-id> yvr.vijay@windworldindia.com </email-id>
+		<contact-number> 9167617817</contact-number>
+	</contact>
+</contact-hierarchy>
+
+

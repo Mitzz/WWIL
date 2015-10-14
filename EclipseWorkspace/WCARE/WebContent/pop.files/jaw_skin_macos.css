@@ -1,0 +1,273 @@
+/*
+ name:macos
+ theme:Mac OS
+ */
+
+.jaw_skin_macos *, .jaw_skin_macos-selected * {
+  padding:0;
+  border:0;
+}
+
+.jaw_skin_macos, .jaw_skin_macos-selected {
+  position: absolute;
+  visibility: hidden;
+}
+
+.jaw_skin_macos_controls {
+  position:absolute;
+  top:0px;
+  left:0px;
+  z-index:2;
+}
+
+.jaw_skin_macos table, .jaw_skin_macos-selected table {
+  border-collapse:collapse;
+  border:0px;
+  padding:0px;
+  margin:0px;
+  table-layout:fixed;
+}
+
+.jaw_skin_macos_sidebar {
+  display:none;
+  border:2px solid #777;
+  position:absolute;  
+} 
+
+.jaw_skin_macos .jaw_header, .jaw_skin_macos-selected .jaw_header {
+  font-family:'Lucida Console';
+  font-size:15px;
+  color:red;
+  text-align:center;
+  position: relative;
+
+  cursor:move;
+  
+}
+.jaw_skin_macos .jaw_span, .jaw_skin_macos-selected .jaw_span {
+  font-family:'Bookman Old Style';
+  font-size:14px;
+  font-weight:bold;
+  color:#666600;
+  
+  
+}
+.jaw_skin_macos .jaw_header {
+  color:rgb(104,102,103);
+}
+
+.jaw_skin_macos .jaw_contentarea, .jaw_skin_macos-selected .jaw_contentarea {
+    border-left:1px solid rgb(192,192,192);
+    border-right:1px solid rgb(192,192,192);
+    background-color:#fff;
+}
+
+.jaw_skin_macos .jaw_handle, .jaw_skin_macos-selected .jaw_handle {
+   cursor:default;
+   overflow:hidden;
+   width:auto;
+}
+
+.jaw_skin_macos td.border00 {
+  width:9px;
+  height:23px;
+  background-image:url('./border-00-passive.gif');
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos-selected td.border00 {
+  width:9px;
+  height:23px;
+  background-image:url('./border-00.gif');
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos td.border00 div, .jaw_skin_macos-selected td.border00 div {
+  width:9px;
+  height:23px;
+}
+
+.jaw_skin_macos td.border10 {
+  height:23px;
+  background-image:url('./border-10-passive.gif');
+  background-repeat:repeat-x;
+}
+.jaw_skin_macos-selected td.border10 {
+  height:23px;
+  background-image:url('./border-10.gif');
+  background-repeat:repeat-x;
+}
+
+.jaw_skin_macos td.border20 {
+  height:23px;
+  width:9px;
+  background-image:url('./border-20-passive.gif');
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos-selected td.border20 {
+  height:23px;
+  width:9px;
+  background-image:url('./border-20.gif');
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos td.border20 div, .jaw_skin_macos-selected td.border20 div {
+  width:9px;
+  height:23px;
+}
+
+.jaw_skin_macos .jaw_statusarea, .jaw_skin_macos-selected .jaw_statusarea {
+  background-color:#999966;
+  background-image:url('./bottom-bg.gif');
+  border:1px solid rgb(192,192,192);
+  border-top:0px solid rgb(192,192,192);
+  height:12px;
+}
+
+/* minimize */
+.jaw_skin_macos-selected .jaw_minimize {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./min.gif');
+  background-position:-14px 0px;
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos .jaw_minimize {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./passivebuttons.gif');
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_minimize-onmouseover, .jaw_skin_macos-selected .jaw_minimize-onmouseover {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./min.gif');
+  background-position:-28px 0px;
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_minimize-onmousedown, .jaw_skin_macos-selected .jaw_minimize-onmousedown {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./min.gif');
+  background-position:0px 0px;
+  background-repeat:no-repeat;
+}
+
+/* fullscreen */
+.jaw_skin_macos-selected .jaw_fullscreen {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./fullscreen.gif');
+  background-position:-14px 0px;
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos .jaw_fullscreen {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./passivebuttons.gif');
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_fullscreen-onmouseover, .jaw_skin_macos-selected .jaw_fullscreen-onmouseover {
+  width:14px;
+
+  height:14px;
+  margin-left:7px;
+  background-image:url('./fullscreen.gif');
+  background-position:-28px 0px;
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_fullscreen-onmousedown, .jaw_skin_macos-selected .jaw_fullscreen-onmousedown {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./fullscreen.gif');
+  background-position:0px 0px;
+  background-repeat:no-repeat;
+}
+
+/* restore */
+.jaw_skin_macos .jaw_restore {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./passivebuttons.gif');
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos-selected .jaw_restore {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./fullscreen.gif');
+  background-position:-14px 0px;
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_restore-onmouseover, .jaw_skin_macos-selected .jaw_restore-onmouseover {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./fullscreen.gif');
+  background-position:-28px 0px;
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_restore-onmousedown, .jaw_skin_macos-selected .jaw_restore-onmousedown {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./fullscreen.gif');
+  background-position:-0px 0px;
+  background-repeat:no-repeat;
+}
+
+/* close */
+.jaw_skin_macos-selected .jaw_close {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./close.gif');
+  background-position:-14px 0px;
+  background-repeat:no-repeat;
+}
+.jaw_skin_macos .jaw_close {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./passivebuttons.gif');
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_close-onmouseover, .jaw_skin_macos-selected .jaw_close-onmouseover {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./close.gif');
+  background-position:-28px 0px;
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_close-onmousedown, .jaw_skin_macos-selected .jaw_close-onmousedown {
+  width:14px;
+  height:14px;
+  margin-left:7px;
+  background-image:url('./close.gif');
+  background-position:0px 0px;
+  background-repeat:no-repeat;
+}
+
+.jaw_skin_macos .jaw_resizearea, .jaw_skin_macos-selected .jaw_resizearea {
+  background: transparent url('./resizer.gif') top right no-repeat;
+  float: right;
+  margin-top:1px;
+  width: 13px;
+  height: 12px;
+  cursor: nw-resize;
+  font-size: 0; 
+}

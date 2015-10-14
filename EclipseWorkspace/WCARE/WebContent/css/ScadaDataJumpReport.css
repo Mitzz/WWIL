@@ -1,0 +1,260 @@
+.divTable {
+	display: table;
+	width: 100%;
+	border: 0px none #FFFFFF;
+	border-spacing: 1px 1px;
+	/* border-collapse: separate; */
+}
+
+.row1, .row2, .row3, .row4, .row5, .row6, .row7, .row8, .row9, .row10, .row11, .row12, .row13{
+	background-color: #ffffff;
+	
+}
+
+
+.divRow {
+	display: table-row;
+	width: auto;
+}
+
+.divCell {
+	float: left; /*fix for  buggy browsers*/
+	display: table-column;
+	width: auto;
+}
+
+.divTable .row1 .cell1 {
+	font-size: 12px;
+	padding: 3%;
+	width: 14%;
+}
+
+.divTable .row1 .cell2 {
+	padding:1% 0;
+	width: 35%;
+}
+
+.divTable .row1 .cell3 {
+	padding-top: 0.5%;
+	text-align: center;
+	width: 10%;
+}
+
+.divTable .row1 .cell4 {
+	padding:1% 0;
+	width: 35%;
+}
+
+.divTable .row2 .cell1 {
+	
+	margin: 5px 70px;
+	text-align: center;
+	width: 100%;
+}
+
+.divTable .row2 .cell1 input{
+	font-size: 10px;	
+	
+}
+
+.divTable .row3 .cell1 {
+	font-size: 12px;
+	padding: 3%;
+	width: 14%;
+}
+
+.divTable .row3 .cell2 {
+	padding:1% 0;
+	width: 35%;
+}
+
+.divTable .row3 .cell3 {
+	padding-top: 0.5%;
+	text-align: center;
+	width: 10%;
+}
+
+.divTable .row3 .cell4 {
+	padding:1% 0;
+	width: 35%;
+}
+
+.divTable .row4 .cell1 {
+	
+	margin: 5px 70px;
+	text-align: center;
+	width: 100%;
+}
+
+.divTable .row4 .cell1 input{
+	font-size: 10px;	
+	
+}
+
+.divTable .row5 .cell1 {
+	font-size: 12px;
+	padding: 3%;
+	width: 14%;
+}
+
+.divTable .row5 .cell2 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row5 .cell3 {
+	padding-top: 0.5%;
+	text-align: center;
+	width: 11%;
+}
+
+.divTable .row5 .cell4 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row6 .cell1 {
+	
+	margin: 5px 70px;
+	text-align: center;
+	width: 100%;
+}
+
+.divTable .row6 .cell1 input{
+	font-size: 10px;	
+	
+}
+
+.divTable .row7 .cell1 {
+	font-size: 12px;
+	padding: 3%;
+	width: 14%;
+}
+
+.divTable .row7 .cell2 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row7 .cell3 {
+	padding-top: 0.5%;
+	text-align: center;
+	width: 11%;
+}
+
+.divTable .row7 .cell4 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row8 .cell1 {
+	
+	margin: 5px 65px;
+	text-align: center;
+	width: 100%;
+}
+
+.divTable .row8 .cell1 input{
+	font-size: 10px;	
+	
+}
+
+.divTable .row9 .cell1 {
+	font-size: 12px;
+	padding: 3%;
+	width: 14%;
+}
+
+.divTable .row9 .cell2 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row9 .cell3 {
+	padding-top: 0.5%;
+	text-align: center;
+	width: 11%;
+}
+
+.divTable .row9 .cell4 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row10 .cell1 {
+	
+	margin: 5px 65px;
+	text-align: center;
+	width: 100%;
+}
+
+.divTable .row10 .cell1 input{
+	font-size: 10px;	
+	
+}
+
+.divTable .row11 .cell1 {
+	font-size: 12px;
+	padding: 3%;
+	width: 14%;
+}
+
+.divTable .row11 .cell2 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row11 .cell3 {
+	padding-top: 0.5%;
+	text-align: center;
+	width: 11%;
+}
+
+.divTable .row11 .cell4 {
+	padding:1% 0;
+	width: 34%;
+}
+
+.divTable .row12 .cell1 {
+	font-size: 12px;
+	width: 18.5%;
+	padding-left: 1.5%;
+	margin-top: 1%;
+	margin-bottom: 1%;
+}
+
+.divTable .row12 .cell2 {
+	width: 6.5%;
+	margin-top: 1%;
+	margin-bottom: 1%;
+}
+
+.divTable .row12 .cell3 {
+	
+	width: 38%;
+	margin-top: 1%;
+	margin-bottom: 1%;
+}
+
+.divTable .row12 .cell4 {
+	width: 7%;
+	margin-top: 1%;
+	margin-bottom: 1%;
+}
+
+.divTable .row12 .cell5 {
+	width: auto;
+	margin-top: 1%;
+	margin-bottom: 1%;
+}
+
+.divTable .row13 .cell1 {
+	font-size: 12px;
+	width: 18.5%;
+	padding-left: 1.5%
+}
+
+.divTable .row13 .cell2 {
+	width: 20%;
+}
+

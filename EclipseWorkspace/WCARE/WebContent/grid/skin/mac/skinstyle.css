@@ -1,0 +1,57 @@
+.gt-skin-default {
+	border:1px #cccccc solid;
+}
+
+.gt-skin-default .gt-split {
+	background-image: url(./images/grid-split.gif);
+}
+
+
+.gt-skin-default .gt-scrollToolV {
+	background-color: #eeeeee;
+	border:1px solid #eeeeee;
+	border-left:1px solid #cccccc;
+
+}
+
+
+.gt-skin-default .gt-scrollTool-top {
+	background: url(./images/scroll2top.gif) no-repeat ;
+	background-position : center 1px;
+}
+
+.gt-skin-default .gt-scrollTool-bottom {
+	margin-top:0px;
+	background: url(./images/scroll2bottom.gif) no-repeat ;
+	background-position : center 1px;
+
+}
+
+.gt-skin-default .gt-separateLine {
+	width: 2px;
+	background-color: #cccccc;
+}
+
+.gt-skin-default .gt-header{
+	background: #ebeadb url(./images/grid-hrow.gif) repeat-x;
+}
+
+
+.gt-skin-default .gt-hd-cell {
+	border-right: 1px solid #dadada;
+}
+
+.gt-skin-default .gt-hd-text {
+	color:#15428b;
+	border-bottom: 1px solid #c3daf9;
+}
+
+
+.gt-skin-default .gt-row-even {
+	background-color:#f3f6f5;
+}
+
+.gt-skin-default .gt-row td {
+	border-right: 1px solid #d9d9d9;
+	border-bottom: 1px solid #d9d9d9;
+}

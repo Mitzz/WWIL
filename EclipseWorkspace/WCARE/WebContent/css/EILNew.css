@@ -1,0 +1,37 @@
+a, A:link, a:visited, a:active
+		{color: #0000aa; text-decoration: none; font-family: Arial,Helvetica, sans-serif; font-size: 11px}
+	A:hover
+		{color: #ff0000; text-decoration: none; font-family: Arial,Helvetica, sans-serif; font-size: 11px}
+	p, tr, td, ul, li
+		{color: #000000; font-family: Arial,Helvetica, sans-serif; font-size: 11px}
+	th
+		{background: #DBEAF5; color: #000000;}
+	.header1, h1
+		{color: #ffffff; background: #4682B4; font-weight: bold; font-family: Arial,Helvetica, sans-serif; font-size: 13px; margin: 0px; padding-left: 2px; height: 21px}
+	
+	.intd
+		{color: #000000; font-family: Arial,Helvetica, sans-serif; font-size: 11px; padding-left: 15px;}
+	.wcell
+		{background: #FFFFFF; vertical-align: top}
+	.ctrl
+		{font-family: Arial,Helvetica, sans-serif; font-size: 12px; width: 100%;}
+	.btnform
+		{border: 0px; font-family: Arial,Helvetica, sans-serif; font-size: 12px; background-color: #DBEAF5; width: 100%; height:18px; text-align: center; cursor: hand;}
+	.btn
+		{background-color: #DBEAF5; padding: 0px;}
+	textarea, select,input
+		{font: 9px Helvetica, sans-serif, arial, helvetica, sans-serif; background-color: #DBEAF5;}
+		
+	/* classes for validator */
+	.tfvHighlight
+		{font-weight: bold; color: red;}
+	.tfvNormal
+		{font-weight: normal;	color: black;}
+	.greenHead {
+			text-transform:uppercase;
+			color:#0a4224;
+			font-weight:bold;
+		}
+
+
+		

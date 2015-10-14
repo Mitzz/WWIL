@@ -1,0 +1,145 @@
+/*
+ name:default
+ theme:Default
+ */
+
+.jaw_skin_default *, .jaw_skin_default-selected * {
+  padding:0;
+  border:0;
+}
+
+.jaw_skin_default, .jaw_skin_default-selected {
+  position: absolute;
+  visibility: hidden;
+}
+
+.jaw_skin_default_controls {
+  position:absolute;
+  top:0px;
+  right:0px;
+  z-index:2;
+}
+
+.jaw_skin_default table, .jaw_skin_default-selected table {
+  border-collapse:collapse;
+  border:0px;
+  padding:0px;
+  margin:0px;
+  table-layout:fixed;
+}
+
+.jaw_skin_default_sidebar {
+  display:none;
+  border:2px solid #777;
+  position:absolute;  
+} 
+
+.jaw_skin_default .jaw_header, .jaw_skin_default-selected .jaw_header {
+  font-family:'Arial';
+  font-size:10px;
+  color:rgb(105,193,227);
+  text-align:left;
+  position: relative;
+  cursor:move;
+}
+.jaw_skin_default .jaw_header {
+  color:rgb(70,184,229);
+}
+
+.jaw_skin_default .jaw_contentarea, .jaw_skin_default-selected .jaw_contentarea {
+    border-left:1px solid rgb(192,192,192);
+    border-right:1px solid rgb(192,192,192);
+    background-color:#fff;
+}
+
+.jaw_skin_default .jaw_handle, .jaw_skin_default-selected .jaw_handle {
+   cursor:default;
+   overflow:hidden;
+   width:auto;
+}
+
+.jaw_skin_default td.border00, .jaw_skin_default-selected td.border00 {
+  width:9px;
+  height:23px;
+  background-image:url('./border-00.gif');
+  background-repeat:no-repeat;
+}
+.jaw_skin_default td.border00 div, .jaw_skin_default-selected td.border00 div {
+  width:9px;
+  height:23px;
+}
+
+.jaw_skin_default td.border10, .jaw_skin_default-selected td.border10 {
+  height:23px;
+  background-image:url('./border-10.gif');
+  background-repeat:repeat-x;
+}
+
+.jaw_skin_default td.border20, .jaw_skin_default-selected td.border20 {
+  height:23px;
+  width:9px;
+  background-image:url('./border-20.gif');
+  background-repeat:no-repeat;
+}
+.jaw_skin_default td.border20 div, .jaw_skin_default-selected td.border20 div {
+  width:9px;
+  height:23px;
+}
+
+.jaw_skin_default .jaw_statusarea, .jaw_skin_default-selected .jaw_statusarea {
+  background-color:#fff;
+  background-image:url('./border-10.gif');
+  border:1px solid rgb(192,192,192);
+  border-top:0px solid rgb(192,192,192);
+  height:23px;
+}
+
+/* minimize */
+.jaw_skin_default-selected .jaw_minimize, .jaw_skin_default .jaw_minimize, .jaw_skin_default .jaw_minimize-onmouseover, .jaw_skin_default-selected .jaw_minimize-onmouseover, .jaw_skin_default .jaw_minimize-onmousedown, .jaw_skin_default-selected .jaw_minimize-onmousedown {
+  width:8px;
+  height:15px;
+  margin-right:7px;
+  background-image:url('./min.gif');
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+
+/* fullscreen */
+.jaw_skin_default-selected .jaw_fullscreen, .jaw_skin_default .jaw_fullscreen, .jaw_skin_default .jaw_fullscreen-onmouseover, .jaw_skin_default-selected .jaw_fullscreen-onmouseover, .jaw_skin_default .jaw_fullscreen-onmousedown, .jaw_skin_default-selected .jaw_fullscreen-onmousedown {
+  width:8px;
+  height:14px;
+  margin-right:7px;
+  background-image:url('./fullscreen.gif');
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+
+/* restore */
+.jaw_skin_default .jaw_restore, .jaw_skin_default-selected .jaw_restore, .jaw_skin_default .jaw_restore-onmouseover, .jaw_skin_default-selected .jaw_restore-onmouseover, .jaw_skin_default .jaw_restore-onmousedown, .jaw_skin_default-selected .jaw_restore-onmousedown {
+  width:8px;
+  height:15px;
+  margin-right:7px;
+  background-image:url('./restore.gif');
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+
+/* close */
+.jaw_skin_default-selected .jaw_close, .jaw_skin_default .jaw_close, .jaw_skin_default .jaw_close-onmouseover, .jaw_skin_default-selected .jaw_close-onmouseover, .jaw_skin_default .jaw_close-onmousedown, .jaw_skin_default-selected .jaw_close-onmousedown {
+  width:8px;
+  height:15px;
+  margin-right:7px;
+  background-image:url('./close.gif');
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+
+.jaw_skin_default .jaw_resizearea, .jaw_skin_default-selected .jaw_resizearea {
+  background: transparent url('./resizer.gif') top right no-repeat;
+  float: right;
+  margin-top:11px;
+  width: 13px;
+  height: 12px;
+  cursor: nw-resize;
+  font-size: 0; 
+}

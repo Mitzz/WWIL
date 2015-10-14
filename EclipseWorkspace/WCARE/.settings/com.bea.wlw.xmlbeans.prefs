@@ -1,0 +1,5 @@
+#Thu Oct 04 17:52:04 IST 2007
+default_output=.xbean_bin
+eclipse.preferences.version=1
+gen_root=.xbean_src
+schema-type-name=EILTypeSystem

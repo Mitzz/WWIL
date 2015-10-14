@@ -1,0 +1,883 @@
+/* Full TreeGrid CSS, to know how to modify it, see TreeGridStyles.htm documentation. */
+
+/* -------------
+--- Sections --- 
+------------- */
+.GMBodyRight,.GMHeadRight,.GMFootRight {
+	border-left:1px solid #e0e0e0;
+	}
+.GMBodyLeft, .GMBodyMid, .GMBodyRight, .GMHeadLeft, .GMHeadMid, .GMHeadRight, .GMFootLeft, .GMFootMid, .GMFootRight {
+
+	}
+.GMBodyLeft, .GMBodyMid, .GMBodyRight { 
+   
+   border-top:1px solid black;
+	}
+.GMHeadLeft, .GMHeadMid, .GMHeadRight { 
+
+	}
+.GMFootLeft, .GMFootMid, .GMFootRight { 
+	border-top:1px solid black;
+	}
+/*.GMVScroll,.GMHScroll {
+   background:none; 
+   scrollbar-base-color:#C8C9C9; 
+   scrollbar-face-color:#D8D9D9;
+   scrollbar-3dlight-color:auto;
+   scrollbar-darkshadow-color:#787979;
+   scrollbar-shadow-color:#D8D9D9;
+   scrollbar-highlight-color:#DEDFDF;
+   scrollbar-arrow-color:#0A7EA4;
+   }*/
+.GMXScroll {
+   background:#F4F4F4;
+   }
+
+
+/* -----------------
+--- Special rows --- 
+----------------- */
+	
+.GMFillRow {
+	background: #E8F4FF;
+	}
+.GMFillUserRow {
+	border-bottom:1px solid #d0d0c0;
+   background: #E8F4FF;
+	}	
+.GMSpace {
+	background: #E8F4FF;
+	white-space:nowrap;
+	}
+.GMPager {
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -160px;
+	border-top:1px solid black;
+   }
+.GMGroup {
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -160px;
+	white-space:nowrap;
+	padding-top:5px;
+	padding-bottom:5px;
+   }
+.GMSearch {
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -80px;
+	white-space:nowrap;
+	padding-top:5px;
+	padding-bottom:5px;
+	}
+	
+/* !!! GMFilter must not set border or margin !!!*/
+.GMFilter {
+   background:url(BackgroundsModern.gif) repeat-x;
+   background-position:0px -80px;
+ 	padding-top:5px;
+	padding-bottom:5px;
+   }
+	
+/* ----------
+--- Cells --- 
+---------- */
+
+
+/* Header */
+
+.GMHeader,.GMHeaderHover,.GMHeaderNoSort,.GMHeaderNoSortHover,.GMPanelTopHover,.GMPanelTop {
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px 0px;
+	padding-bottom:1px;
+	padding-top:3px;
+	border-right:1px solid #e0e0ff;
+	vertical-align:top;
+	cursor:pointer;
+	_cursor:hand;
+	border-top:1px solid #EEF7FF;
+	}
+.GMHeaderGroup,.GMHeaderGroupFocus,.GMHeaderGroupDelete {
+   background: #7FA9E6;
+   cursor:default;
+	cursor:pointer;
+	_cursor:hand;
+	border-left:3px solid #EEF7FF;
+   }
+.GMHeaderFocus {
+	background: #9FB9E9; 
+	}
+.GMHeaderGroupFocus {
+    background: #C0C0A0;
+    }
+.GMHeaderGroupDelete {
+    background: #F0F0E0;
+    color: #F0F0E0;
+    }
+.GMHeader,.GMHeaderHover,.GMHeaderNoSort,.GMHeaderNoSortHover,.GMHeaderHoverMulti,.GMHeaderGroup { 
+	white-space:nowrap;
+	overflow:hidden;
+	}
+.GMHeaderNoSort,.GMHeaderNoSortHover {
+   cursor:default;
+   }
+.GMHeaderHover,.GMHeaderNoSortHover,.GMPanelTopHover {
+   background-position:0px -240px;
+	}
+.GMHeaderHoverMulti {
+	background: #FAF8F3; 
+	cursor:default;
+	}
+.GMHeaderMulti,.GMHeaderMultiHover,.GMHeaderMultiEven,.GMHeaderMultiEvenHover {
+   cursor:default;
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -160px;
+	padding-bottom:1px;
+	padding-top:3px;
+	border-right:1px solid #e0e0ff;
+	vertical-align:top;
+	white-space:nowrap;
+   }
+.GMHeaderMultiEven,.GMHeaderMultiEvenHover {
+   background-position:0px -80px;
+   }
+.GMHeaderMultiHover,.GMHeaderMultiEvenHover {
+   background: #FAF8F3;
+   }
+.GMPanelTop,.GMPanelTopHover {
+   border-left:1px solid #e0e0ff;
+   }
+
+/* Panel */
+.GMPanel,.GMPanelHover,.GMFixedPanel,.GMFixedPanelHover {
+	border-bottom:1px solid #e0e0ff;
+	border-right:1px solid #e0e0ff;
+	vertical-align:top;
+	background:url(BackgroundVModern.gif) repeat-y;
+	background-position:1px 0px;
+	cursor:pointer;
+	_cursor:hand;
+	padding-left:1px;
+	}
+.GMSpacePanel,.GMSpacePanelHover {
+	vertical-align:top;
+	cursor:pointer;
+	_cursor:hand;
+	padding-left:1px;
+   }   
+.GMFilterPanel,.GMFilterPanelHover {
+   border-right:1px solid #e0e0ff;
+   cursor:pointer;
+	_cursor:hand;
+	padding-left:1px;
+   }
+.GMPanelHover,.GMFixedPanelHover {
+	background: #FAF8F3; 
+	}
+.GMSpacePanelHover,.GMFilterPanelHover {
+	background: #FAF8F3; 
+	}
+   
+/* Cells */
+
+.GMCell,.GMCellNE,.GMFixedCell,.GMFixedCellNE { 
+	border-bottom:1px solid #E0E0E0;
+	border-right:1px solid #E0E0E0;
+	vertical-align:top;
+	}
+.GMSpaceCell {
+	vertical-align:top;
+	white-space:nowrap;
+   background:white url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -320px;
+   border:1px solid black;
+   border-top:0px solid;
+   padding-top:3px;
+   }
+.GMSpaceCellNE {
+	vertical-align:top;
+	white-space:nowrap;
+   padding-top:2px;
+   }
+.GMSpaceSelectCell {
+   white-space:nowrap;
+   }
+.GMSpaceSelect {
+  	background:white url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -320px;
+	border-left:1px solid black;
+   border-bottom:1px solid black;
+   padding-top:2px;
+   }
+.GMSpaceCheckboxCell {
+   padding-right:3px;
+   white-space:nowrap;
+   }
+.GMFilterCell,.GMFilterCellNE {
+	border-top:1px solid #e0e0ff;
+	border-bottom:1px solid #e0e0ff;
+   border-right:1px solid #e0e0ff;
+   }   
+.GMFilterCell {
+   background:white;
+   }   
+.GMCellNE,.GMSpaceCellNE,.GMFixedCellNE,.GMFilterCellNE {
+	cursor:default;
+	}
+
+/* Other */	
+
+.GMRightButton, .GMFilterButton, .GMTreeIcon {
+	vertical-align:top;
+	}
+.GMCellSpaceButton {
+	overflow:hidden;
+	height:18px;
+	width:43px;
+	}
+   
+/* -----------------
+--- Cell content --- 
+----------------- */
+
+.GMHeadText,.GMGroupText {
+   font-family:"Trebuchet MS", Tahoma, Arial;
+	color:#FFFFFF;
+	font-size:12px;
+	padding-left:3px;
+	padding-right:3px;
+	white-space:nowrap;
+	}
+.GMHeadSort { 
+	cursor:pointer;
+	_cursor:hand;
+	}
+.GMText,.GMTextB,.GMTextM,.GMNumber,.GMNumberB,.GMNumberM,.GMIText,.GMINumber,.GMLines,.GMTextArea, .GMHtml,.GMRadio, .GMIHtml {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	padding-left:3px;
+	padding-right:3px;
+	border:0px solid;
+	background:inherit;
+	}
+.GMRadio {
+	padding-left:0px;
+	padding-right:5px;
+	}
+.GMText,.GMTextB,.GMTextM {
+	white-space:nowrap;
+	padding-top:2px;
+	}
+.GMHtml {
+	padding-top:2px;
+	cursor:default;
+	}
+.GMIText,.GMINumber, .GMIHtml, .GMIList {
+	display:block;
+	white-space:nowrap;
+	margin-top:-1px!IE;
+	margin-bottom:-1px!IE;
+	padding-top:2px;
+	padding-bottom:0px;
+	}
+.GMNumber,.GMNumberB,.GMNumberM,.GMINumber {
+	text-align:right;
+	white-space:nowrap;
+	padding-top:2px;
+	padding-bottom:0px;
+	}
+.GMTextB,.GMNumberB,.GMNumberM {
+	color:blue;
+	}
+.GMTextM,.GMNumberM {
+	font-weight:bold;
+	}
+.GMLines {
+	padding-top:1px;
+	padding-bottom:1px;	
+	}
+.GMTextArea {
+	margin:0px;
+	padding-top:1px;
+	padding-bottom:1px;	
+	padding-top:0px!IE;
+	padding-bottom:0px!IE;
+	line-height:13px;
+	}
+.GMSelect {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:10px;
+	margin-top:-1px;
+	}
+.GMButton,.GMButtonSpace,.GMButtonSpaceChecked {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:9px;
+	height:18px; 
+	cursor:pointer;
+	_cursor:hand;	
+	padding-bottom:3px;
+	margin-bottom:4px;
+	}
+.GMButtonImg {
+	cursor:pointer;
+	_cursor:hand;
+	text-align:right;
+	}
+.GMGroupCustom {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	color:#BBB;
+	font-style:italic;
+	padding-left:5px;
+	cursor:default;
+	white-space:nowrap;
+	height:17px;
+   }
+.GMButtonSpace {
+	width:42px;
+   }
+.GMButtonSpaceChecked {
+	color:blue;
+	font-weight:700;
+	width:42px;
+	}
+
+/* ------------
+--- Toolbar --- 
+------------ */
+
+.GMToolbar {
+	border-top:1px solid #808070;
+	padding-top:1px;
+	padding-bottom:1px;
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -80px;
+	}
+.GMToolbarCell {
+	
+	}
+.GMToolbarImg,.GMToolbarImgHover,.GMToolbarImgChecked,.GMToolbarImgHoverChecked {
+	cursor:pointer;	
+	_cursor:hand;
+	margin-top:2px;
+	margin-bottom:2px;
+	padding-top:2px;
+	padding-left:2px;
+	padding-right:2px;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GMToolbarImgHover,.GMToolbarImgHoverChecked {
+	margin-top:0px;
+	margin-bottom:1px;
+	padding-top:3px;
+	padding-bottom:1px;
+	border-bottom:1px solid #FCC247;
+	background: #FFFFFF; 
+	}
+.GMToolbarImgChecked,.GMToolbarImgHoverChecked {
+	color:#8080FF;
+	font-weight:700;
+	}
+.GMToolbarFormula {
+	padding-left:5px;
+	padding-right:5px;
+	white-space:nowrap;
+   }
+.GMToolbarButton {
+
+   }
+.GMToolbarText {
+   padding-top:2px;
+   }   
+/* -------------
+--- Cfg menu --- 
+------------- */
+
+.GMCfgMenu {
+	border:1px solid black;
+	padding:6px;
+	background:#e7f4ff;
+	margin:3px;
+	}
+.GMCfgMenuHeader {
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px 0px;
+	padding-bottom:1px;
+	padding-top:3px;
+	height:22px;
+	font-family:"Trebuchet MS", Tahoma, Arial;
+	color:#FFFFFF;
+	font-size:12px;
+	padding-left:3px;
+	padding-right:3px;
+	white-space:nowrap;
+	cursor:default;
+	}
+.GMCfgMenuSeparator {	
+   height:1px; overflow:hidden;
+   border-top:1px solid black;
+   background:#EEE;
+   padding:0px;
+   margin-top:5px;
+   margin-bottom:5px;
+   }
+.GMCfgMenuItem {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	height:20px;
+	}
+.GMCfgMenuHover {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	background:#88DDDD;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	height:20px;
+	}
+.GMCfgMenuButton {
+	width:70px;
+	font-size:11px;
+	margin:2px;
+	}
+
+
+/* ----------------
+--- Popup menus --- 
+---------------- */
+
+.GMMenu {
+	border:1px solid black;
+	background:white;
+	padding:1px;
+   cursor:pointer;
+	_cursor:hand;
+	overflow:hidden;
+	}
+.GMMenuItem {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GMMenuHover {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	background:#88DDDD;
+	font-size:11px;
+	}
+.GMMenuButton {
+	width:40px;
+	font-size:11px;
+	margin:2px;
+	}
+.GMMenuIcon {
+   border-top:1px solid black;
+   border-left:1px solid black;
+   border-right:1px solid black;
+   padding-bottom:2px;
+   background:white;
+   cursor:pointer;
+   }
+
+/* ---------------------
+--- Custom Enum type --- 
+--------------------- */
+
+.GMEnumCell {
+   cursor:pointer;
+	_cursor:hand;
+   }
+.GMEnum {
+	border:1px solid black;
+	background:white;
+	padding:1px;
+   cursor:pointer;
+	_cursor:hand;
+	overflow:hidden;
+	padding-top:2px;
+	}
+.GMEnumItem {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	}
+.GMEnumHover {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	background:#88DDDD;
+	}
+.GMEnumIcon {
+   border:1px solid #b0b0c0;
+   background:white;
+   cursor:pointer;
+   }
+
+/* ----------------
+--- Date picker --- 
+---------------- */
+
+.GMPickTag {
+	background:white;
+	padding:1px;
+	border:1px solid #426b8c;
+	}
+.GMPickBorder {
+   width:2px;
+   }
+.GMPickHeader {
+   background:#5c8397;
+   }
+.GMPickFooter {
+   background:white;
+   }
+.GMPickHeadText,.GMPickFootText {
+	padding-left:5px;
+   font-family:Verdana,Arial;
+	font-size:10px;
+	color:white;
+	padding-top:1px;
+	padding-bottom:1px;
+	cursor:default;
+   }
+.GMPickFootText {
+   padding-right:5px;
+   }   
+.GMPickClose {
+   cursor:pointer;
+   _cursor:hand;
+   text-align:right;
+   padding-top:1px;
+   }
+.GMPickDate {
+   background:#183873;
+   background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -2px;
+
+   }
+.GMPickSep {
+   height:1px;
+   width:1px;
+   overflow:hidden;
+   }   
+.GMPickMY {
+   font-family:Verdana;
+	font-size:10px;
+	color:white;
+	cursor:pointer;
+	_cursor:hand;
+	padding-top:2px;
+	padding-bottom:4px;
+   }   
+.GMPickBL {
+   padding-left:1px;
+   padding-top:3px;     
+   float:left;
+   cursor:pointer;
+	_cursor:hand;
+   }
+.GMPickBR {
+   text-align:right;
+   padding-right:1px;
+   padding-top:3px;
+   text-align:right;
+   float:right;
+   cursor:pointer;
+	_cursor:hand;
+   }
+
+.GMPickRow {
+   background:white;
+   }
+.GMPickRowW {
+ 	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -360px;
+   }
+.GMPickCell {
+   padding-left:3px;
+   padding-right:3px;
+   padding-top:2px;
+   padding-bottom:2px;
+   width:16px;
+   }
+.GMPickWDN {
+	background-color:transparent;
+	text-align:center; 
+	width:16px; 
+	font-family:Arial;
+	font-size:10px;
+	cursor:default;
+	margin-top:0px;
+	padding:1px;
+	color:#333333;
+	}
+.GMPickHover,.GMPickSelHover,.GMPickWD, .GMPickSa, .GMPickSu, .GMPickSel, .GMPickNow, .GMPickWDNE, .GMPickSaNE, .GMPickSuNE, .GMPickSelNE, .GMPickNowNE, .GMPickOM, .GMPickOMNE {
+	text-align:center; 
+	width:16px;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:10px;
+	border:1px solid white;
+	cursor:pointer;
+	_cursor:hand;
+	}
+.GMPickWDNE, .GMPickSaNE, .GMPickSuNE, .GMPickSelNE, .GMPickNowNE {
+	cursor:default;
+	}
+.GMPickWD {	background-color:#ffffff;	}
+.GMPickSa {	background-color:#ffffff;	}
+.GMPickSu {	background-color:#ffffff;	}
+.GMPickSel {	background-color:#fbea54; border:1px solid #dad1d1;}
+.GMPickSelNE {	background-color:#fbea54; border:1px solid #dad1d1;}
+.GMPickNow {	background-color:#c0f3ff; border:1px solid #dad1d1;}
+.GMPickNowNE {	background-color:#c0f3ff; border:1px solid #dad1d1;}
+.GMPickHover {
+   background-color:#DDD;	
+   border:1px solid white;
+   }
+.GMPickSelHover {
+   background-color:#eeee77;	
+   border:1px solid white;
+   }
+.GMPickOM {	background-color:white; color:#aaaaaa;	}
+.GMPickOMNE { color:#aaaaaa; }
+
+.GMPickTimeCell {
+	text-align:right;
+	background-color:#ffffff;
+	padding-bottom:5px;
+	padding-top:6px;
+	padding-right:5px;
+	border-top:1px solid #adf;
+	background:#f0f6ff;
+   }
+.GMPickTime {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	border:0px solid;
+	white-space:nowrap;
+	text-align:right;
+	background:#f0f6ff;
+	}
+
+.GMPickFooter {
+  	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px -380px;
+   }
+.GMPickButton {
+	width:48px;
+	font-size:11px;
+	margin:2px;
+	margin-top:5px;
+	margin-bottom:4px;
+	border:1px solid #8a8fb5;
+	background-color:#dcecf8;
+	text-align:center;
+	}
+
+.GMPick2Cell {
+   height:22px;   
+   }
+.GMPick2M,.GMPick2Y,.GMPick2MSel,.GMPick2YSel,.GMPick2MHover,.GMPick2YHover,.GMPick2MSelHover,.GMPick2YSelHover {
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	padding-left:3px;
+	padding-right:3px;
+	margin-left:5px;
+	margin-right:5px;
+	width:25px;
+   }
+.GMPick2MSel,.GMPick2YSel {
+   background-color:#c0f3ff; 
+   border:1px solid #dad1d1;
+   margin-left:4px;
+	margin-right:4px;  
+   }
+.GMPick2MHover,.GMPick2YHover {
+   background-color:#DDD;	
+   border:1px solid white;
+   margin-left:4px;
+	margin-right:4px;
+   }
+.GMPick2MSelHover,.GMPick2YSelHover {
+   background-color:#80e0f0;	
+   border:1px solid white;
+   margin-left:4px;
+	margin-right:4px;  
+   }   
+.GMPick2SepH {
+   width:1px; 
+   height:1px;
+   overflow:hidden;
+   }
+.GMPick2Sep {
+   width:1px; 
+   background:#777;
+   overflow:hidden;
+   margin-right:3px;  
+   height:22px;
+   }    
+.GMPick2BL,.GMPick2BR {
+	padding-left:3px;
+	padding-right:3px;
+	margin-left:5px;
+	margin-right:5px;
+	padding-top:5px;
+	width:25px;
+	cursor:pointer;
+	_cursor:hand;  
+   }
+/* ----------
+--- Pager --- 
+---------- */
+
+.GMPagerBody {
+	border-left:1px solid #a0a090;
+	background: #E2F0FF;
+	}
+.GMPagerHeader {
+	border-left:1px solid #a0a090;
+	background:url(BackgroundsModern.gif) repeat-x;
+	background-position:0px 0px;
+	padding-bottom:2px;
+	padding-top:3px;
+	border-bottom:1px solid #d0d0c0;
+	border-top:1px solid #EEF7FF;
+	}
+.GMPagerCaption {	
+   font-family:"Trebuchet MS", Tahoma, Arial;
+	color:#FFFFFF;
+	font-size:12px;
+	padding-left:3px;
+	padding-right:3px;
+	white-space:nowrap;
+	height:17px;
+	cursor:default;
+   }
+.GMPagerItem, .GMPagerHover {
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	border-top:1px solid #ffffff; 
+	border-bottom:1px solid #d0d0c0;
+	padding-left:3px;
+	padding-right:3px;
+	cursor:pointer;
+	_cursor:hand;
+   }
+.GMPagerHover {
+	background: #FFFFFF;
+	}
+.GMPagerCursor {
+	cursor:pointer;
+	_cursor:hand;
+	background:#00AAAA;
+	opacity:0.5;              /* Mozilla */
+	filter:alpha(opacity=50); /* IE */
+	}
+.GMPagerSort1 {
+	color: #006600;
+	}
+.GMPagerSort2 {
+	color: #00AE00;
+	}
+.GMPagerSort3 {
+	color: #00FF00;
+	}
+.GMPagerSortS {
+	color: black;
+	}
+
+/* -----------------
+--- Simple pager --- 
+----------------- */
+
+
+.GMSimplePager,.GMSimplePagerActive {
+   padding-left:2px;
+   padding-right:1px;
+   padding-top:2px;
+   padding-bottom:2px;
+   margin-top:2px;
+   margin-bottom:2px;
+   font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	cursor:pointer;
+	_cursor:hand;
+	color:blue;
+	display:inline-block;
+   }
+.GMSimplePager:visited {
+   color:blue;
+   }
+.GMSimplePager:hover {
+   color:red;
+   }
+.GMSimplePagerActive {
+   color:black;
+   font-weight:bold;
+   border:1px dotted black;
+   margin-top:1px;
+   margin-bottom:1px;
+   }
+
+/* ----------
+--- Other --- 
+---------- */
+
+.GMMessage {
+	background:#E2F0FF;
+	border:1px solid black;
+	padding:10px;
+	white-space:nowrap;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:13px;
+	}
+.GMPageMessage {
+	background:#FaFaFa;
+	border:1px solid black;
+	padding:10px;
+	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:13px;
+	}
+.GMPage {
+	border-bottom:1px solid #f0f0f0;
+	}
+.GMPageOne {
+	
+	}
+.GMChildPage {	
+
+   }
+.GMTable {
+	border:1px solid black;
+	background:white;
+	}
+.GMHint {
+   background:white;
+   border:1px solid black;
+   position:relative;
+   top:-1px!IE;
+   left:-1px;
+   cursor:default;
+   padding-bottom:2px;
+   }
+.GMTip {
+   background:#F2F7FF;
+   border:1px solid black;
+  	font-family:"Microsoft Sans Serif",Verdana,Arial;
+	font-size:11px;
+	padding-top:1px;
+	padding:3px;
+   }
+.GMShadow {
+	background:#888;
+	opacity:0.5;              /* Mozilla */
+	filter:alpha(opacity=50); /* IE */
+	}
+.GMPagerEdit  {
+	font-size:11px;
+	border:0px solid;
+   background:white;
+   margin-top:2px; 
+   padding-top:2px;
+   text-align:center;
+  	font-family:"Microsoft Sans Serif",Verdana,Arial;
+   }
+  

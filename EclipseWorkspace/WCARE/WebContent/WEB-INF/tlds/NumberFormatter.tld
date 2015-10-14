@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_3_0.xsd"
+	version="3.0">
+
+	<tlib-version>1.1</tlib-version>
+	<uri>numberWithComma</uri>
+	<short-name>Minutes Custom Format</short-name>
+	
+	<tag>
+		<name>convert</name>
+		<description>Convert Number with comma separated</description>
+		<tag-class>com.enercon.global.utility.NumberFormatter</tag-class>
+		<body-content>empty</body-content>
+		<!-- <body-content>scriptless</body-content>
+		<body-content>tagdependent</body-content>
+		<body-content>JSP</body-content> -->
+		<attribute>
+			<name>number</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib> 

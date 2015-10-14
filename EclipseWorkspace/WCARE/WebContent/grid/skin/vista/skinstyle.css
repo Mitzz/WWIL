@@ -1,0 +1,19 @@
+.gt-skin-vista {
+	border:1px #cccccc solid;
+}
+
+
+.gt-skin-vista .gt-hd-row TD {
+	border-right: 1px solid #668899;
+	border-bottom: 1px solid #668899;
+
+	background: #ebeadb url(./images/grid-hrow.gif) repeat-x;
+}
+
+.gt-skin-vista .gt-hd-row .gt-hd-row-over {
+	background: #ebeadb url(./images/grid-hrow-o.gif) repeat-x;
+}
+
+.gt-skin-vista  .gt-toolbar-box {
+	background-image:url(./images/footer-bg.gif); 
+}

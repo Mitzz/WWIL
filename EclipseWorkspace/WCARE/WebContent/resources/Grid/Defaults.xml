@@ -1,0 +1,620 @@
+<Grid>
+   
+	<!-- Basic grid configuration -->
+	<Cfg
+		Version="0"
+		Editing="1"
+		Deleting="1"
+		ShowDeleted="1"
+		Selecting="7"
+		Adding="1"
+		Pasting="1" 
+		FocusWholeRow="0"
+		Dragging="1"
+		Dropping="1" 
+		ColResizing="1"
+		ColMoving="1"
+		Hover="2"
+		ShowDrag="1"
+		HidePanel="0"
+		SortIcons="1"
+		Sorting="1"
+		Sorted="1"
+		AutoSort="0"
+		Grouping="1" 
+		Grouped="1"
+		Filtering="1" 
+		Filtered="1"
+		Searching="1" 
+		Searched="1" 
+		Calculated="1"
+		RowHeight="0"
+		SuppressCfg="0"
+		AllPages="1"
+		HelpFile="Help.html"
+		Paging="0"
+		ChildPaging="2"
+		RemoveCollapsed="0" 
+		PageLength="20"
+		PageUrlPrefix=""
+		PageUrlPostfix=""
+		ServerSort="0"
+		ServerFilter="0"
+		AutoUpdate="0"
+		LastId=""
+		IdChars="_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+		IdPrefix=""
+		IdPostfix=""
+		CacheTimeout="5"
+		Copying="1"
+		PageTime="500"
+		PageLengthDiv="1"
+		MaxGroupLength="300"
+		ExportType="2"
+		ExportRows="0"
+		PrintType="496"
+		PrintRows="10" 
+		OverflowDialog="4" 
+		ZIndex="255"
+		ReloadChanged="5"
+		ExpandAllType="1"
+		StoreOriginalValues="1"
+		SynchroCount="50"
+		ExpandOnDrag="1"
+		StyleLap="1"
+      MaxSortColumns="3"
+      MessageWidth="140"
+		/>
+
+	<!-- Keys and mouse actions -->
+	<Actions
+		CtrlEnter="ExpandF OR CollapseF"
+		Enter="ChangeBoolF OR StartEdit OR ShowLinkF"
+		F2="StartEdit"
+
+		Tab="TabRight,1" ShiftTab="TabLeft,1"
+		Up="GoUp,1" Down="GoDown,1" Left="GoLeft,1" Right="GoRight,1"
+		Home="GoFirst,1" End="GoLast,1" PageUp="PageUp,1" PageDown="PageDown,1"
+
+		Space="SelectRowF OR DeselectRowF" CtrlSpace="SelectAll OR DeselectAll"
+		Del="DeleteRowF OR UndeleteRowF" CtrlDel="UndeleteSelected OR DeleteSelected"
+		Ins="AddRowF" CtrlIns="AddChildF"
+		CtrlDown="ShowDefaultsF OR ButtonClickF OR ShowCalendarF"
+		CtrlC="CCopySelected OR CCopyRow,0" 
+		CtrlX="ExcludeSelected OR ExcludeRow,0" 
+		CtrlV="PasteToSelected OR PasteToNewRow,0"
+		CtrlZ="Undo" CtrlY="Redo"
+
+		ClickSort="SortAsc OR SortDesc" ClickSortUp="SortAsc" ClickSortDown="SortDesc"
+		CtrlClickSort="NoSort" CtrlClickSortUp="NoSort" CtrlClickSortDown="NoSort"
+		ClickHeaderSelect="DeselectAll OR SelectAll" 
+		CtrlClickHeaderSelect="InvertAll"
+		ClickHeaderDelete="UndeleteSelected OR DeleteSelected"
+		ClickSelect="SelectRow OR DeselectRow" 
+		ClickDelete="DeleteRow OR UndeleteRow"
+		ClickCopy="CopyMenu"
+		ClickGrouped="GroupOn OR GroupOff"
+		ClickFiltered="FilterOn OR FilterOff" 
+		ClickSearched="SearchOn OR SearchOff" 
+		ClickHeaderCopy="CopyMenuF"
+		CtrlClickCopy="AddRowBelow"
+		ClickExpand="Focus,Expand OR Collapse"
+		CtrlClickCell="SelectCell OR DeselectCell OR SelectRow OR DeselectRow,1"
+		ShiftClickCell="InvertCellRangeFirst OR InvertRowRangeFirst,1"
+		RightClickCell="ShowPopupMenu" 
+
+		ClickButtonCalendar="Focus,ShowCalendar"
+		ClickButtonDefaults="Focus,ShowDefaults"
+		ClickButtonUser="Focus,ButtonClick"
+		ClickBool="Focus,ChangeBool"
+		ClickRadio="Focus" 
+		ClickLink="Focus AND StartEdit OR ShowLink"
+		ClickCell="Focus AND StartEdit"
+		ClickOutside="Blur"
+		AfterClick="ShowDetail" 
+
+		DragMove="DragRow,1" 
+		DragCell="DragSelected OR DragRow,1"
+		CtrlDragCell="InvertCellsFirst OR InvertRowsFirst"
+		DragHeaderLeft="ColResize"
+		DragHeaderRight="ColResize"
+		DragHeader="ColMove" 
+		DragDropCols="DropColMove"
+		DragPagerHeaderRight="ColResize"
+		DragResize="GridResize"
+		DragSelect="InvertOddRows" 
+		DownHeader="1" DownCell="1"
+
+		ClickButtonSave="Validate AND Save"
+		ClickButtonReload="Reload"
+		ClickButtonRepaint="Repaint"
+		ClickButtonCalc="CalcOn OR CalcOff"
+		ClickButtonSort="SortOn OR SortOff"
+		ClickButtonPrint="Print"
+		ClickButtonExport="Export"
+		ClickButtonExpandAll="ExpandAllLoaded"
+		ClickButtonCollapseAll="CollapseAll"
+		ClickButtonAdd="CopyRowMenuF OR AddRowF OR AddRowEnd"
+		ClickButtonAddChild="CopyChildMenuF OR AddChildF"
+		ClickButtonCfg="ShowCfg"
+		ClickButtonColumns="ShowColumns"
+		ClickButtonHelp="ShowHelp"
+		DblClickResize="GridResizeDefault"
+
+		TabEdit="TabRightEdit AND StartEdit,1" ShiftTabEdit="TabLeftEdit AND StartEdit,1"
+		UpEdit="GoUpEdit AND StartEdit,1" DownEdit="GoDownEdit AND StartEdit,1" LeftEdit="ChangeRadioLeft" RightEdit="ChangeRadioRight"
+		EnterEdit="AcceptEdit" EscEdit="CancelEdit"
+		CtrlEnterEdit="AcceptEdit" AltEnterEdit="AcceptEdit"
+		SpaceEdit="ChangeBoolF"
+		UpEditMultiline="100" DownEditMultiline="100"
+
+		EdgeSize="5"
+		DragSize="5"
+
+		EditParent="" 
+		EditMultilineParent="Edit" 
+
+		CellParent="Grid"
+		EditedParent=""
+		BoolParent="Cell" 
+		RadioParent="Cell"
+		LinkParent="Cell"
+		ButtonParent="Cell"
+		ButtonCalendarParent="Button"
+		ButtonDefaultsParent="Button"
+		ButtonUserParent="Button"
+		FilterMenuParent="Cell"
+		ExpandParent="Cell"
+		DropColsParent="Cell" 
+		HeaderParent="Grid"
+		HeaderMultiParent="Header"
+		HeaderLeftParent="Header"
+		HeaderRightParent="Header"
+		SortDownParent="Header"
+		SortUpParent="Header"
+		SortParent="Header"
+		PanelParent="Grid"
+		DeleteParent="Panel"
+		SelectParent="Panel"
+		CopyParent="Panel"
+		MoveParent="Panel" 
+		GroupedParent="Panel"
+		SearchedParent="Panel"
+		FilteredParent="Panel" 
+		HeaderPanelParent="Grid"
+		HeaderDeleteParent="HeaderPanel"
+		HeaderSelectParent="HeaderPanel"
+		HeaderCopyParent="HeaderPanel"
+		HeaderMoveParent="HeaderPanel"
+		PagerHeaderParent="Grid"
+		PagerHeaderLeftParent="PagerHeader"
+		PagerHeaderRightParent="PagerHeader" 
+		PagerPageParent="Grid"
+		ToolbarParent="Grid"
+		ButtonSaveParent="Grid"
+		ButtonReloadParent="Grid"
+		ButtonRepaintParent="Grid"
+		ButtonCalcParent="Grid"
+		ButtonSortParent="Grid"
+		ButtonPrintParent="Grid"
+		ButtonExportParent="Grid"
+		ButtonExpandAllParent="Grid"
+		ButtonCollapseAllParent="Grid"
+		ButtonAddParent="Grid"
+		ButtonAddChildParent="Grid"
+		ButtonCfgParent="Grid"
+		ButtonColumnsParent="Grid"
+		ButtonHelpParent="Grid"
+		ResizeParent="Grid"
+		EmptyParent="Grid"
+		GridParent=""
+		OutsideParent=""
+
+		KeyCodes1="Space=32,Enter=13,Esc=27,Backspace=8,Tab=9"
+		KeyCodes2="Tilde=192,Minus=189,Equal=187,Backslash=220,LeftBracket=219,RightBracket=221"
+		KeyCodes3="Semicolon=186,Apostrophe=222,Comma=188,Point=190,Slash=191"
+		KeyCodes4="F1=112,F2=113,F3=114,F4=115,F5=116,F6=117,F7=118,F8=119,F9=120,F10=121,F11=122,F12=123"
+		KeyCodes5="Ins=45,Del=46,Home=36,End=35,PageUp=33,PageDown=34,Up=38,Down=40,Left=37,Right=39,Pause=19"
+		KeyCodes6="NumDivide=111,NumStar=106,NumMinus=109,NumPlus=107,NumPoint=110"
+		KeyCodes7="Num0=96,Num1=97,Num2=98,Num3=99,Num4=100,Num5=101,Num6=102,Num7=103,Num8=104,Num9=105"
+		KeyCodes8="CapsLock=20,ScrollLock=145,NumLock=144"
+		/>
+   
+	<!-- Cell background colors -->
+
+	<!-- Individual TreeGrid styles -->
+	<Styles Style="Modern">
+
+		<!-- Default style, used all attributes not defined in selected style -->
+		<Style Name="Default">
+			<Img
+				Grid="GridLight.gif"
+				Toolbar="ToolbarLight.gif"
+				Height="17"
+				Line="21"
+				Tree="26"
+				Panel="16"
+				Sort="16"
+				Filter="17"
+				Row="17"
+            Enum="13" 
+				SpacePanel="16"
+				SpaceRow="17"
+				SpaceHeight="17"
+            CalendarHeight="13"
+            CalendarWidth="13"
+				ToolbarHeight="16"
+				ToolbarWidth="16"
+				DragOne="DragOne.cur"
+				DragMore="DragMore.cur"
+				/>
+			<Cfg
+				Top=""
+				Bottom=""
+				CellSpacing="0"
+				MovingColBorder="3"
+				NoTreeLines="0"
+            ShadowMessage="3,3,3,3"
+            ShadowHint="3,3,3,3"
+            ShadowTip="3,3,3,3"
+            ShadowMenu="9,9,3,3" 
+            ShadowEnum="3,3,3,3"
+            ShadowEnumIcon="3,3,3,3"
+            ShadowFilter="3,3,3,3"
+            ShadowFilterIcon="3,3,3,3" 
+            ShadowDialog="3,3,3,3"
+            TipStart="500"
+            TipPos="0,16"
+				/>
+			<Colors
+				Default="255,255,255"
+				Alternate="0,0,0"
+
+				FocusedCell="90,255,255"
+				EditedCell="255,220,255"
+				ViewedCell="255,238,255"
+
+				Detail="0,-15,0"
+				DetailSelected="0,-15,-30"
+
+				Focused="-25,-25,-25"
+				CannotFocus="-15,-15,-15"
+				ReadOnly="-11,-11,-11"
+				Preview="0,0,0"
+				Hovered="-5,-5,-10"
+				HoveredCell="-25,-10,0"
+				Selected="0,0,-128"
+
+				Error="0,-150,-150"
+				Deleted="0,-50,-50"
+				Added="-50,0,-50"
+				Moved="-40,-20,-20"
+				ChangedCell="-50,-50,0"
+				Changed="-20,-20,0"
+
+				ChildPage="0,0,-15"
+
+				Found1="0,-120,0"
+				Found2="0,-60,-120"
+				Found3="-120,0,-120"
+				FoundAbsolute="0"
+
+				MovingColInside="0,0,255"
+				MovingColOutside="255,0,0"
+				/>
+		</Style>
+
+		<Style Name="Standard" File="Grid.css" Prefix="G" Caption="Standard&amp;#160;style" ToolTip="Select TreeGrid original look and style">
+			<Img
+				Grid="Grid.gif"
+				Toolbar="Toolbar.gif"
+				Height="17"
+				Line="21"
+				Tree="26"
+				Panel="13"
+				Sort="14"
+				Filter="17"
+				Row="17"
+				SpacePanel="13"
+				SpaceRow="17"
+				SpaceHeight="17"
+				ToolbarHeight="16"
+				ToolbarWidth="18"
+				/>
+			<Colors
+				Default="247,247,247"
+				/>
+		</Style>
+
+		<Style Name="Light" File="GridLight.css" Prefix="GL" Caption="Light&amp;#160;style" ToolTip="Select TreeGrid look and style without lines">
+			<Img
+				Grid="GridLight.gif"
+				Toolbar="ToolbarLight.gif"
+				Height="17"
+				Line="21"
+				Tree="26"
+				Panel="16"
+				Sort="16"
+				Filter="17"
+				Row="17"
+				SpacePanel="16"
+				SpaceRow="17"
+				SpaceHeight="17"
+				ToolbarHeight="16"
+				ToolbarWidth="16"
+				/>
+			<Cfg 
+				Top="|5,0,,1,#E0E0E0,0,,5|3,2,#E0E0E0,1,#F0F0E0,2,#E0E0E0,3|2,1,#E0E0E0,1,#F0F0F0,1,#E0E0E0,2|1,1,#E0E0E0,2,#F0F0E0,1,#E0E0E0,1"
+				Bottom="|1,1,#E0E0E0,2,#F0F0E0,1,#E0E0E0,1|2,1,#E0E0E0,1,#F0F0F0,1,#E0E0E0,2|3,2,#E0E0E0,1,#F0F0E0,2,#E0E0E0,3|5,0,,1,#E0E0E0,0,,5"
+				/>
+			<Colors
+				Alternate="-20,0,0"
+				AlternateRepeat="2"
+				/>
+		</Style>
+
+		<Style Name="Office" File="GridOffice.css" Prefix="GO" Caption="Office&amp;#160;style">
+			<Img
+				Grid="GridOffice.gif"
+				Toolbar="ToolbarOffice.gif"
+				Height="17"
+				Line="21"
+				Tree="26"
+				Panel="13"
+				Sort="14"
+				Filter="17"
+				Row="17"
+				SpacePanel="13"
+				SpaceRow="17"
+				SpaceHeight="17"
+				ToolbarHeight="16"
+				ToolbarWidth="18"
+				/>
+			<Cfg
+				CellSpacing="1"
+				NoTreeLines="1"
+            ShadowHint=""
+				/>
+			<Colors
+				Default="255,255,255"
+
+				FocusedCell="255,255,128"
+				EditedCell="255,255,128"
+				ViewedCell="255,238,255"
+
+				Detail="0,-15,0"
+				DetailSelected="0,-15,-30"
+
+				Focused="-25,-25,-25"
+				CannotFocus="0,0,0"
+				ReadOnly="-11,-11,-11"
+				Preview="0,0,0"
+				Hovered="-11,-11,-11"
+				HoveredCell="-20,-20,-20"
+				Selected="-33,-16,0"
+
+				Error="0,-150,-150"
+				Deleted="0,-20,-20"
+				Added="0,0,0"
+				Moved="0,0,0"
+				ChangedCell="-40,-40,-40"
+				Changed="-11,-11,-11"
+
+				ChildPage="0,0,-15"
+
+				Found1="-102,-51,0"
+				Found2="-120,-160,-120"
+				Found3="-120,0,-120"
+				FoundAbsolute="0"
+
+				MovingColInside="0,144,192"
+				MovingColOutside="192,144,144"
+				/>   
+		</Style>
+
+		<Style Name="Modern" File="GridModern.css" Prefix="GM" Caption="Modern&amp;#160;style">
+			<Img
+				Grid="GridModern.gif"
+				Toolbar="ToolbarModern.png"
+            ToolbarIE6="ToolbarModern.gif"
+				Height="17"
+				Line="21"
+				Tree="26"
+				Panel="16"
+				Sort="10"
+				Filter="17"
+				Row="17"
+				SpacePanel="16"
+				SpaceRow="17"
+				SpaceHeight="21"
+				ToolbarHeight="20"
+				ToolbarWidth="20"
+				/>
+			<Cfg
+
+				/>
+			<Colors
+				Default="255,255,255"
+				Alternate="0,0,0"
+
+				FocusedCell="90,255,255"
+				EditedCell="255,220,255"
+				ViewedCell="255,238,255"
+
+				Detail="0,-15,0"
+				DetailSelected="0,-15,-30"
+
+				Focused="-25,-25,-25"
+				CannotFocus="-15,-15,-15"
+				ReadOnly="-7,-7,-7"
+				Preview="0,0,0"
+				Hovered="-5,-5,-10"
+				HoveredCell="-25,-10,0"
+				Selected="0,0,-128"
+
+				Error="0,-150,-150"
+				Deleted="0,-50,-50"
+				Added="-50,0,-50"
+				Moved="-40,-20,-20"
+				ChangedCell="-50,-50,0"
+				Changed="-20,-20,0"
+
+				ChildPage="0,0,-15"
+
+				Found1="0,-120,0"
+				Found2="0,-60,-120"
+				Found3="-120,0,-120"
+				FoundAbsolute="0"
+
+				MovingColInside="100,255,100"
+				MovingColOutside="255,150,150"
+				/>
+		</Style>
+
+	</Styles>
+
+	<!-- Default rows and column -->
+	<Def>
+		<!-- Default row for all rows -->
+		<D Name="R"
+			Kind="Data"
+			CDef="R"
+
+			CanEdit="1"
+			CanDelete="1"
+			CanSelect="1"
+			CanDrag="1"
+			CanFocus="1"
+			CanFilter="1"
+			AcceptChild="1"
+			CanExpand="1"
+			CanSort="1"
+			CanCopy="1"
+			CanGroup="1"
+			CanExport="1" 
+
+			Deleted="0"
+			Selected="0"
+			Changed="0"
+			Error="0"
+			Added="0"
+			Moved="0"
+
+			Visible="1"
+			Expanded="1"
+
+			Calculated="0"
+			Recalc="3"
+
+			MaxChildren="300"
+			MaxChildrenDiff="20"
+			/>
+      
+		<!-- Default row for fixed rows -->
+		<D Name="Fixed"
+			CanDelete="0"
+			CanSelect="0"
+			CanDrag="0"
+			CanFilter="0"
+			CanCopy="0"
+			AcceptChild="0"
+			/>
+
+		<!-- Default row for space rows -->
+		<D Name="Solid"
+			Def="Fixed"
+			CalcOrder=""
+			/>
+
+		<!-- Default row created when grouping -->
+		<D Name="Group"
+			CanEdit="0"
+			CanFilter="0"
+			CanSearch="0"
+			CanDrag="0"
+			CanCopy="0"
+			CanDelete="0"
+			Expanded="0"
+			Group="1"
+			/>
+
+		<!-- Default column -->
+		<D Name="C"
+			Type="Text"
+			Format=""
+			EditFormat=""
+
+			CanEdit="1"
+			CanFocus="1"
+			CanResize="1"
+			CanMove="1"
+			CanFilter="1"
+			CanSort="1"
+			CanHide="1"
+			CanCopy="1"
+			CanGroup="1" 
+			CanSearch="1"
+			CanDrag="1"
+			CanExport="1" 
+			SortType="0"
+			WhiteChars=" "
+			AutoWidth="1"
+
+			WidthPad="0"
+
+			ToolTip="0"
+         ShowHint="1"
+			/>
+	</Def>
+
+	<!-- Header row = column captions -->
+	<Header
+		Kind="Header"
+		id="Header"
+
+		CanEdit="0"
+		CanDelete="1"
+		CanSelect="1"
+		CanDrag="0"
+		CanFocus="0"
+		CanFilter="0"
+		AcceptChild="0"
+		CanSort="1"
+		CanCopy="1"
+		CanExport="1" 
+
+		Deleted="0"
+		Selected="0"
+		Changed="0"
+		Error="0"
+		Added="0"
+		Moved="0"
+
+		Visible="1"
+		Expanded="0"
+
+		Calculated="0"		
+		/>
+
+	<!-- Row left panel -->
+	<Panel 
+		Visible="1" Select="1" Delete="1" Copy="0" CanHide="0" CanResize="0" CanMove="0"
+		/>
+
+	<!-- Right side pager -->
+	<Pager 
+		Visible="1" Caption="Pager" Width="100" CanResize="1" CanHide="0"
+		/>
+
+	<!-- Bottom toolbar -->
+	<Toolbar 
+		Cells="Save,Reload,Repaint,Print,Export,Add,AddChild,Sort,Calc,ExpandAll,CollapseAll,User,Columns,Cfg,Help,Styles" 
+		Tag="" Visible="1" Styles="0" Copy="7"
+		/>
+
+	<!-- Configuration menu -->
+	<MenuCfg 
+		ShowDeleted="1" AutoSort="1" AutoUpdate="1" CheckUpdates="1" Separator1="1" 
+		MouseHover="1" ShowDrag="1" ShowPanel="1" ShowIcons="1" ShowPager="1" ShowAllPages="1"
+		/>
+</Grid>

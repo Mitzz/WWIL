@@ -1,0 +1,72 @@
+BODY {
+	FONT-SIZE: 8pt; FONT-FAMILY: Arial, Helvetica, sans-serif;
+	color: #3E5C0E;
+}
+TD {
+	FONT-SIZE: 8pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A:active {
+	COLOR: #0000cc; TEXT-DECORATION: none
+}
+A:link {
+	COLOR: #0000cc; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #0000ff; TEXT-DECORATION: none
+}
+A:hover {
+	COLOR: #0000ff; TEXT-DECORATION: underline
+}
+.TableTitleRow {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR: #94A664; TEXT-ALIGN: left;COLOR: white;
+}
+.TableCell11 {
+	PADDING-RIGHT: 4pt; FONT-SIZE: 9pt; PADDING-LEFT: 4pt BACKGROUND-COLOR: #94A664 ;TEXT-ALIGN: left
+	
+}
+.TableCell111 {
+	PADDING-RIGHT: 4pt; FONT-SIZE: 9pt; PADDING-LEFT: 4pt BACKGROUND-COLOR: #94A664 ;TEXT-ALIGN: right
+	
+}
+.TableTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; TEXT-ALIGN: center
+}
+.TableRow1 {
+	BACKGROUND-COLOR: #F6F6EC;TEXT-ALIGN: left;
+}
+.TableRow2 {
+	BACKGROUND-COLOR: #D2EBAB;TEXT-ALIGN: left;
+}
+.TableSolidRow {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR:#94A664
+}
+.TableSummaryRow {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR: #94A664
+}
+.TableCell {
+	PADDING-RIGHT: 4pt;  PADDING-LEFT: 4pt BACKGROUND-COLOR: #94A664 ;TEXT-ALIGN: left
+}
+.TableCellRight {
+	PADDING-RIGHT: 4pt;  PADDING-LEFT: 4pt BACKGROUND-COLOR: #94A664 ;TEXT-ALIGN: right
+}
+.ReportTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.CategoryTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.SinglePageCategoryTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.ChartTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; TEXT-ALIGN: center
+}
+.SectionTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: white; BACKGROUND-COLOR:#94A664; TEXT-ALIGN: center
+}
+.TOC {
+	BACKGROUND-IMAGE: url(contents_back.gif); BACKGROUND-REPEAT: repeat-x
+}
+.TranslatedContentsTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #333333
+}

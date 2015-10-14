@@ -1,0 +1,14 @@
+;; Programming Languages, Homework 5
+
+#lang racket
+(provide (all-defined-out)) ;; so we can put tests in a second file
+
+;; definition of structures for MUPL programs - Do NOT change
+(struct var  (string) #:transparent)  ;; a variable, e.g., (var "foo")
+(struct int  (num)    #:transparent)  ;; a constant number, e.g., (int 17)
+(struct add  (e1 e2)  #:transparent)  ;; add two expressions
+(struct ifgreater (e1 e2 e3 e4)    #:transparent) ;; if e1 > e2 then e3 else e4
+(struct fun  (nameopt formal body) #:transparent) ;; a recursive(?) 1-argument function
+(struct call (funexp actual)       #:transparent) ;; function call
+(struct mlet (var e body) #:transparent) ;; a local binding (let var = e in body) 
+(struct apair (e1

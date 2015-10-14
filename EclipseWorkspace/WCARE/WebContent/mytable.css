@@ -1,0 +1,102 @@
+.gurtTable {
+	font: 11px tahoma, verdana, arial;
+	color: #336666;
+	width: 700;
+	
+}
+.gurtCapt {
+	height: 20px;
+	border-left: 2px solid #E1B700;
+	background: url(resources/menu/hitbkg.gif);
+	color: #ffffff;
+	font-weight:bold;
+	text-align: center;
+}
+.gurtPg {
+	background: #314585;
+	font: 11px tahoma, verdana, arial;
+	text-align: center;
+	background: url(resources/menu/hitbkg.gif);
+	height: 24px;
+	color: #ffffff;
+}
+select.gurtPg, input.gurtPg, select.gurtFilt, input.gurtFilt{
+	text-align: left;
+	color:black;
+	background: #FBFBFB;
+	font-weight:normal;
+}
+select.gurtPg, input.gurtPg{
+	height: 16px;
+	width:80;
+}
+
+select.gurtFilt, input.gurtFilt{
+	font-size: 10px;
+	height: 18px;
+	width:100;
+}
+a.gurtPg, a.gurtPg:link, a.gurtPg:visited, a.gurtPg:active,a.gurtFilt, a.gurtFilt:link, a.gurtFilt:visited, a.gurtFilt:active  { 
+	color: #BDBEBF;
+	text-decoration : none;
+	background-image:none;
+}
+
+.gurtRowIndex{
+	width : 18px;
+	background-color: #314585;
+	color: #ffffff;
+	text-align: center;
+	
+}
+
+.gurtFilt {
+	background-color: #314585;
+	font: 11px tahoma, verdana, arial;
+	text-align: right;
+	color: #ffffff;
+	height: 18px;
+}
+
+.gurtContentCol0 {
+	background: #ffffff;
+}
+.gurtContentCol1 {
+	text-align: center;
+	background: #ffffff;
+}
+.gurtContentCol2 {
+	text-align: center;
+	background: #ffffff;
+}
+.gurtContentCol3 {
+	background: #ffffff;
+	text-align: center;
+}
+.gurtContentCol4 {
+	background: #ffffff;
+	text-align: center;
+}
+
+.gurtContentCol5 {
+	background: #ffffff;
+	text-align: center;
+}
+
+.gurtContentCol6 {
+	background: #ffffff;
+	text-align: center;
+}
+.gurtContentCol7 {
+	background: #ffffff;
+	text-align: center;
+}
+.gurtMarkRow{
+	background: #E1B700;
+}
+
+.gurtHoverRow{
+	background: #c9cece;
+
+}
+

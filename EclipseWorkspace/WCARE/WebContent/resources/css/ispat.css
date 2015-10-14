@@ -1,0 +1,551 @@
+
+.BODY{
+scrollbar-face-color:#073D6C;
+scrollbar-arrow-color:#ff0000;
+scrollbar-track-color:#000000;
+scrollbar-shadow-color:#99CCFF;
+scrollbar-highlight-color:#99CCFF;
+scrollbar-3dlight-color:#99CCFF;
+scrollbar-darkshadow-Color:#99CCFF;
+}
+
+.BodyBkgClr{
+  background-color:#FFFFFF;
+}
+
+.BodyTextBrown{
+    font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#000000;    
+}
+
+.BodyTextBrown1{
+    font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#FF0000;    
+}
+.BodyTextYellow{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#FFFF00;    
+}
+
+.BodyLinkBrown{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#700000;    
+}
+
+.BodyLinkBrown:hover{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:underline;
+	 color:#700000;    
+}
+
+.BodyTextBlack{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#000080;    
+}
+.Hyperlink{
+   font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#000080;    
+}
+
+.BodyTextBlack:hover{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:underline;
+	 color:#000080;    
+}
+
+.DottedLineVer{
+     border-left:1px #700000 dotted;
+}
+
+.DottedLineHor{
+     border-bottom:1px #700000 dotted;
+}
+
+.DottedLineHor1{
+     border-top:1px #700000 dotted;
+}
+
+/* For header.html */
+.HeaderLinks{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#FFFFFF;    
+}
+
+.HeaderLinks:hover{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:underline;
+	 color:#FFFFFF;    
+}
+.Scrolls{
+    overflow:auto;
+	scrollbar-3dlight-color: #666666;
+    scrollbar-arrow-color: #868686;
+    scrollbar-base-color : #ff00ff;
+    scrollbar-darkshadow-color: #ffffff;
+    scrollbar-face-color: #e5e5e5;
+    scrollbar-highlight-color: #ffffff;
+    scrollbar-shadow-color: #868686;
+}
+
+/* ------- */
+
+/* For Scroll.html */
+.ScrollText{
+     font-family:"Arial";
+	 color:#99CCFF;
+	 background-color:#000080;
+}
+
+.Bkg{
+	background: url('../images/greybar.jpg');
+}
+
+.Bkg1{
+    padding-left:10px;
+	background: url('../images/Hrcoil_thumb.jpg') no-repeat;
+}
+/* ------- */
+
+/* For leftmenu.html */
+.MenuText{
+     font-family:"Arial";
+	 font-size:13px;
+	 font-weight:normal;
+     text-align:left;
+	 text-decoration:none;
+	 color:#FFFFFF;
+	 padding-left:6px;
+     cursor:pointer;
+     margin-bottom: 5px;
+     width:170px;
+}
+.submenu{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+     text-align:left;
+	 text-decoration:none;
+	 color:#FFFFFF;
+	 padding-left:15px;
+     margin-bottom: 0.5em;
+}
+.submenu1{
+     font-family:"Arial";
+	 font-size:13px;
+	 font-weight:normal;
+     text-align:left;
+	 text-decoration:none;
+	 color:#000000;
+     cursor:pointer;
+     margin-bottom: 0.5em;
+}
+
+
+.BorderTop{
+     border-top:1px solid #DADADA;
+}
+
+.BorderBottom{
+     border-bottom:1px solid #DADADA;
+}
+
+.LeftMenuBkg{
+	background: url('../images/menubkg.jpg');
+}
+/* ------- */
+
+/* For topmenu.html */
+.TopMenuText{
+    font-family:"Arial";
+	font-size:13px;
+	font-weight:normal;
+	text-decoration:none;
+	color:#FFFFFF;
+	background:#000080;
+	height:19px;
+	padding-left:3px;
+    border-top:1px solid #FFFFFF;
+    border-left:1px solid #FFFFFF;
+    border-bottom:1px solid #FFFFFF;
+}
+
+.TopMenuText:visited{
+    font-family:"Arial";
+	font-size:13px;
+	font-weight:normal;
+	text-decoration:none;
+	color:#FFFFFF;
+	background:#000080;
+	height:19px;
+	padding-left:3px;
+    border-top:1px solid #FFFFFF;
+    border-left:1px solid #FFFFFF;
+    border-bottom:1px solid #FFFFFF;
+}
+
+.TopMenuText:active{
+    font-family:"Arial";
+	font-size:13px;
+	font-weight:normal;
+	text-decoration:none;
+	color:yellow;
+	background:#000000;
+	height:19px;
+	padding-left:3px;
+    border-top:1px solid #FFFFFF;
+    border-left:1px solid #FFFFFF;
+    border-bottom:1px solid #FFFFFF;
+}
+
+.TopMenuText:hover{
+    font-family:"Arial";
+	font-size:13px;
+	font-weight:normal;
+	text-decoration:none;
+	color:red;
+	background:#000000;
+	height:19px;
+	padding-left:3px;
+    border-top:1px solid #FFFFFF;
+    border-left:1px solid #FFFFFF;
+    border-bottom:1px solid #FFFFFF;
+}
+
+ 
+
+/* ------- */
+
+/* For login.html */
+.ButtonText{
+     font-family:"Arial";
+	 font-size:13px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#073D6C;
+	 background-color:#F1EFF0;
+     border-top:1px solid #6E0000;
+     border-left:1px solid #6E0000;
+}
+
+.BoxBorder{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     text-decoration:none;
+     border-top:1px solid #99CCFF;
+     border-left:1px solid #99CCFF;
+     border-bottom:1px solid #99CCFF;
+     border-right:1px solid #99CCFF;
+	 color: #000000;
+	 background-color:#FFFFFF;
+}
+.BoxBorder1{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     text-decoration:none;
+     border-top:1px solid #FFFFFF;
+     border-left:1px solid #FFFFFF;
+     border-bottom:1px solid #FFFFFF;
+     border-right:1px solid #FFFFFF;
+	 color: #000000;
+	 background-color:#FFFFFF;
+}
+.BoxBorder2{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     text-decoration:none;
+     border-top:0px solid #FFFFFF;
+     border-left:0px solid #FFFFFF;
+     border-bottom:0px solid #FFFFFF;
+     border-right:0px solid #FFFFFF;
+	 color: #000000;
+	 background-color:#FFFFFF;
+}
+.BoxBorderInt{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     text-decoration:none;
+     border-top:1px solid #99CCFF;
+     border-left:1px solid #99CCFF;
+     border-bottom:1px solid #99CCFF;
+     border-right:1px solid #99CCFF;
+	 color: #000000; 
+	 text-align: Left; 
+	 background-color: #FFFFFF;     
+}
+.BoxBorderInt1{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     text-decoration:none;
+     border-top:1px solid #99CCFF;
+     border-left:1px solid #99CCFF;
+     border-bottom:1px solid #99CCFF;
+     border-right:1px solid #99CCFF;
+	 color: #000000; 
+	 text-align: right; 
+	 background-color: #FFFFFF;     
+}
+
+.HrefButtons{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#6E0000;
+}
+
+.Buttons{
+     width:67px;
+     height:21px;
+     background: url('../images/button.jpg') no-repeat;     
+}
+
+.Padding{
+     padding-left:160px;
+}
+
+.ForgetText{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#DB0000;
+	 padding-left:3px;
+}
+/* ------- */
+
+/* For onlinebid.html */
+.BidButton{
+     width:166px;
+     height:27px;
+     background: url('../images/onlinebidsubmit.jpg') no-repeat;     
+}
+/* ------- */
+
+.CommonHref{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#FFCC00;
+}
+
+.CommonHref:hover{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#FFCC00;
+}
+
+/********* Styles Added By Jithin **************/
+
+div.heading {
+	width: 100%;
+	height: 18px;
+	font-size: 14px;
+	font-weight: bold;
+	font-family:"Arial";
+	color:#700000;   
+	padding-left:270px;
+      padding-top:7px;
+	background-color: #FFFFFF;
+	vertical-align: middle;
+	cursor: default;
+      text-decoration:underline;
+}
+
+div.subheading {
+	width: 105%;
+	height: 14px;
+	padding-top: 10px;
+	color: #FFFFFF;
+	padding-left: 10px;
+	background-color:#700000;
+	vertical-align: middle;
+      horizontal-align: middle;
+      font-family:"Arial";
+	font-size:12px;
+	font-weight:bold;  
+  
+}
+
+.select{
+  width: 140px;
+  height: 22px;
+  background-color: #FFFFFF;
+  color:#6E0000;
+  font-family:"Arial";
+  font-size:12px;
+  font-weight:normal;
+  border-top:1px solid #6E0000;
+  border-left:1px solid #6E0000;
+  border-bottom:1px solid #6E0000;
+  border-right:1px solid #6E0000;
+ 
+}
+
+/*CSS for test purpose*/
+
+.Scrolling{
+  font-family:"Arial";
+  font-size:12px;
+  font-weight:normal;
+  color:#FFFFFF;
+  background-color:#FFFFFF;
+  border-top:1px solid #000080;
+  border-left:1px solid #000080;
+  border-bottom:1px solid #000080;
+  border-right:1px solid #000080;
+ 
+}
+/*CSS for test purpose*/
+
+.Scrolling1{
+  font-family:"Arial";
+  font-size:12px;
+  font-weight:normal;
+  color:#000080;
+  background-color:#000080;
+  border-top:1px solid #000080;
+  border-left:1px solid #000080;
+  border-bottom:1px solid #000080;
+  border-right:1px solid #000080;
+ 
+}
+
+.ScrollHead{
+  font-family:"Arial";
+  font-size:12px;
+  font-weight:bold;
+  padding:3px;
+  color:#000000;
+ 
+}
+.ScrollHead1{
+  font-family:"Arial";
+  font-size:12px;
+  font-weight:bold;
+  padding:3px;
+  color:#FFFFFF;
+ 
+}
+
+.Login{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#000000;
+}
+.Login1{
+     font-family:"Arial";
+	 font-size:12px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#FFFFFF;
+}
+
+.LoginBoxBorder{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     width:120px;
+     height:15px;
+     border-top:1px solid #000080;
+     border-left:1px solid #000080;
+     border-bottom:1px solid #000080;
+     border-right:1px solid #000080;
+}
+
+.TableBoxBorder{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     border-top:1px solid #000080;
+     border-left:1px solid #000080;
+     border-bottom:1px solid #000080;
+     border-right:1px solid #000080;
+}
+
+.InputBoxBorder{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     width:120px;
+     height:15px;
+	 color:#000000;
+	 background-color:#FFFFFF;
+     border-top:1px solid #000000;
+     border-left:1px solid #000000;
+     border-bottom:1px solid #000000;
+     border-right:1px solid #000000;
+}
+.InputBoxBorder1{
+     font-family:"Arial";
+     font-size:10px;
+     font-weight:normal;
+     width:120px;
+     height:15px;
+	 color:#000000;
+	 background-color:#FFFFFF;
+     border-top:1px solid #000000;
+     border-left:1px solid #000000;
+     border-bottom:1px solid #000000;
+     border-right:1px solid #000000;
+}
+
+.RegBoxBorder{
+     font-family:"Arial";
+     font-size:12px;
+     font-weight:normal;
+     border-top:1px solid #FFFFFF;
+     border-left:1px solid #FFFFFF;
+     border-bottom:1px solid #FFFFFF;
+     border-right:1px solid #FFFFFF;
+}
+
+.LoginButton{
+     font-family:"Arial";
+	 font-size:11px;
+	 font-weight:normal;
+	 text-decoration:none;
+	 color:#073D6C;
+	 width:45px;
+	 height:20px;
+	 letter-spacing:1px;
+	 background-color:#F1EFF0;
+     border-top:1px solid #6E0000;
+     border-left:1px solid #6E0000;
+}

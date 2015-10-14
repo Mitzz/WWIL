@@ -1,0 +1,98 @@
+BODY {
+	FONT-SIZE: 8pt; FONT-FAMILY: Arial, Helvetica, sans-serif;
+	color: #3E5C0E;
+}
+TD {
+	FONT-SIZE: 8pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A:active {
+	COLOR: #0000cc; TEXT-DECORATION: none
+}
+A:link {
+	COLOR: #0000cc; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #0000ff; TEXT-DECORATION: none
+}
+A:hover {
+	COLOR: #0000ff; TEXT-DECORATION: underline
+}
+.TableTitleRow {
+	FONT-WEIGHT: bold;  TEXT-ALIGN: center;COLOR: white
+	;BORDER-RIGHT: #d4d4d4 1px solid; PADDING-RIGHT: 10px; BORDER-TOP: #d4d4d4 1px solid; PADDING-LEFT: 5px; BACKGROUND-IMAGE: url(images/bgfadegreen.gif); PADDING-BOTTOM: 0px; BORDER-LEFT: #d4d4d4 1px solid; COLOR: #000000; PADDING-TOP: 0px; BORDER-BOTTOM: #d4d4d4 1px solid; BACKGROUND-REPEAT: repeat-x; BACKGROUND-COLOR: #e5eecc
+}
+
+.btn
+{border: 1px; padding:0px;  FONT-WEIGHT: bold; font-size: 14px; COLOR: #000000; background-color: #D2EBAB; width:40%; height:25px;  cursor: hand;}
+	
+.TableTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; TEXT-ALIGN: center
+}
+.TableRow1 {
+	BACKGROUND-COLOR: #F6F6EC
+}
+.TableRow2 {
+	BACKGROUND-COLOR: #D2EBAB
+}
+.TableSolidRow {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR:#C0C0C0
+}
+.TableSummaryRow {
+	
+	FONT-WEIGHT: bold; 
+	;BORDER-RIGHT: #d4d4d4 1px solid; PADDING-RIGHT: 10px; BORDER-TOP: #d4d4d4 1px solid; PADDING-LEFT: 5px; BACKGROUND-IMAGE: url(images/bgfadegreen.gif); PADDING-BOTTOM: 0px; BORDER-LEFT: #d4d4d4 1px solid; COLOR: #000000; PADDING-TOP: 0px; BORDER-BOTTOM: #d4d4d4 1px solid; BACKGROUND-REPEAT: repeat-x; BACKGROUND-COLOR: #e5eecc
+
+}
+.TableCell {
+	PADDING-RIGHT: 4pt; PADDING-LEFT: 4pt BACKGROUND-COLOR: #C0C0C0 ; TEXT-ALIGN: center
+}
+.TableCell11 {
+	PADDING-RIGHT: 4pt; FONT-SIZE: 10pt; PADDING-LEFT: 4pt BACKGROUND-COLOR: #C0C0C0 ;TEXT-ALIGN: center
+}
+.TableCell1 {
+	PADDING-RIGHT: 4pt; PADDING-LEFT: 4pt BACKGROUND-COLOR: #C0C0C0 ;TEXT-ALIGN: left
+}
+.TableCell2 {
+	PADDING-RIGHT: 4pt; PADDING-LEFT: 4pt BACKGROUND-COLOR: #C0C0C0 ;TEXT-ALIGN: right
+}
+.ReportTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.CategoryTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.SinglePageCategoryTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.ChartTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; TEXT-ALIGN: center
+}
+.SectionTitle {
+		FONT-WEIGHT: bold;  TEXT-ALIGN: center;COLOR: white
+		;BORDER-RIGHT: #d4d4d4 1px solid; PADDING-RIGHT: 10px; BORDER-TOP: #d4d4d4 1px solid; PADDING-LEFT: 5px; BACKGROUND-IMAGE: url(images/bgfadegreen.gif); PADDING-BOTTOM: 0px; BORDER-LEFT: #d4d4d4 1px solid; COLOR: #000000; PADDING-TOP: 0px; BORDER-BOTTOM: #d4d4d4 1px solid; BACKGROUND-REPEAT: repeat-x; BACKGROUND-COLOR: #e5eecc
+
+}
+.SectionTitleLeft {
+	FONT-WEIGHT: bold;  TEXT-ALIGN: left;COLOR: white
+		;BORDER-RIGHT: #d4d4d4 1px solid; PADDING-RIGHT: 10px; BORDER-TOP: #d4d4d4 1px solid; PADDING-LEFT: 5px; BACKGROUND-IMAGE: url(images/bgfadegreen.gif); PADDING-BOTTOM: 0px; BORDER-LEFT: #d4d4d4 1px solid; COLOR: #000000; PADDING-TOP: 0px; BORDER-BOTTOM: #d4d4d4 1px solid; BACKGROUND-REPEAT: repeat-x; BACKGROUND-COLOR: #e5eecc
+
+}
+.SectionTitleRight {
+	FONT-WEIGHT: bold;  TEXT-ALIGN: right;COLOR: white
+		;BORDER-RIGHT: #d4d4d4 1px solid; PADDING-RIGHT: 10px; BORDER-TOP: #d4d4d4 1px solid; PADDING-LEFT: 5px; BACKGROUND-IMAGE: url(images/bgfadegreen.gif); PADDING-BOTTOM: 0px; BORDER-LEFT: #d4d4d4 1px solid; COLOR: #000000; PADDING-TOP: 0px; BORDER-BOTTOM: #d4d4d4 1px solid; BACKGROUND-REPEAT: repeat-x; BACKGROUND-COLOR: #e5eecc
+
+}
+.SectionTitle1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: white; BACKGROUND-COLOR:#C0C0C0; 
+}
+.SectionTitle2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: white; BACKGROUND-COLOR:#C0C0C0;
+}
+.TOC {
+	BACKGROUND-IMAGE: url(contents_back.gif); BACKGROUND-REPEAT: repeat-x
+}
+.TranslatedContentsTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #333333
+}
+
+

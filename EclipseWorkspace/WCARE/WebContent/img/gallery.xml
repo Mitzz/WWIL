@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+<item source="../_images/slider/one.png" thumbnail="../_images/slider/thumb/one.png" title="Title One" description="This is title one" />
+<item source="../_images/slider/two.png" thumbnail="../_images/slider/thumb/two.png" title="Title One" description="This is title two" />
+<item source="../_images/slider/three.png" thumbnail="../_images/slider/thumb/three.png" title="Title One" description="This is title three" />
+</items>

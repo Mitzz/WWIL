@@ -1,0 +1,75 @@
+.menu1 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #060606; text-decoration: none}
+.menu2 {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #555555; text-decoration: none}
+.bluehighlight1 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #ffffff}
+.reportheading {  font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: bold; color: #4A5052}
+.redhighlight1 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: red}
+.clickhere1 {  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #00AC90; text-decoration: none}
+.text1 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #151515}
+.more1 {  font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: normal; color: #537F7C; text-decoration: none}
+.text2 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #825A56}
+.text3 {  font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #4D6978}
+.greyhighlight1 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #4A5052}
+.text4 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #4A5052; text-align: justify}
+.bottommenu1 {  font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; color: #E5E8EA; text-decoration: none}
+.bottommenu2 {  font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; color: #434D53; text-decoration: none}
+.copyright {  font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; color: #748289; text-decoration: none}
+.text5 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #505051; text-align: justify}
+.grey_text {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #4A5052}
+.high {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #4A5052}
+.low { font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #4A5052 }
+.green_numbers {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #04811E}
+.red_numbers {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #FA0A00}
+.greyhighlight2 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #4F4F50}
+.text6 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: normal; color: #4F4F50}
+.greyhighlight3 {  font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #505051}
+.links { font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #836AA7 ; text-decoration: none}
+.voilethighlight1 { font-family: Arial, Helvetica, sans-serif; font-size: 11px; font-weight: bold; color: #836AA7 ; text-decoration: none }
+.blue_text { font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: #314585 }
+.WhiteLink{font-family:"Arial";font-size:12px;font-weight:normal;text-decoration:none;color:white;}
+.WhiteLink:hover{font-family:"Arial";font-size:12px;font-weight:bold;text-decoration:none;color:white;}
+.thoughtofday{font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: bold; color: #256D10 }
+@media Print, Screen    
+{
+	UL.mktree LI {
+		LIST-STYLE-TYPE: none; 
+	}
+	UL.mktree {
+		PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN-LEFT: 7px; PADDING-TOP: 0px
+	}
+	UL.mktree UL {
+		PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN-LEFT: 7px; PADDING-TOP: 0px
+	}
+	UL.mktree LI {
+		PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN-LEFT: 7px; PADDING-TOP: 0px
+	}
+	UL.mktree LI .bullet {
+		PADDING-LEFT: 10px; PADDING-BOTTOM: 0px;  
+	}
+	UL.mktree LI.liOpen .bullet {
+		BACKGROUND: url(../arrow-down.png) no-repeat left center; CURSOR: pointer
+	}
+	UL.mktree LI.liClosed .bullet {
+		BACKGROUND: url(../arrow-side.png) no-repeat left center; CURSOR: pointer
+	}
+	UL.mktree LI.liBullet .bullet {
+		BACKGROUND: url(../square1.png) no-repeat left center; CURSOR: default
+	}
+	UL.mktree LI.liOpen UL {
+		DISPLAY: block
+	}
+	UL.mktree LI.liClosed UL {
+		DISPLAY: none
+	}
+	UL.mktree LI {
+		FONT-SIZE: 8pt; HEIGHT:16px;
+	}
+	UL.mktree LI UL LI {
+		FONT-SIZE: 8pt; HEIGHT:17px;
+	}
+	UL.mktree LI UL LI UL LI {
+		FONT-SIZE: 8pt; HEIGHT:15px;
+	}
+	UL.mktree LI UL LI UL LI UL LI {
+		FONT-SIZE: 8pt; HEIGHT:15px;
+	}
+}

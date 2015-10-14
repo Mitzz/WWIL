@@ -1,0 +1,24 @@
+.ui-dropdownchecklist .ui-widget-content {
+	BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none;COLOR:#0000FF;
+}
+.ui-dropdownchecklist .ui-widget-header {
+	BORDER-TOP-STYLE: none; BORDER-RIGHT-STYLE: none; BORDER-LEFT-STYLE: none; BORDER-BOTTOM-STYLE: none;COLOR:#0000FF;
+}
+.ui-dropdownchecklist-indent {
+	PADDING-LEFT: 7px
+}
+.ui-dropdownchecklist-selector-wrapper {
+	FONT-SIZE: 0px; VERTICAL-ALIGN: middle
+}
+.ui-dropdownchecklist-selector-wrapper {
+	FONT-SIZE: 0px; VERTICAL-ALIGN: middle
+}
+.ui-dropdownchecklist-selector {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 2px; FONT-SIZE: 0px; PADDING-BOTTOM: 1px; PADDING-TOP: 1px
+}
+.ui-dropdownchecklist-text {
+	FONT-SIZE: small
+}
+.ui-dropdownchecklist-group {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; PADDING-BOTTOM: 1px; PADDING-TOP: 1px
+}

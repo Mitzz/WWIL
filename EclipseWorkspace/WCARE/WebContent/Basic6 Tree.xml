@@ -1,0 +1,29 @@
+<Grid>
+<Cfg id='Simple6' MainCol='Order'/>
+<Cols>
+      <C Name='Order' Width='150'/>
+      <C Name='Rank'/>
+</Cols>
+<Body>
+<B>
+<I Order='1.' Rank='1'>
+	<I Order='1a.' Rank='2'>
+		<I Order='1a. I' Rank='3'/>
+    </I>
+	<I Order='1b.' Rank='2'>
+		<I Order='1b. I' Rank='3'>
+			<I Order='1b. Ia' Rank='4'/>
+		</I>
+		<I Order='1b. II' Rank='3'/>
+	</I>
+</I>
+<I Order='2.' Rank='1'/>
+<I Order='3.' Rank='1' Expanded='0'>
+	<I Order='3a.' Rank='2'/>
+	<I Order='3b.' Rank='2' Expanded='0'>
+		<I Order='3b. I' Rank='3'/>
+	</I>
+</I>
+</B>
+</Body>
+</Grid>

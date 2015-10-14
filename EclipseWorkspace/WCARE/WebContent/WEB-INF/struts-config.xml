@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<struts-config>
+	<plug-in className="org.springframework.web.struts.ContextLoaderPlugIn">
+		<set-property property="contextConfigLocation"
+			value="/WEB-INF/classes/SpringBeans.xml" />
+  	</plug-in>
+  <data-sources />
+    <form-beans>
+    		<form-bean  name="testfrm" type="TestForm" />  	
+  	  		<form-bean  name="changepassword" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="forcechangepassword" type="com.enercon.global.utils.ExcelValidation" />
+			<form-bean  name="rolemaster" type="com.enercon.global.utils.ExcelValidation" />  				  		
+			<form-bean  name="roletranmaster" type="com.enercon.global.utils.ExcelValidation" />  			
+			<form-bean  name="roletranmasternew" type="com.enercon.global.utils.ExcelValidation" />
+			<form-bean  name="userrolemaster" type="com.enercon.global.utils.ExcelValidation" />  	
+			<form-bean  name="StateMaster" type="com.enercon.global.utils.ExcelValidation" /> 
+			<form-bean  name="typemaster" type="com.enercon.global.utils.ExcelValidation" /> 
+			<form-bean  name="SiteMaster" type="com.enercon.global.utils.ExcelValidation" /> 
+			<form-bean  name="SubStationMaster" type="com.enercon.global.utils.ExcelValidation" /> 
+			<form-bean  name="FeederSiteMaster" type="com.enercon.global.utils.ExcelValidation" />
+  	  		<form-bean  name="MPMaster" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="EBMaster" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="EBMFactor" type="com.enercon.global.utils.ExcelValidation" />   	  		
+  	  		<form-bean  name="FederMaster" type="com.enercon.global.utils.ExcelValidation" />   	  		
+  	  		<form-bean  name="FDMFactor" type="com.enercon.global.utils.ExcelValidation" />   	  		
+  	  		<form-bean  name="CustomerMaster" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="LoginMaster" type="com.enercon.global.utils.ExcelValidation" />
+  	  		<form-bean  name="WECMaster" type="com.enercon.global.utils.ExcelValidation" />
+  	  		<form-bean  name="MaterialMaster" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="LocationRight" type="com.enercon.global.utils.ExcelValidation" />
+  	  		<form-bean  name="uploadebdata" type="com.enercon.global.utils.ExcelValidation" />
+  	  		<form-bean  name="uploadwecdata" type="com.enercon.global.utils.ExcelValidation" />  
+  	  		<form-bean  name="uploadwecremarks" type="com.enercon.global.utils.ExcelValidation" />	  		
+  	  		<form-bean  name="PublishData" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="StdMessage" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="PostMessage" type="com.enercon.global.utils.ExcelValidation" />  	  
+  	  		<form-bean  name="ManageNews" type="com.enercon.global.utils.ExcelValidation" />  	  
+  	  		<form-bean  name="remarksmaster" type="com.enercon.global.utils.ExcelValidation" />  			
+  	  		<form-bean  name="TransferEB" type="com.enercon.global.utils.ExcelValidation" />  
+  	  		<form-bean  name="TransferWEC" type="com.enercon.global.utils.ExcelValidation" />    	  		
+  	  		<form-bean  name="EBReading" type="com.enercon.global.utils.ExcelValidation" />  	  		
+  	  		<form-bean  name="WECReading" type="com.enercon.global.utils.ExcelValidation" />  	  		  	  		
+  	  		<form-bean  name="FDReading" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="DeleteEBData" type="com.enercon.global.utils.ExcelValidation" /> 
+  	  		<form-bean  name="DeleteWECData" type="com.enercon.global.utils.ExcelValidation" />   	  		
+  	  		<form-bean  name="DeleteFederData" type="com.enercon.global.utils.ExcelValidation" />
+  	  		
+  	  		<form-bean name="GridBifurcationDataUploadForm" type="com.enercon.struts.form.GridBifurcationDataUploadForm" />
+  	  		<form-bean scope="request" name="GridBifurcationReportForm" type="com.enercon.struts.form.GridBifurcationReportForm" />
+  	  		<form-bean name="InitialReadingUploadForm" type="com.enercon.struts.form.InitialReadingUploadForm" />
+  	  		<form-bean name="ScadaDataJumpUploadForm" type="com.enercon.struts.form.ScadaDataJumpUploadForm" />
+  	  		
+  	  		<!-- Vinay -->
+  	  		
+  	  		<!-- Form bean for Scada dat Jump report form -->
+			<form-bean scope="request" name="ScadaDataJumpReportForm" type="com.enercon.struts.form.ScadaDataJumpReportForm" />
+			<form-bean scope="request" name="HistoricalDataReportForm" type="com.enercon.struts.form.HistoricalDataReportForm" />
+			<form-bean scope="request" name="AreaWiseMGSAvailabilityReportForm" type="com.enercon.struts.form.AreaWiseMGSAvailabilityReportForm" />
+			
+			<form-bean scope="request" name="IredaWecWiseStatewiseMonthlyReportForm" type="com.enercon.struts.form.IredaWecWiseStatewiseMonthlyReportForm" />
+			<form-bean scope="request" name="IredaFiscalYearWecWiseBasedOnStateReportForm" type="com.enercon.struts.form.IredaFiscalYearWecWiseBasedOnStateReportForm" />
+			<form-bean scope="request" name="IredaOneDayWecWiseBasedOnStateReportForm" type="com.enercon.struts.form.IredaOneDayWecWiseBasedOnStateReportForm" />
+			
+			<!-- summary report -->			
+  	  		<form-bean scope="request" name="SummaryReportForm" type="com.enercon.struts.form.GridBifurcationReportForm" />
+  	  		
+  </form-beans>
+  
+  <global-exceptions />
+  <global-forwards />
+  
+   <action-mappings>
+   			
+    		<action  path="/first" forward="/hello.jsp" /> 
+    		<action path="/AssignLogin" name="AssignLogin" type="com.enercon.global.utils.DataValidation" input="/Admin/AssignLogin.jsp" >
+				<forward name="success" path="/Admin/AssignLogin.jsp" />
+				<forward name="failure" path="/Admin/AssignLogin.jsp" />
+			</action>
+			
+    		<action path="/StdMessage" name="StdMessage" type="com.enercon.global.utils.DataValidation" input="/Admin/StdMessage.jsp" >
+				<forward name="success" path="/Admin/StdMessage.jsp" />
+				<forward name="failure" path="/Admin/StdMessage.jsp" />
+			</action> 
+    		<action path="/ManageProfile" name="ManageProfile" type="com.enercon.global.utils.DataValidation" input="/ManageProfile.jsp" >
+				<forward name="success" path="/ThankOut.jsp" />
+				<forward name="failure" path="/ManageProfile.jsp" />
+			</action> 
+			<action path="/CustomerFeedBack" name="CustomerFeedBack" type="com.enercon.global.utils.DataValidation" input="/CustomerFeedBack.jsp" >
+				<forward name="success" path="/main.jsp" />
+				<forward name="failure" path="/CustomerFeedBack.jsp" />
+			</action> 	
+			<action path="/ManageProfile1" name="ManageProfile1" type="com.enercon.global.utils.DataValidation" input="/ManageProfile.jsp" >
+				<forward name="success" path="/ManageProfile.jsp" />
+				<forward name="failure" path="/ManageProfile.jsp" />
+			</action> 			
+			<action path="/changepassword" name="changepassword" type="com.enercon.global.utils.DataValidation" input="/ChangePassword.jsp" >
+				<forward name="success" path="/ChangePassword.jsp" />
+				<forward name="failure" path="/ChangePassword.jsp" />
+			</action>
+			
+			<action path="/forcechangepassword" name="forcechangepassword" type="com.enercon.global.utils.DataValidation" input="/ForceToChangePassword.jsp" >
+				<forward name="success" path="/main.jsp" />
+				<forward name="failure" path="/ForceToChangePassword.jsp" />
+			</action>				
+						
+			<action path="/PostMessage" name="PostMessage" type="com.enercon.global.utils.DataValidation" input="/Admin/PostMessage.jsp" >
+				<forward name="success" path="/Admin/PostMessage.jsp" />
+				<forward name="failure" path="/Admin/PostMessage.jsp" />
+			</action>   
+			<action path="/ManageNews" name="ManageNews" type="com.enercon.global.utils.DataValidation" input="/Admin/NewsMessage.jsp" >
+				<forward name="success" path="/Admin/NewsMessage.jsp" />
+				<forward name="failure" path="/Admin/NewsMessage.jsp" />
+			</action> 
+    		<action path="/MaterialMaster" name="MaterialMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/MaterialMaster.jsp" >
+				<forward name="success" path="/Admin/MaterialMaster.jsp" />
+				<forward name="failure" path="/Admin/MaterialMaster.jsp" />
+			</action>
+    		<action path="/WECMaster" name="WECMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageWEC.jsp" >
+		      <forward name="success" path="/Admin/ManageWEC.jsp" />
+		      <forward name="failure" path="/Admin/ManageWEC.jsp" />
+	        </action> 	
+    		<action path="/LoginMaster" name="LoginMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageLogin.jsp" >
+		      <forward name="success" path="/Admin/ManageLogin.jsp" />
+		      <forward name="failure" path="/Admin/ManageLogin.jsp" />
+	        </action> 		
+    		<action path="/rolemaster" name="rolemaster" type="com.enercon.global.utils.DataValidation" input="/Admin/CreateRole.jsp" >
+		      <forward name="success" path="/Admin/CreateRole.jsp" />
+		      <forward name="failure" path="/Admin/CreateRole.jsp" />
+	        </action>
+	        <action path="/emailactivate" name="emailactivate" type="com.enercon.global.utils.DataValidation" input="/Admin/DGRViaEmail.jsp" >
+		      <forward name="success" path="/Admin/DGRViaEmail.jsp" />
+		      <forward name="failure" path="/Admin/DGRViaEmail.jsp" />
+	        </action>
+  	        <action path="/roletranmaster" name="roletranmaster" type="com.enercon.global.utils.DataValidation" input="/Admin/RoleTransactionMapping.jsp" >
+		      <forward name="success" path="/Admin/RoleTransactionMapping.jsp" />
+		      <forward name="failure" path="/Admin/RoleTransactionMapping.jsp" />
+	        </action>
+	        <action path="/roletranmasternew" name="roletranmasternew" type="com.enercon.global.utils.DataValidation" input="/Admin/RoleTransactionMappingNew.jsp" >
+		      <forward name="success" path="/Admin/RoleTransactionMappingNew.jsp" />
+		      <forward name="failure" path="/Admin/RoleTransactionMappingNew.jsp" />
+	        </action>
+	        <action path="/userrolemaster" name="userrolemaster" type="com.enercon.global.utils.DataValidation" input="/Admin/UserRoleMapping.jsp" >
+		      <forward name="success" path="/Admin/UserRoleMapping.jsp" />
+		      <forward name="failure" path="/Admin/UserRoleMapping.jsp" />
+	        </action>
+	        <action path="/StateMaster" name="StateMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageState.jsp" >
+				<forward name="success" path="/Admin/ManageState.jsp" />
+				<forward name="failure" path="/Admin/ManageState.jsp" />
+			</action>
+			<action path="/typemaster" name="typemaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageWecType.jsp" >
+				<forward name="success" path="/Admin/ManageWecType.jsp" />
+				<forward name="failure" path="/Admin/ManageWecType.jsp" />
+			</action>
+  		 	<action path="/SiteMaster" name="SiteMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageSite.jsp" >
+				<forward name="success" path="/Admin/ManageSite.jsp" />
+				<forward name="failure" path="/Admin/ManageSite.jsp" />
+			</action>
+			<action path="/SubStationMaster" name="SubStationMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageSubStation.jsp" >
+				<forward name="success" path="/Admin/ManageSubStation.jsp" />
+				<forward name="failure" path="/Admin/ManageSubStation.jsp" />
+			</action>
+			<action path="/FeederSiteMaster" name="FeederSiteMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageFeederSite.jsp" >
+				<forward name="success" path="/Admin/ManageFeederSite.jsp" />
+				<forward name="failure" path="/Admin/ManageFeederSite.jsp" />
+			</action>
+			<action path="/AreaMaster" name="AreaMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageArea.jsp" >
+				<forward name="success" path="/Admin/ManageArea.jsp" />
+				<forward name="failure" path="/Admin/ManageArea.jsp" />
+			</action>
+	         <action path="/MPMaster" name="MPMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/Managemeapoint.jsp" >
+				<forward name="success" path="/Admin/Managemeapoint.jsp" />
+				<forward name="failure" path="/Admin/Managemeapoint.jsp" />
+			</action>	
+			<action path="/EBMaster" name="EBMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageEB.jsp" >
+				<forward name="success" path="/Admin/ManageEB.jsp" />
+				<forward name="failure" path="/Admin/ManageEB.jsp" />
+			</action>
+			<action path="/EBMFactor" name="EBMFactor" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageEBFactor.jsp" >
+				<forward name="success" path="/Admin/ManageEBFactor.jsp" />
+				<forward name="failure" path="/Admin/ManageEBFactor.jsp" />
+			</action>
+			
+			<action path="/FederMaster" name="FederMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageFeder.jsp" >
+				<forward name="success" path="/Admin/ManageFeder.jsp" />
+				<forward name="failure" path="/Admin/ManageFeder.jsp" />
+			</action>		
+			<action path="/FDMFactor" name="FDMFactor" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageFederFactor.jsp" >
+				<forward name="success" path="/Admin/ManageFederFactor.jsp" />
+				<forward name="failure" path="/Admin/ManageFederFactor.jsp" />
+			</action>
+				
+			<action path="/CustomerMaster" name="CustomerMaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageCustomer.jsp" >
+				<forward name="success" path="/Admin/ManageCustomer.jsp" />
+				<forward name="failure" path="/Admin/ManageCustomer.jsp" />
+			</action>			
+			<action path="/LocationRight" name="LocationRight" type="com.enercon.global.utils.DataValidation" input="/Admin/LocationRight.jsp" >
+				<forward name="success" path="/Admin/LocationRight.jsp" />
+				<forward name="failure" path="/Admin/LocationRight.jsp" />
+			</action>
+			<action path="/uploadfederdata" name="uploadfederdata" type="com.enercon.global.utils.ExcelUpload" input="/Admin/UploadFederData.jsp" >
+				<forward name="success" path="/Admin/UploadFederData.jsp" />
+				<forward name="failure" path="/Admin/UploadFederData.jsp" />
+			</action>
+			<action path="/uploadebdata" name="uploadebdata" type="com.enercon.global.utils.ExcelUpload" input="/Admin/UploadEBData.jsp" >
+				<forward name="success" path="/Admin/UploadEBData.jsp" />
+				<forward name="failure" path="/Admin/UploadEBData.jsp" />
+			</action>
+			<action path="/uploadwecdata" name="uploadwecdata" type="com.enercon.global.utils.ExcelUpload" input="/Admin/UploadWECData.jsp" >
+				<forward name="success" path="/Admin/UploadWECData.jsp" />
+				<forward name="failure" path="/Admin/UploadWECData.jsp" />
+			</action>	
+			<action path="/uploadwecremarks" name="uploadwecremarks" type="com.enercon.global.utils.ExcelUpload" input="/Admin/UploadWECRemarks.jsp" >
+				<forward name="success" path="/Admin/UploadWECRemarks.jsp" />
+				<forward name="failure" path="/Admin/UploadWECRemarks.jsp" />
+			</action>		
+			<action path="/PublishData" name="PublishData" type="com.enercon.global.utils.DataValidation" input="/Admin/PublishData.jsp" >
+				<forward name="success" path="/Admin/PublishData.jsp" />
+				<forward name="failure" path="/Admin/PublishData.jsp" />
+			</action>
+			<action path="/PublishScadaData" name="PublishScadaData" type="com.enercon.global.utils.DataValidation" input="/Admin/PublishScadaData.jsp" >
+				<forward name="success" path="/Admin/PublishScadaData.jsp" />
+				<forward name="failure" path="/Admin/PublishScadaData.jsp" />
+			</action>
+			<action path="/remarksmaster" name="remarksmaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageRemarks.jsp" >
+				<forward name="success" path="/Admin/ManageRemarks.jsp" />
+				<forward name="failure" path="/Admin/ManageRemarks.jsp" />
+			</action>
+			<action path="/remarkssitemaster" name="remarkssitemaster" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageSiteRemarks.jsp" >
+				<forward name="success" path="/Admin/ManageSiteRemarks.jsp" />
+				<forward name="failure" path="/Admin/ManageSiteRemarks.jsp" />
+			</action>
+			<action path="/TransferEB" name="TransferEB" type="com.enercon.global.utils.DataValidation" input="/Admin/TransferEB.jsp" >
+				<forward name="success" path="/Admin/TransferEB.jsp" />
+				<forward name="failure" path="/Admin/TransferEB.jsp" />
+			</action>
+			<action path="/TransferWEC" name="TransferWEC" type="com.enercon.global.utils.DataValidation" input="/Admin/TransferCustomer.jsp" >
+				<forward name="success" path="/Admin/TransferCustomer.jsp" />
+				<forward name="failure" path="/Admin/TransferCustomer.jsp" />
+			</action>			
+			<action path="/EBReading" name="EBReading" type="com.enercon.global.utils.DataValidation" input="/Admin/EBEntryForm.jsp" >
+				<forward name="success" path="/Admin/EBEntryForm.jsp" />
+				<forward name="failure" path="/Admin/EBEntryForm.jsp" />
+			</action>		
+			<action path="/WECReading" name="WECReading" type="com.enercon.global.utils.DataValidation" input="/Admin/WECEntryForm.jsp" >
+				<forward name="success" path="/Admin/WECEntryForm.jsp" />
+				<forward name="failure" path="/Admin/WECEntryForm.jsp" />
+			</action>	
+			<action path="/FDReading" name="FDReading" type="com.enercon.global.utils.DataValidation" input="/Admin/FederEntryForm.jsp" >
+				<forward name="success" path="/Admin/FederEntryForm.jsp" />
+				<forward name="failure" path="/Admin/FederEntryForm.jsp" />
+			</action>		
+			<action path="/DeleteEBData" name="DeleteEBData" type="com.enercon.global.utils.DataValidation" input="/Admin/DeleteEBData.jsp" >
+				<forward name="success" path="/Admin/DeleteEBData.jsp" />
+				<forward name="failure" path="/Admin/DeleteEBData.jsp" />
+			</action>	
+			<action path="/DeleteWECData" name="DeleteWECData" type="com.enercon.global.utils.DataValidation" input="/Admin/DeleteWECData.jsp" >
+				<forward name="success" path="/Admin/DeleteWECData.jsp" />
+				<forward name="failure" path="/Admin/DeleteWECData.jsp" />
+			</action>
+			<action path="/DeleteFederData" name="DeleteFederData" type="com.enercon.global.utils.DataValidation" input="/Admin/DeleteFEDERData.jsp" >
+				<forward name="success" path="/Admin/DeleteFEDERData.jsp" />
+				<forward name="failure" path="/Admin/DeleteFEDERData.jsp" />
+			</action>						
+			<action path="/uploadScadaData" name="/uploadScadaData" type="com.enercon.global.utils.DataValidation" input="/Admin/UploadScadaData.jsp" >
+				<forward name="success" path="/Admin/UploadScadaData.jsp" />
+				<forward name="failure" path="/Admin/UploadScadaData.jsp" />
+			</action>
+			<action path="/WECCurtailment" name="WECCurtailment" type="com.enercon.global.utils.DataValidation" input="/Admin/ManageWECCurtailment.jsp" >
+				<forward name="success" path="/Admin/ManageWECCurtailment.jsp" />
+				<forward name="failure" path="/Admin/ManageWECCurtailment.jsp" />
+			</action>
+			<action path="/deactivate" name="deactivate" type="com.enercon.global.utils.DataValidation" input="/Admin/PESStatusReport.jsp" >
+				<forward name="success" path="/Admin/PESStatusReport.jsp" />
+				<forward name="failure" path="/Admin/PESStatusReport.jsp" />
+			</action>
+			<action path="/activate" name="activate" type="com.enercon.global.utils.DataValidation" input="/Admin/PESStatusReport.jsp" >
+				<forward name="success" path="/Admin/PESStatusReport.jsp" />
+				<forward name="failure" path="/Admin/PESStatusReport.jsp" />
+			</action> 
+			<action path="/report" name="report" type="com.enercon.global.utils.PESStatusCreator" input="/Admin/PESStatusReport.jsp" >
+				<forward name="success" path="/PESReport.jsp" />
+				<forward name="failure" path="/PESReport.jsp" />
+			</action>
+			<action path="/WECReadingTracker" name="WECReadingTracker" type="com.enercon.struts.action.WECReadingTrackerAction">
+				<forward name="success" path="/WECReadingTrackerPage.jsp" />
+			</action>
+			<action path="/WECReadingTrackerReport" name="WECReadingTrackerReport" 
+					type="com.enercon.struts.action.WECReadingTrackerCreatorAction" 
+					input="/WECReadingTrackerPage.jsp" >
+				<forward name="success" path="/Report/WECReadingTrackerReport.jsp" />
+				<forward name="failure" path="/Report/WECReadingTrackerReport.jsp" />
+			</action>
+			<action path="/PESDataUpload" name="PESDataUpload" type="com.enercon.struts.action.PESDataUploadAction">
+				<forward name="success" path="/PageView/PESDataUploadPage.jsp" />
+			</action>
+			<action path="/PESDataUploadProcedure" name="PESDataUploadProcedure" 
+					type="com.enercon.struts.action.submit.PESDataUploadProcedureAction" 
+					input="/PageView/PESDataUploadPage.jsp" >
+				<forward name="success" path="/PageView/PESDataUploadPage.jsp" />
+				<forward name="failure" path="/PageView/PESDataUploadPage.jsp" />
+			</action>
+			<action path="/InitialReading" name="InitialReading" 
+					type="com.enercon.struts.action.submit.InitialReadingUpload">
+				<forward name="success" path="/Developer/InitialReadingUpload.jsp" />
+				
+			</action>
+			<action path="/InitialReadingUploadHandler" name="InitialReadingUploadHandler" 
+					type="com.enercon.struts.action.submit.InitialReadingUploadHandler">
+				<forward name="success" path="/Developer/result/result.jsp" />
+				<forward name="failure" path="/Developer/result/result.jsp" />
+			</action>  
+			
+			<action path="/gridBifurcationDataUploadRequestProcessor" 
+			type="org.apache.struts.actions.ForwardAction" 
+			parameter="/jsppages/gridDowntimeBifurcation/GridBifurcationDataUpload.jsp"/>
+			
+			<action scope="request" 
+					path="/gridBifurcationDataUpload" 
+					name="GridBifurcationDataUploadForm" 
+					input="/jsppages/gridDowntimeBifurcation/GridBifurcationDataUpload.jsp" 
+					type="com.enercon.struts.action.GridBifurcationDataUploadAction"
+					validate = "true" >
+				<forward name="success" path="/gridBifurcationDataUploadRequestProcessor.do" />
+			</action>
+			
+			<action path="/InitialReadingUploadRequestProcessor" type="org.apache.struts.actions.ForwardAction" parameter="/jsppages/gridDowntimeBifurcation/InitialReadingUpload.jsp"/>
+			
+			<action scope="request" 
+					path="/InitialReadingUpload" 
+					name="InitialReadingUploadForm" 
+					input="/jsppages/gridDowntimeBifurcation/InitialReadingUpload.jsp" 
+					type="com.enercon.struts.action.InitialReadingUploadAction"
+					validate = "true" >
+				<forward name="success" path="/InitialReadingUploadRequestProcessor.do" />
+			</action>
+			<action path="/ScadaDataJumpUploadRequestProcessor" type="org.apache.struts.actions.ForwardAction" parameter="/jsppages/gridDowntimeBifurcation/ScadaDataJumpUpload.jsp"/>
+			
+			<action scope="request" 
+					path="/ScadaDataJumpUpload" 
+					name="ScadaDataJumpUploadForm" 
+					input="/jsppages/gridDowntimeBifurcation/ScadaDataJumpUpload.jsp" 
+					type="com.enercon.struts.action.ScadaDataJumpUploadAction"
+					validate = "true" >
+				<forward name="success" path="/ScadaDataJumpUploadRequestProcessor.do" />
+			</action>
+			
+			<action scope = "request"
+					path="/gridBifurcationReportRequestProcessor" 
+					type="com.enercon.struts.action.GridBifurcationReportRequestProcessor">
+				<forward name="success" path="/jsppages/gridDowntimeBifurcation/GridBifurcationReport.jsp" />
+			</action>
+					
+	 	 	<action scope="request" 
+					path="/gridBifurcationReport" 
+					name="GridBifurcationReportForm" 
+					input="/jsppages/gridDowntimeBifurcation/GridBifurcationReport.jsp" 
+					type="com.enercon.struts.action.GridBifurcationReportAction"
+					validate = "false" >
+				<forward name="success" path="/jsppages/excelReport/GridBifurcationReportExcel.jsp" />
+			</action>
+	 		
+			<!-- Summary report -->
+			<action scope = "request"
+					path="/comprehensiveReport" 
+					type="com.enercon.struts.action.summaryreport.SummaryReportRequestProcessor">
+				<forward name="success" path="/jsppages/SummaryReport/SummaryReport.jsp" />
+			</action>
+			
+			<action scope="request" 
+					path="/summaryReport" 
+					name="SummaryReportForm" 
+					input="/jsppages/SummaryReport/SummaryReport.jsp" 
+					type="com.enercon.struts.action.summaryreport.SummaryReportAction"
+					validate = "false" >
+				<forward name="success" path="/comprehensiveReport.do" />
+			</action>
+			
+			<!-- Vinay -->
+			<!-- Action mapping for ScadaDataJumpReport.jsp -->
+
+<action 
+			path="/ScadaDataJumpReportRequestProcessor" 
+			type="com.enercon.struts.action.ScadaDataJumpReportRequestProcessor"
+			parameter="/jsppages/scadaDataJump/ScadaDataJumpReport.jsp">
+			<forward name="success" path="/jsppages/scadaDataJump/ScadaDataJumpReport.jsp"></forward>
+			</action>
+
+
+
+<!-- Action mapping for ScadaDataJumpReportExcel.jsp -->
+
+		<action scope="request" 
+					path="/scadaDataJumpReport" 
+					name="ScadaDataJumpReportForm" 
+					input="/jsppages/scadaDataJump/ScadaDataJumpReport.jsp" 
+					type="com.enercon.struts.action.ScadaDataJumpReportAction"
+					validate = "false" >
+				<forward name="success" path="/jsppages/excelReport/ScadaDataJumpReportExcel.jsp" />
+		</action>
+			
+			<action scope = "request"
+					path="/HistoricalDataReportRequestProcessor" 
+					type="com.enercon.struts.action.HistorycalDataReportRequestProcessor">
+				<forward name="success" path="/jsppages/HistoricalDataReport.jsp" />
+			</action>
+			
+			<action scope="request" 
+					path="/historicalDataReport" 
+					name="HistoricalDataReportForm" 
+					input="/jsppages/HistoricalDataReport.jsp" 
+					type="com.enercon.struts.action.HistoricalDataReportAction"
+					validate = "false" >
+				<forward name="success" path="/jsppages/excelReport/HistoricalDataReportExcel.jsp" />
+			</action>
+			
+			<action scope = "request"
+					path="/AreaWiseMGSAvailabiltyReportRequestProcessor" 
+					type="com.enercon.struts.action.AreaWiseMGSAvailabiltyReportRequestProcessor">
+				<forward name="success" path="/jsppages/AreaWiseMGSAvailabilityReport.jsp" />
+			</action>
+			
+			<action scope="request" 
+					path="/areaWiseMGSAvailabiltyReport" 
+					name="AreaWiseMGSAvailabilityReportForm" 
+					input="/jsppages/AreaWiseMGSAvailabilityReport.jsp" 
+					type="com.enercon.struts.action.AreaWiseMGSAvailabilityReportAction"
+					validate = "false" >
+				<forward name="success" path="/jsppages/excelReport/AreaWiseMGSAvailabilityReportExcel.jsp" />
+			</action>
+			
+<!-- 			<action path="/AreaWiseMGSReportRequestProcessor" type="org.apache.struts.actions.ForwardAction" parameter="/jsppages/AreaWiseMGSAvailabilityReport.jsp"/> -->
+			<!-- Start : ireda related -->
+			
+			<!-- DailyReportForIREDARequestProcessor.do -->
+			
+			<action scope = "request" path="/DailyReportForIREDARequestProcessor" type="com.enercon.struts.action.IREDARequestProcessor" >
+				<forward name="success" path="/jsppages/ireda/DailyReportForIREDAPage.jsp" />
+			</action>
+			
+			<action scope = "request" path="/iredaHome" type="com.enercon.struts.action.ireda.IREDADailyReportRequestProcessor" >
+				<forward name="success" path="/jsppages/ireda/IREDADailyReport.jsp" />
+			</action>
+			
+			<action scope = "request" path="/IREDAMonthlyReportRequestProcessor" type="com.enercon.struts.action.IREDARequestProcessor" >
+				<forward name="success" path="/jsppages/ireda/IREDAMonthlyReport.jsp" />
+			</action>
+			
+			
+			<action scope="request" path="/IredaWecWiseStatewiseMonthlyReport" name="IredaWecWiseStatewiseMonthlyReportForm" type="com.enercon.struts.action.ireda.IredaWecWiseStatewiseMonthlyReportAction"
+					validate = "false" >
+				<forward name="success" path="/jsppages/ireda/IredaStateWiseWecWiseReport.jsp" />
+			</action>
+			 
+			<action scope ="request" path="/YearlyReportForIREDARequestProcessor" type="com.enercon.struts.action.IREDARequestProcessor"> 
+				<forward name="success" path="/jsppages/ireda/IREDAYearlyReport.jsp" />
+			</action>
+			
+			<action scope="request" path="/IredaFiscalYearWecWiseBasedOnStateReport" name="IredaFiscalYearWecWiseBasedOnStateReportForm" type="com.enercon.struts.action.ireda.IredaFiscalYearWecWiseBasedOnStateReportAction"
+					validate = "false" >
+				<forward name="success" path="/jsppages/ireda/IredaFiscalYearWecWiseBasedOnStateReport.jsp" />
+			</action>
+			
+			<action scope="request" path="/IredaOneDayWecWiseBasedOnStateReport" name="IredaOneDayWecWiseBasedOnStateReportForm" type="com.enercon.struts.action.ireda.IredaOneDayWecWiseBasedOnStateReportAction"
+					validate = "false" >
+				<forward name="success" path="/jsppages/ireda/IredaOneDayWecWiseBasedOnStateReport.jsp" />
+			</action>
+			
+			
+			<!-- End : ireda related -->
+			
+			
+			
+			
+  </action-mappings>
+  
+  <message-resources parameter="com.enercon.struts.ApplicationResources" />
+</struts-config>

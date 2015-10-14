@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+   	<bean id = "generationReport" abstract="true" class="com.enercon.reports.pojo.GenerationReport"/>
+ 	<bean id="generationReport1" parent="generationReport">
+ 		<property name = "customerShortName" value = "ILFS Ltd" />
+ 		<property name = "customerFullName" value = "IL and FS ENERGY DEVELOPMENT COMPANY LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1404000004</value>
+ 				<value>1009000004</value>
+				<value>1107000004</value>
+				<value>1107000002</value>
+				<value>1107000003</value>
+				<value>1205000001</value>
+				<value>1204000008</value>
+				<value>1204000009</value>
+				<value>1207000002</value>
+				<value>1304000001</value>
+				<value>1304000029</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	<bean id="generationReport2" parent="generationReport">
+ 		<property name = "customerShortName" value = "Vish Wind LLP" />
+ 		<property name = "customerFullName" value = "VISH WIND INFRASTRUCTURE LLP" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1009000010</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	<bean id="generationReport3" parent="generationReport">
+ 		<property name = "customerShortName" value = "VAAYU INFRASTRUCTURE LLP" />
+ 		<property name = "customerFullName" value = "VAAYU INFRASTRUCTURE LLP" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1204000010</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	<bean id="generationReport4" parent="generationReport">
+ 		<property name = "customerShortName" value = "JNI Ltd" />
+ 		<property name = "customerFullName" value = "J N INVESTMENTS" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000172</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+   	<bean id="generationReport5" parent="generationReport">
+ 		<property name = "customerShortName" value = "VAAYU RENEWABLE ENERGY (TAPTI) PVT. LTD." />
+ 		<property name = "customerFullName" value = "VAAYU RENEWABLE ENERGY (TAPTI) PVT. LTD." />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1306000002</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	<bean id="generationReport6" parent="generationReport">
+ 		<property name = "customerShortName" value = "VAAYU Power Corporation Ltd" />
+ 		<property name = "customerFullName" value = "VAAYU (INDIA) POWER CORPORATION PVT. LTD." />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1004000026</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+	<bean id="generationReport7" parent="generationReport">
+ 		<property name = "customerShortName" value = "CLP Wind farms (India) Pvt Ltd" />
+ 		<property name = "customerFullName" value = "CLP Wind farms (India) Pvt Ltd" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1312000001</value>
+ 				<value>0905000002</value>
+				<value>1000000790</value>
+				<value>1000000797</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+ 	<bean id="generationReport8" parent="generationReport">
+ 		<property name = "customerShortName" value = "APOLLO TYRES LTD." />
+ 		<property name = "customerFullName" value = "APOLLO TYRES LTD." />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000767</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	<bean id="generationReport9" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD (WINDFARMS)  INDIA LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD (WINDFARMS)  INDIA LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000323</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	<bean id="generationReport10" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD (WINDFARMS)  INDIA LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD (WINDFARMS)  INDIA LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1110000001</value>
+ 			</set>
+ 		</property>
+ 	</bean>	
+
+	<!-- 1000000591	ENERCON WIND FARM (KRISHNA)  LTD -->
+	<bean id="generationReport11" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WIND FARM (KRISHNA)  LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WIND FARM (KRISHNA)  LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000591</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+	
+
+<!-- 1000000702	ENERCON WIND FARMS (CHITRADURGA) PV LTD -->
+<bean id="generationReport12" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WIND FARMS (CHITRADURGA) PV LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WIND FARMS (CHITRADURGA) PV LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000702</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1000000766	ENERCON WIND FARMS (SAI) PVT. LTD. -->
+<bean id="generationReport13" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WIND FARMS (SAI) PVT. LTD." />
+ 		<property name = "customerFullName" value = "WIND WORLD WIND FARMS (SAI) PVT. LTD." />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000766</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1103000014	ENERCON WIND RESOURCES DEVELOPMENT PVT LTD -->
+<bean id="generationReport14" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WIND RESOURCES DEVELOPMENT PVT LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WIND RESOURCES DEVELOPMENT PVT LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1103000014</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 0811000001	ENERCON WINDFARM (TUNGBHADRA) PVT LTD -->
+<bean id="generationReport15" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WINDFARM (TEMDARAI) PVT LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WINDFARM (TEMDARAI) PVT LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>0811000001</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1002000002	ENERCON WINDFARM JAISALMER PVT LTD -->
+<bean id="generationReport16" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WINDFARM JAISALMER PVT LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WINDFARM JAISALMER PVT LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1002000002</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1002000004	ENERCON WINDFARM KAPATHGUDA SOUTH PVT LTD -->
+<bean id="generationReport17" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WINDFARM KAPATHGUDA SOUTH PVT LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WINDFARM KAPATHGUDA SOUTH PVT LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1002000004</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1002000003	ENERCON WINDFARM RAJASTHAN  PVT LTD -->
+<bean id="generationReport18" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WINDFARM RAJASTHAN  PVT LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WINDFARM RAJASTHAN  PVT LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1002000003</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1000000698	ENERCON WINDFARMS (HINDUSTAN) PVT LIMITED -->
+<bean id="generationReport19" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WINDFARMS (HINDUSTAN) PVT LIMITED" />
+ 		<property name = "customerFullName" value = "WIND WORLD WINDFARMS (HINDUSTAN) PVT LIMITED" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000698</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1000000774	ENERCON WINDFARMS (MADHYA PRADESH) PVT. LTD. -->
+<bean id="generationReport20" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WINDFARMS (MADHYA PRADESH) PVT. LTD." />
+ 		<property name = "customerFullName" value = "WIND WORLD WINDFARMS (MADHYA PRADESH) PVT. LTD." />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000774</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1000000382	ENERCON WINDFARMS KARNATAKA LTD -->
+<bean id="generationReport21" parent="generationReport">
+ 		<property name = "customerShortName" value = "WIND WORLD WINDFARMS KARNATAKA LTD" />
+ 		<property name = "customerFullName" value = "WIND WORLD WINDFARMS KARNATAKA LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000382</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1000000485	GI POWER CORPN LTD -->
+<bean id="generationReport22" parent="generationReport">
+ 		<property name = "customerShortName" value = "GI POWER CORPN LTD" />
+ 		<property name = "customerFullName" value = "GI POWER CORPN LTD" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000485</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1000000172	J N INVESTMENTS -->
+<bean id="generationReport23" parent="generationReport">
+ 		<property name = "customerShortName" value = "J N INVESTMENTS" />
+ 		<property name = "customerFullName" value = "J N INVESTMENTS" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000172</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1000000647	MRF LIMITED -->
+<bean id="generationReport24" parent="generationReport">
+ 		<property name = "customerShortName" value = "MRF LIMITED" />
+ 		<property name = "customerFullName" value = "MRF LIMITED" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000647</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1004000026	VAAYU (INDIA) POWER CORPORATION PVT. LTD. -->
+<bean id="generationReport25" parent="generationReport">
+ 		<property name = "customerShortName" value = "VAAYU (INDIA) POWER CORPORATION PVT. LTD." />
+ 		<property name = "customerFullName" value = "VAAYU (INDIA) POWER CORPORATION PVT. LTD." />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1004000026</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1204000010	VAAYU INFRASTRUCTURE LLP -->
+<bean id="generationReport26" parent="generationReport">
+ 		<property name = "customerShortName" value = "VAAYU INFRASTRUCTURE LLP" />
+ 		<property name = "customerFullName" value = "VAAYU INFRASTRUCTURE LLP" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1204000010</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1306000002	VAAYU RENEWABLE ENERGY (TAPTI) PVT. LTD. -->
+<bean id="generationReport27" parent="generationReport">
+ 		<property name = "customerShortName" value = "VAAYU RENEWABLE ENERGY (TAPTI) PVT. LTD." />
+ 		<property name = "customerFullName" value = "VAAYU RENEWABLE ENERGY (TAPTI) PVT. LTD." />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1306000002</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+<!-- 1009000010	VISH WIND INFRASTRUCTURE LLP -->
+<bean id="generationReport28" parent="generationReport">
+ 		<property name = "customerShortName" value = "VISH WIND INFRASTRUCTURE LLP" />
+ 		<property name = "customerFullName" value = "VISH WIND INFRASTRUCTURE LLP" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1009000010</value>
+ 			</set>
+ 		</property>
+ 	</bean>
+ 	
+ 	<!-- <bean id="generationReport8" parent="generationReport">
+ 		<property name = "customerShortName" value = "IPP Group" />
+ 		<property name = "customerFullName" value = "IPP Group" />
+ 		<property name = "customerIds">
+ 			<set>
+ 				<value>1000000766</value>
+				<value>1103000014</value>
+				<value>1000000172</value>
+				<value>1204000010</value>
+				<value>1000000698</value>
+				<value>1000000774</value>
+				<value>1000000382</value>
+				<value>1002000002</value>
+				<value>1000000591</value>
+				<value>0811000001</value>
+				<value>1306000002</value>
+				<value>1110000001</value>
+				<value>1000000767</value>
+				<value>1000000702</value>
+				<value>1002000004</value>
+				<value>1002000003</value>
+				<value>1000000647</value>
+				<value>1004000026</value>
+				<value>1000000323</value>
+				<value>1000000485</value>
+				<value>1009000010</value>
+ 			</set>
+ 		</property>
+ 	</bean> -->
+</beans>

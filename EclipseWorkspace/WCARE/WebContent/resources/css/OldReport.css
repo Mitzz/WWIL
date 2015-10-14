@@ -1,0 +1,60 @@
+BODY {
+	FONT-SIZE: 8pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+TD {
+	FONT-SIZE: 8pt; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A:active {
+	COLOR: #0000cc; TEXT-DECORATION: none
+}
+A:link {
+	COLOR: #0000cc; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #0000ff; TEXT-DECORATION: none
+}
+A:hover {
+	COLOR: #0000ff; TEXT-DECORATION: underline
+}
+.TableTitleRow {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR: #c8d6e5; TEXT-ALIGN: center
+}
+.TableTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; TEXT-ALIGN: center
+}
+.TableRow1 {
+	BACKGROUND-COLOR: #ffffff
+}
+.TableRow2 {
+	BACKGROUND-COLOR: #eeeeee
+}
+.TableSolidRow {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR: #c8d6e5
+}
+.TableSummaryRow {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR: #e0e9f3
+}
+.TableCell {
+	PADDING-RIGHT: 4pt; PADDING-LEFT: 4pt
+}
+.ReportTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.CategoryTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.SinglePageCategoryTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt
+}
+.ChartTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; TEXT-ALIGN: center
+}
+.SectionTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #ffffff; BACKGROUND-COLOR: #6699cc; TEXT-ALIGN: center
+}
+.TOC {
+	BACKGROUND-IMAGE: url(contents_back.gif); BACKGROUND-REPEAT: repeat-x
+}
+.TranslatedContentsTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #333333
+}

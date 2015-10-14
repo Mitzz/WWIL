@@ -1,0 +1,8 @@
+<upgrade-log>
+  <entry time="2013-05-25 05:17:28 UTC">
+    <upgrade-participant pluginId="oracle.eclipse.tools.weblogic" pluginVersion="4.2.1.201203120349" class="oracle.eclipse.tools.weblogic.upgrade.internal.WlsRuntimeNameProjectUpgradeParticipant"/>
+  </entry>
+  <entry time="2013-05-25 05:17:28 UTC">
+    <upgrade-participant pluginId="oracle.eclipse.tools.weblogic" pluginVersion="4.2.1.201203120349" class="oracle.eclipse.tools.weblogic.upgrade.internal.WlsRuntimeClasspathUpgradeParticipant"/>
+  </entry>
+</upgrade-log>
