@@ -2,9 +2,14 @@ package com.enercon.model.thread.map;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.enercon.dao.WecDataDao;
+import com.enercon.global.utility.master.WecMasterUtility;
+import com.enercon.model.master.WecMasterVo;
 import com.enercon.model.report.IWecParameterVo;
 import com.enercon.model.summaryreport.Parameter;
 
@@ -28,6 +33,13 @@ public class DayWecParameterVoEvaluator<Key, Value extends IWecParameterVo> impl
 		this.parameters = parameters;
 	}
 	
+	public DayWecParameterVoEvaluator(Key key, List<WecMasterVo> wecs, String date, List<Parameter> parameters) {
+		this.key = key;
+		this.wecIds =  new LinkedHashSet<String>(WecMasterUtility.getWecIds(wecs));
+		this.date = date;
+		this.parameters = new HashSet<Parameter>(parameters);
+	}
+
 	public static void main(String[] args) {
 		try {
 			IWecParameterVo parameterVo = new DayWecParameterVoEvaluator<String, IWecParameterVo>(null, null, null).evaluate();

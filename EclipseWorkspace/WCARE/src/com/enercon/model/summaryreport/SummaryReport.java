@@ -15,14 +15,9 @@ public class SummaryReport implements Comparable<SummaryReport>{
 	private String stateName;
 	private String siteName;
 	private String customerName;
-//	private Set<String> selectedWecIdsBasedOnSiteStateCustomer = new HashSet<String>();
 	private Set<String> wecIds = new HashSet<String>();
 	private String fromDate;
 	private String toDate;
-	
-	/*Map<Year,Map<Month , Integer>> generations = null;
-	Map<Year,Map<Month , Integer>> operatingHour = null;
-	Map<Year,Map<Month, Integer>> ma = null;*/
 	
 	private Map<Year, Map<Month, IWecParameterVo>> yearWiseMonthlyWecParameterVo = null;
 	private Map<FiscalYear, Map<Month, IWecParameterVo>> fiscalYearWiseMonthlyWecParameterVo = null;

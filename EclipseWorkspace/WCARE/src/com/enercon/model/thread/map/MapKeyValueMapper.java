@@ -9,7 +9,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+
 public class MapKeyValueMapper<Key, Value> {
+	private final static Logger logger = Logger.getLogger(MapKeyValueMapper.class);
 	
 	//List of Processing Objects to get result and store it in a Map
 	public Map<Key, Value> submit(List<MapValueEvaluatorWorker<Key, Value>> worker){
@@ -28,7 +31,9 @@ public class MapKeyValueMapper<Key, Value> {
 		try {
 			factory.awaitTermination(1, TimeUnit.DAYS);
 		} catch (InterruptedException e1) {
+			logger.error(e1.getMessage());
 			e1.printStackTrace();
+			
 		}
 		
 		Key key = null;
@@ -39,8 +44,10 @@ public class MapKeyValueMapper<Key, Value> {
 			try {
 				allWorkerResult.put(key, result.get());
 			} catch (InterruptedException e) {
+				logger.error(e.getMessage());
 				e.printStackTrace();
 			} catch (ExecutionException e) {
+				logger.error(e.getMessage());
 				e.printStackTrace();
 			}
 		}

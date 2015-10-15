@@ -3,7 +3,7 @@ package com.enercon.model.master;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EbMasterVo implements Comparable<EbMasterVo>{
+public class EbMasterVo implements Comparable<EbMasterVo>, WecsPresent{
 
 	private String name;
 	private String id;
@@ -32,6 +32,11 @@ public class EbMasterVo implements Comparable<EbMasterVo>{
 	public void setSite(SiteMasterVo site) {
 		site.addEb(this);
 		this.site = site;
+	}
+
+	@Override
+	public String toString() {
+		return "EbMasterVo [name=" + name + "]";
 	}
 
 	public List<WecMasterVo> getWecs() {

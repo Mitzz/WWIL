@@ -19,7 +19,7 @@ public class CustomerMasterDao{
 	
 	private final static String LOGIN_MASTER_ID_NULL = "LoginMasterVo 'id' is null";
 	private final static String LOGIN_MASTER_NULL = "LoginMasterVo is null";
-	private final static String NO_CUSTOMER_LOGIN_TYPE = "Customers are not assigned to User of Login Type 'E'";
+	private final static String LOGIN_MASTER_LOGIN_TYPE = "Customers are not assigned to User of Login Type 'E'";
 	
 	public CustomerMasterVo get(String id) throws SQLException{
 		
@@ -116,8 +116,8 @@ public class CustomerMasterDao{
 		}
 		String loginType = loginMasterVo.getLoginType();
 		if(!loginType.equals("C")) {
-			logger.error(NO_CUSTOMER_LOGIN_TYPE);
-			throw new IllegalArgumentException(NO_CUSTOMER_LOGIN_TYPE);
+			logger.error(LOGIN_MASTER_LOGIN_TYPE);
+			throw new IllegalArgumentException(LOGIN_MASTER_LOGIN_TYPE);
 		}
 		
 		if(loginMasterVo.getId() == null){
@@ -126,6 +126,8 @@ public class CustomerMasterDao{
 		}
 	}
 
-
+	public static void main(String[] args) {
+		
+	}
 	
 }

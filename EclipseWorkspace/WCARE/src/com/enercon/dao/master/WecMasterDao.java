@@ -1132,8 +1132,6 @@ public class WecMasterDao implements WcareConnector {
 	
 	}
 
-	
-
 	public CustomerMasterVo get(CustomerMasterVo customer) throws SQLException{
 
 		Connection conn = null;

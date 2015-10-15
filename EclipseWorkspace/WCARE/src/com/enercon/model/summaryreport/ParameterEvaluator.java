@@ -12,6 +12,12 @@ import com.enercon.dao.WecDataDao;
 import com.enercon.dao.master.StateMasterDao;
 import com.enercon.dao.master.WecMasterDao;
 import com.enercon.global.utility.DateUtility;
+import com.enercon.model.master.AreaMasterVo;
+import com.enercon.model.master.CustomerMasterVo;
+import com.enercon.model.master.EbMasterVo;
+import com.enercon.model.master.SiteMasterVo;
+import com.enercon.model.master.StateMasterVo;
+import com.enercon.model.master.WecsPresent;
 import com.enercon.model.report.IWecParameterVo;
 import com.enercon.model.thread.map.DayWecParameterVoEvaluator;
 import com.enercon.model.thread.map.DayWecParameterVoWecWiseEvaluator;
@@ -127,6 +133,37 @@ public class ParameterEvaluator {
 		}
 		
 		return m.submit(workerList);
+	}
+	
+	public Map<StateMasterVo, IWecParameterVo> getStateWiseWecParameterVo(List<StateMasterVo> states, String date, List<Parameter> parameters){
+		return get(states, date, parameters);
+	}
+	
+	public Map<AreaMasterVo, IWecParameterVo> getAreaWiseWecParameterVo(List<AreaMasterVo> areas, String date, List<Parameter> parameters){
+		return get(areas, date, parameters);
+	}
+	
+	public Map<SiteMasterVo, IWecParameterVo> getSiteWiseWecParameterVo(List<SiteMasterVo> sites, String date, List<Parameter> parameters){
+		return get(sites, date, parameters);
+	}
+	
+	public Map<EbMasterVo, IWecParameterVo> getEbWiseWecParameterVo(List<EbMasterVo> ebs, String date, List<Parameter> parameters){
+		return get(ebs, date, parameters);
+	}
+	
+	public Map<CustomerMasterVo, IWecParameterVo> getCustomerWiseWecParameterVo(List<CustomerMasterVo> customers, String date, List<Parameter> parameters){
+		return get(customers, date, parameters);
+	}
+	
+	public <Master extends WecsPresent> Map<Master, IWecParameterVo> get(List<Master> keys, String date, List<Parameter> parameters){
+		MapKeyValueMapper<Master, IWecParameterVo> mapper = new MapKeyValueMapper<Master, IWecParameterVo>();
+		List<MapValueEvaluatorWorker<Master, IWecParameterVo>> workers = new ArrayList<MapValueEvaluatorWorker<Master, IWecParameterVo>>();
+		
+		for (Master key : keys) {
+			workers.add(new DayWecParameterVoEvaluator<Master, IWecParameterVo>(key , key.getWecs(), date, parameters));
+		} 
+		
+		return mapper.submit(workers);
 	}
 	
 	public Map<String, IWecParameterVo> getStateWiseWecParameterVo(String fromDate, String toDate, Set<String> allWecIds, Set<Parameter> parameters) throws SQLException {

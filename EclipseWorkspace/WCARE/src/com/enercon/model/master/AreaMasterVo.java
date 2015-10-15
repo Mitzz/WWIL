@@ -3,7 +3,7 @@ package com.enercon.model.master;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AreaMasterVo implements Comparable<AreaMasterVo>{
+public class AreaMasterVo implements Comparable<AreaMasterVo>, WecsPresent{
 
 	private String name;
 	private String id;
@@ -89,5 +89,11 @@ public class AreaMasterVo implements Comparable<AreaMasterVo>{
 		}
 		return wecs;
 	}
+
+	@Override
+	public String toString() {
+		return "AreaMasterVo [name=" + name + "]";
+	}
+	
 	
 }

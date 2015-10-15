@@ -1,14 +1,21 @@
 package com.enercon.model.master;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class StateMasterVo implements Comparable<StateMasterVo>{
+import org.apache.log4j.Logger;
+
+public class StateMasterVo implements Comparable<StateMasterVo>, WecsPresent{
 
 	private String name;
 	private String id;
 	private List<AreaMasterVo> areas = new ArrayList<AreaMasterVo>();
 	private List<WecMasterVo> wecs = new ArrayList<WecMasterVo>();
+	private List<CustomerMasterVo> customers;
+	
+	private final static Logger logger = Logger.getLogger(StateMasterVo.class);
 	
 	public StateMasterVo(String id){
 		this.id = id;
@@ -73,6 +80,22 @@ public class StateMasterVo implements Comparable<StateMasterVo>{
 	
 	public void addArea(AreaMasterVo area){
 		areas.add(area);
+	}
+	
+	public List<CustomerMasterVo> getCustomers() {
+		if(customers == null || customers.size() == 0){
+			Set<CustomerMasterVo> customersSet = new HashSet<CustomerMasterVo>();
+			List<WecMasterVo> wecs = getWecs();
+			
+			for(WecMasterVo wec : wecs){
+				CustomerMasterVo customer = wec.getCustomer();
+				customersSet.add(customer);
+			}
+			
+			logger.debug(customersSet);
+			customers = new ArrayList<CustomerMasterVo>(customersSet);
+		}
+		return customers;
 	}
 	
 	public List<WecMasterVo> getWecs(){

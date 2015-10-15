@@ -445,7 +445,7 @@ public class StateMasterDao implements WcareConnector{
 		try {
 			new StateMasterDao().get(customer);
 			
-			List<StateMasterVo> states = customer.getStateMasterVo();
+			List<StateMasterVo> states = customer.getStates();
 			logger.debug("Start");
 			for (StateMasterVo stateMasterVo : states) {
 				logger.debug("State Name: " + stateMasterVo.getName());

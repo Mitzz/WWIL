@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class SiteMasterVo implements Comparable<SiteMasterVo>{
+public class SiteMasterVo implements Comparable<SiteMasterVo>, WecsPresent{
 
 	private String name;
 	private String id;
@@ -74,7 +74,6 @@ public class SiteMasterVo implements Comparable<SiteMasterVo>{
 		this.ebs = ebs;
 	}
 
-
 	public void addEb(EbMasterVo eb){
 		ebs.add(eb);
 	}
@@ -85,5 +84,10 @@ public class SiteMasterVo implements Comparable<SiteMasterVo>{
 			wecs.addAll(eb.getWecs());
 		}
 		return wecs;
+	}
+
+	@Override
+	public String toString() {
+		return "SiteMasterVo [name=" + name + "]";
 	}
 }

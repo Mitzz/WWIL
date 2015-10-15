@@ -128,7 +128,7 @@ public class SecurityServlet extends HttpServlet {
 		} catch (Exception ex) {
 			logger.equals("ENERCON: SecurityServlet: doPost: Exception: " + ex.toString());
 			logger.error(ex.getMessage());
-			ex.printStackTrace();
+//			ex.printStackTrace();
 			try {
 				include("/Error.jsp", request, response);
 			} catch (Exception e) {

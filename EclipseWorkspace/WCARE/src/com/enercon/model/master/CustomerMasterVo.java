@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-public class CustomerMasterVo {
+public class CustomerMasterVo implements WecsPresent {
 	private final static Logger logger = Logger.getLogger(CustomerMasterVo.class);
 
 	private String id;
@@ -21,6 +21,13 @@ public class CustomerMasterVo {
 
 	public CustomerMasterVo(String id) {
 		this.id = id;
+	}
+
+	
+
+	@Override
+	public String toString() {
+		return "CustomerMasterVo [name=" + name + "]";
 	}
 
 	public String getId() {
@@ -51,7 +58,7 @@ public class CustomerMasterVo {
 		wecs.add(wec);
 	}
 	
-	public List<StateMasterVo> getStateMasterVo() {
+	public List<StateMasterVo> getStates() {
 		if(states == null || states.size() == 0){
 			Set<StateMasterVo> statesSet = new HashSet<StateMasterVo>();
 			List<WecMasterVo> wecs = getWecs();
