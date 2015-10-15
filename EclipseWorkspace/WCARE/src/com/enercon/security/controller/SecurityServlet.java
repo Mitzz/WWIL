@@ -18,7 +18,6 @@ import com.enercon.dao.master.LoginMasterDao;
 import com.enercon.global.utils.DynaBean;
 import com.enercon.global.utils.GlobalUtils;
 import com.enercon.model.master.LoginMasterVo;
-import com.enercon.security.bean.LoginMasterBean;
 import com.enercon.security.utils.SecurityUtils;
 
 public class SecurityServlet extends HttpServlet {
@@ -29,12 +28,13 @@ public class SecurityServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		System.out.println("");
 	}
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		logger.debug(new Date(request.getSession(false).getCreationTime()));
+		
 		response.setContentType(CONTENT_TYPE);
 		DynaBean dynaBean = GlobalUtils.getDynaBean(request);
 		SecurityUtils secUtil = new SecurityUtils();
@@ -51,15 +51,10 @@ public class SecurityServlet extends HttpServlet {
 		logger.debug("Client IP Addr: " + request.getRemoteAddr() + ", Client IP Host: " + request.getRemoteHost());
 		
 		try {
-//			String loginActivity = "Activity";
 			String sLoginID = dynaBean.getProperty("sLoginID").toString().toUpperCase(); 
 			String sPassWord = dynaBean.getProperty("sPassword").toString();
 			String sroleID = null;
-//			if (loginActivity != null) {
-//				logger.debug("if block 0");
-//				LoginMasterBean validEmployee = (LoginMasterBean) secUtil.validateEmployee(sLoginID, sPassWord); // for normal password
 				LoginMasterVo loginMasterVo = new LoginMasterDao().get(sLoginID, sPassWord);
-//				logger.debug("validEmployee:" + validEmployee);
 				boolean isEmployeeActive = false;
 				boolean isEmployeeValid = loginMasterVo != null;
 				
@@ -69,7 +64,6 @@ public class SecurityServlet extends HttpServlet {
 					sroleID = loginMasterVo.getRole().getId();
 					String roleName = loginMasterVo.getRole().getName();
 					logger.debug("if block 1");
-//					if (validEmployee.getsActive().equals("1")) {
 						logger.debug("if block 2");
 						HttpSession session = request.getSession(true);
 						session.setAttribute("SESSION_EXISTS", "true");
@@ -78,9 +72,6 @@ public class SecurityServlet extends HttpServlet {
 						session.setAttribute("Name", loginMasterVo.getLoginDescription());
 						session.setAttribute("RoleID", sroleID);
 						session.setAttribute("LoginType", loginMasterVo.getLoginType());
-//						session.setAttribute("EmployeeBean", validEmployee);
-							
-						//GlobalUtils.displaySessionAttribute(session);
 							
 						String loginRoleHistoryId = "";
 						loginRoleHistoryId = secUtil.insertLoginHistory(sLoginID,sPassWord, sroleID, ipadd,iphost);
@@ -127,11 +118,6 @@ public class SecurityServlet extends HttpServlet {
 								}
 							}
 						}
-//					} else {
-//						logger.debug("else block 2");
-//						String remarks = validEmployee.getsRemarks();
-//						invalidDataHandler(request,response, remarks);
-//					}
 				} else {
 					logger.debug("else block 1");
 					if(isEmployeeValid)
@@ -139,9 +125,9 @@ public class SecurityServlet extends HttpServlet {
 						else 					invalidDataHandler(request,response, "Your Username is Deactivated");
 					else 						invalidDataHandler(request,response, "Invalid Invalid User Id/Password. Try Again.");
 				}
-//			}
 		} catch (Exception ex) {
 			logger.equals("ENERCON: SecurityServlet: doPost: Exception: " + ex.toString());
+			logger.error(ex.getMessage());
 			ex.printStackTrace();
 			try {
 				include("/Error.jsp", request, response);
