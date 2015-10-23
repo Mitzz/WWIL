@@ -2,7 +2,6 @@ package com.enercon.customer.dao;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -28,25 +27,20 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
 
 import org.apache.log4j.Logger;
 
 import com.enercon.admin.dao.AdminDao;
 import com.enercon.connection.WcareConnector;
-import com.enercon.dao.IredaDAO.DAO;
 import com.enercon.global.utility.DatabaseUtility;
 import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.DebuggerUtility;
 import com.enercon.global.utility.MethodClass;
-import com.enercon.global.utility.NumberUtility;
 import com.enercon.global.utility.TimeUtility;
 import com.enercon.global.utils.CodeGenerate;
 import com.enercon.global.utils.DynaBean;
 import com.enercon.global.utils.GlobalUtils;
 import com.enercon.global.utils.JDBCUtils;
-import com.enercon.model.report.ManyWECsOneDateWECWiseTotal;
-import com.enercon.model.report.OneWECOneDayInfoOrTotal;
 import com.enercon.security.dao.SecuritySQLC;
 
 public class CustomerDao extends DebuggerUtility implements WcareConnector{
@@ -565,10 +559,10 @@ try {
 			conn = wcareConnector.getConnectionFromPool();
 			String msghead = dynaBean.getProperty("MsgHeadtxt").toString();
 
+			logger.debug("dynaBean: " + dynaBean);
 			String msgdesc = dynaBean.getProperty("MsgDescriptiontxt").toString();
 			String msgid = "";
-			if (dynaBean.getProperty("MsgIdtxt") == null
-					|| dynaBean.getProperty("MsgIdtxt").equals("")) {
+			if (dynaBean.getProperty("MsgIdtxt") == null || dynaBean.getProperty("MsgIdtxt").equals("")) {
 				msgid = CodeGenerate.NewCodeGenerate("TBL_STANDARD_MESSAGE");
 				sqlQuery = CustomerSQLC.CHECK_MESSAGE_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
@@ -1532,6 +1526,74 @@ try {
 	}
 
 	
+//	public List getMessageByLogid(String logid) throws Exception {
+//		String msg = "";
+//		JDBCUtils conmanager = new JDBCUtils();
+//		Connection conn = conmanager.getConnection();
+//		PreparedStatement prepStmt = null;
+//		PreparedStatement ps = null;
+//		List tranList = new ArrayList();
+//		ResultSet rs = null;
+//		String sqlQuery = "",cname="";
+//		try {
+//
+//			sqlQuery = CustomerSQLC.CHECK_MESSAGE_SEND_BY_LOG_ID;
+//			prepStmt = conn.prepareStatement(sqlQuery);
+//			prepStmt.setObject(1, logid);
+//
+//			rs = prepStmt.executeQuery();
+//			int i = 0;
+//			while (rs.next()) {
+//				String msgstr;
+//				Vector tranVector = new Vector();
+//				if (rs.getObject("S_MESSAGE_DESCRIPTION") == null|| rs.getObject("S_MESSAGE_DESCRIPTION") == "")
+//					msgstr = "NIL";
+//				else
+//					msgstr = rs.getObject("S_MESSAGE_DESCRIPTION").toString();
+//
+//				cname = changestr(rs.getObject("S_CUSTOMER_NAME") == null ? "." : rs.getObject("S_CUSTOMER_NAME").toString().replace("&", "AND"));
+//				tranVector.add(cname);
+//				tranVector.add(msgstr);
+//
+//				tranList.add(i, tranVector);
+//				i++;
+//			}
+//
+//			prepStmt.close();
+//			rs.close();
+//		} catch (SQLException sqlExp) {
+//			sqlExp.printStackTrace();
+//			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
+//			throw exp;
+//		} finally {
+//			try {
+//				if (prepStmt != null) {
+//					prepStmt.close();
+//				}
+//				if (rs != null)
+//					rs.close();
+//				if (conn != null) {
+//					conn.close();
+//					conn = null;
+//
+//					conmanager.closeConnection();
+//					conmanager = null;
+//				}
+//			} catch (Exception e) {
+//				prepStmt = null;
+//				rs = null;
+//				if (conn != null) {
+//					conn.close();
+//					conn = null;
+//
+//					conmanager.closeConnection();
+//					conmanager = null;
+//				}
+//			}
+//		}
+//		return tranList;
+//	}
+	
 	public List getMessageByLogid(String logid) throws Exception {
 		String msg = "";
 		JDBCUtils conmanager = new JDBCUtils();
@@ -1540,7 +1602,8 @@ try {
 		PreparedStatement ps = null;
 		List tranList = new ArrayList();
 		ResultSet rs = null;
-		String sqlQuery = "",cname="";
+		//String sqlQuery = "",cname="";
+		String sqlQuery = "";
 		try {
 
 			sqlQuery = CustomerSQLC.CHECK_MESSAGE_SEND_BY_LOG_ID;
@@ -1557,8 +1620,8 @@ try {
 				else
 					msgstr = rs.getObject("S_MESSAGE_DESCRIPTION").toString();
 
-				cname = changestr(rs.getObject("S_CUSTOMER_NAME") == null ? "." : rs.getObject("S_CUSTOMER_NAME").toString().replace("&", "AND"));
-				tranVector.add(cname);
+				//cname = changestr(rs.getObject("S_CUSTOMER_NAME") == null ? "." : rs.getObject("S_CUSTOMER_NAME").toString().replace("&", "AND"));
+				//tranVector.add(cname);
 				tranVector.add(msgstr);
 
 				tranList.add(i, tranVector);
@@ -14183,7 +14246,9 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 
 	public String getCUSTAjaxDetails(String item, String action, String UserId)
 			throws Exception {
-		
+		logger.debug("Ajax Call(item):::" + item);
+		logger.debug("Ajax Call(action):::" + action);
+		logger.debug("Ajax Call(userid):::" + UserId);
 		//System.out.println("Item :: " + item + ", Action :: " + action + ", UserId :: " + UserId);
 		StringBuffer xml = new StringBuffer();
 		JDBCUtils conmanager = new JDBCUtils();
@@ -14877,17 +14942,20 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			else if (action.equals("CUST_TEMP_TO_POST")) {
 
 				sqlQuery = CustomerSQLC.DELETE_MESSAGE_POST;
+				logger.debug("sqlQuery:::" + sqlQuery);
 				ps = conn.prepareStatement(sqlQuery);
 
 				 ps.executeQuery();
 				//.close();
 				ps.close();
 				sqlQuery = CustomerSQLC.INSERT_MESSAGE_TEMP_TO_POST;
+				logger.debug("sqlQuery:::" + sqlQuery);
 				ps = conn.prepareStatement(sqlQuery);
 				rs = ps.executeQuery();
 				rs.close();
 				ps.close();
 				sqlQuery = CustomerSQLC.DELETE_MESSAGE_TEMP;
+				logger.debug("sqlQuery:::" + sqlQuery);
 				ps = conn.prepareStatement(sqlQuery);
 				ps.setObject(1, UserId);
 				 ps.executeQuery();
@@ -14916,17 +14984,18 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				xml.append("<msgid>");
                 
 				String comma[] = item.split(":");
-	
+				logger.debug("comma[]:::" + comma);
 				if (comma[1].equals("NA"))				
 				{ 				
 					if (comma[3] != null)
 					{  
 						String[] site =comma[3].split(",");
-						
+						logger.debug("site[]:::" + site);
 						for(int i=0;i<site.length;i++)
 						{   
                            
 				    		sqlQuery = CustomerSQLC.CHECK_MESSAGE_TEMP_SITE;
+				    		logger.debug("sqlQuery:::" + sqlQuery);
 					    	ps = conn.prepareStatement(sqlQuery);
 						    ps.setObject(1, comma[0]);
 					        ps.setObject(2, site[i]);
@@ -14939,6 +15008,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 						    else
 						    {
 							sqlQuery = CustomerSQLC.INSERT_MESSAGE_TEMP_SITE;
+							logger.debug("sqlQuery:::" + sqlQuery);
 							ps1 = conn.prepareStatement(sqlQuery);
 
 							ps1.setObject(1, comma[0]);
@@ -14966,6 +15036,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				    {
 				      
 					  sqlQuery = CustomerSQLC.DELETE_MESSAGE_TEMP_table;
+					  logger.debug("sqlQuery:::" + sqlQuery);
 					  ps = conn.prepareStatement(sqlQuery);
 					  ps.setObject(1, comma[0]);
 					  ps.setObject(2, customer[i]);
@@ -14973,6 +15044,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 					  ps.close();
 					  
 					  sqlQuery = CustomerSQLC.CHECK_MESSAGE_TEMP_CUST;
+					  logger.debug("sqlQuery:::" + sqlQuery);
 					  ps = conn.prepareStatement(sqlQuery);
 					  ps.setObject(1, comma[0]);
 					  ps.setObject(2, customer[i]);
@@ -14983,6 +15055,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 					   } else
 					   {	
 						sqlQuery = CustomerSQLC.INSERT_MESSAGE_TEMP_ALL_CUST;
+						logger.debug("sqlQuery:::" + sqlQuery);
 						ps1 = conn.prepareStatement(sqlQuery); 
 						ps1.setObject(1, comma[0]);						  
 						ps1.setObject(2, UserId);
@@ -15049,6 +15122,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			}
 		}
 		//System.out.println("XML :: " + xml);
+//		logger.debug(xml.toString());
 		return xml.toString();
 	}
 

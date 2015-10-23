@@ -313,7 +313,7 @@ public class StateMasterDao implements WcareConnector{
 					rs.close();
 				}
 			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
+				logger.error(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -432,7 +432,7 @@ public class StateMasterDao implements WcareConnector{
 					rs.close();
 				}
 			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
+				logger.error(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -456,7 +456,7 @@ public class StateMasterDao implements WcareConnector{
 
 			wcareConnector.shutDown();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 

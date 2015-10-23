@@ -11,6 +11,7 @@ import com.enercon.siteuser.dao.SiteUserDao;
 
 import com.enercon.scada.dao.ScadaDao;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -22,6 +23,7 @@ import com.enercon.admin.dao.*;
  
 public final class DataValidation extends Action
 {
+	private static final Logger logger = Logger.getLogger(DataValidation.class);
 //	private static final long serialVersionUID = 1L;
 //	public void service(HttpServletRequest req,HttpServletResponse res)
 //	throws IOException, ServletException
@@ -353,6 +355,7 @@ public final class DataValidation extends Action
 			}
 			else if(uploadtype.equals("StdMessage"))
 			{					
+				logger.debug("STDMessage");
 				msg = ct.addStdMessage(session.getAttribute("loginID").toString(),dynaBean);
 				if (msg.toString().contains("sucessmsgtext"))
 				{

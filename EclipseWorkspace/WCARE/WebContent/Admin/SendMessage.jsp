@@ -113,7 +113,7 @@ function AddTempMsg()
  	  	  custTransactions =  custlist.options[i].value ;
  	   }	   
     }
- 
+    logger("custTransactions:::" + custTransactions);
     //create list of state  
 	for(var i = 0; i < mySelect.length; i++)
 	{
@@ -126,7 +126,7 @@ function AddTempMsg()
        }	  
 	 	  
      }
-	   	   
+	logger("stateTransactions:::" + stateTransactions);  	   
      //create list of sites
 	 for(var i = 0; i < sitelist.length; i++)
      {
@@ -138,10 +138,10 @@ function AddTempMsg()
 	       siteTransactions =  sitelist.options[i].value ;
 		}	   	  
 	 }
-		  
+	 logger("siteTransactions:::" + siteTransactions); 	  
     //checking the criteria	   
     var cntttl=(custlist.length)+(mySelect.length);
-   
+    logger("cntttl:::" + cntttl);
     if(cntttl==0)
     {
     
@@ -149,12 +149,13 @@ function AddTempMsg()
     }
     else
     {
+    	logger("custTransactions:::" + custTransactions);
      	if(custTransactions == 0)
      	 {	
     		  custTransactions = "NA";
     		  var req = newXMLHttpRequest();    
     	      var MsgId = msgid+":"+custTransactions+":"+stateTransactions+":"+siteTransactions; 
-    	     
+    	      logger("MsgId:::" + MsgId);
     		  req.onreadystatechange = getReadyStateHandler(req, InsertTempDetails);	  
     		  req.open("POST", "<%=request.getContextPath()%>/Ajax.do", true);
     		  req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -166,7 +167,7 @@ function AddTempMsg()
      	      siteTransactions = "NA";    
      	      var req = newXMLHttpRequest();    
               var MsgId = msgid+":"+custTransactions+":"+stateTransactions+":"+siteTransactions;    
-            
+              console.log("MsgId:::" + MsgId);
      	      req.onreadystatechange = getReadyStateHandler(req, InsertTempDetails);	  
      	      req.open("POST", "<%=request.getContextPath()%>/Ajax.do", true);
      	      req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -176,9 +177,15 @@ function AddTempMsg()
     }// End of Criteria
      
  }// End Of AddTempMsg()
- 
+ function enter(tableName){
+	 logger("Entering " + tableName); 
+ }
+	function left(tableName){
+		logger("Leaving " + tableName); 
+ }
 function InsertTempDetails(dataXml)
 {
+	enter("InsertTempDetails");
 	var cart = dataXml.getElementsByTagName("msgmaster")[0];
 	var items = cart.getElementsByTagName("mcode");
 	for (var I = 0 ; I < items.length ; I++)
@@ -191,13 +198,18 @@ function InsertTempDetails(dataXml)
      	}	 			
  	}
  findTempList();
+ left("InsertTempDetails");
 }
- 
+ function logger(message){
+	 console.log(message)
+ }
 //displaying customer list to sent message
 function findTempList() 
 {    
+	enter("findTempList");
 	 var req = newXMLHttpRequest();
      var ApplicationId = document.forms[0].MsgIdtxt.value;
+     logger("ApplicationId:::" + ApplicationId);
 	 req.onreadystatechange = getReadyStateHandler(req, findTempListDetail);	  
 	 req.open("POST", "<%=request.getContextPath()%>/Ajax.do", true);
 	 req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -205,6 +217,7 @@ function findTempList()
 }
 function findTempListDetail(dataXml)
 {  
+	enter("findTempListDetail");
 	var cart = dataXml.getElementsByTagName("msgmaster")[0];
 	var items = cart.getElementsByTagName("mcode");	
 	var divdetails = document.getElementById("tempmsgdetails");
@@ -238,7 +251,9 @@ function findTempListDetail(dataXml)
 		str += "<tr align='center' height='20'><td colspan=3 class='detailsheading' width='300'><input type='button' value='Send Message' onClick='SentMsg()'</td></tr>"
 		str += "<tr align='center' height='20'><td colspan=3 class='detailsheading' width='300'><input type='button' value='Clear' onClick=DelCustTemp('" + item.getElementsByTagName("msgid")[0].firstChild.nodeValue + "','" + cust + "')></td></tr>"		
 		str += "</table>"
+		logger(str);
 		divdetails.innerHTML = str;
+		left("findTempListDetail");
 }
 
 //delete whole list of customer
@@ -315,6 +330,7 @@ function createlistSite()
 {   
    var selected = new Array();
    var mySelect = document.getElementById("StateSelList");
+   console.log("mySelect:::" + mySelect);
   // alert(mySelect.length);
    var z = 0;
    var transactions = "";
@@ -329,10 +345,13 @@ function createlistSite()
 	  }	  
     z = 1;
    }
+   console.log("transactions:::" + transactions);
+   console.log("z:::" + z);
    if(transactions.length == 10)
    {
 		transactions = transactions + ",'.'";
-   }	
+   }
+   console.log("transactions:::" + transactions);
    if (z == 1)
    {   
     	document.getElementById("Transactions").value = transactions;

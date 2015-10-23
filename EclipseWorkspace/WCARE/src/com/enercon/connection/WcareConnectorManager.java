@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.apache.log4j.Category;
 import org.apache.log4j.Logger;
 
 import com.enercon.global.utility.FilePathUtility;
@@ -17,7 +18,7 @@ public class WcareConnectorManager implements DatabaseConnector{
 	private final static Logger logger = Logger.getLogger(WcareConnectorManager.class);
 	private static WcareConnectorManager scManager;
 	
-	final private static int MAX_POOL_SIZE = 1;
+	final private static int MAX_POOL_SIZE = 4;
 
 	private static String databaseUrl;
 	private static String userName;
@@ -288,3 +289,164 @@ public class WcareConnectorManager implements DatabaseConnector{
 	}
 }
 */
+class WcareDatabaseConnector implements DatabaseConnector{
+	
+	private ConnectorVo connectionVo;
+	private ConnectorPoolManager connector; 
+	
+	public WcareDatabaseConnector(){
+		connectionVo = new ConnectorVo("oracle.jdbc.driver.OracleDriver", "jdbc:oracle:thin:@172.18.16.108:1521:wcare", "ecare", "customer2011");
+		connector = new ConnectorPoolManager(connectionVo, 2); 
+	}
+
+	public Connection getConnectionFromPool() {
+		return connector.getConnectionFromPool();
+	}
+
+	public void returnConnectionToPool(Connection connection) {
+		connector.returnConnectionToPool(connection);
+	}
+
+	public void shutDown() {
+		connector.shutDown();
+	}
+	
+}
+
+class ConnectorPoolManager implements DatabaseConnector{
+	
+	private Vector<Connection> connectionPool = new Vector<Connection>();
+	private ConnectorVo connectionVo;
+	private final int MAX_POOL_SIZE;
+	private final static Logger logger = Logger.getLogger(ConnectorPoolManager.class);
+	
+	public ConnectorPoolManager(ConnectorVo connectionVo, int size){
+		this.connectionVo = connectionVo;
+		MAX_POOL_SIZE = size;
+		initialize();
+	}
+	
+	private void initialize() {
+		initializeConnectionPool();
+	}
+
+	private void initializeConnectionPool(){
+		while(!checkIfConnectionPoolIsFull()){
+			System.out.println("Connection Pool is NOT full. Proceeding with adding new connections");
+			//Adding new connection instance until the pool is full
+			connectionPool.addElement(createNewConnectionForPool());
+//			System.out.println("After Adding Size: " + connectionPool.size());
+		}
+		System.out.println("Connection Pool is full.");
+	}
+
+	private synchronized boolean checkIfConnectionPoolIsFull(){
+		
+		if(connectionPool.size() <= MAX_POOL_SIZE){
+			return false;
+		}
+
+		return true;
+	}
+
+	//Creating a connection
+	private Connection createNewConnectionForPool(){
+		Connection connection = null;
+
+		try{
+			Class.forName(connectionVo.getDriverName());
+			connection = DriverManager.getConnection(connectionVo.getDatabaseUrl(), connectionVo.getUserName(), connectionVo.getPassword());
+//			System.out.println("Connection: "+connection);
+		}
+		catch(SQLException sqle){
+			System.err.println("SQLException: "+sqle);
+			return null;
+		}
+		catch(ClassNotFoundException cnfe){
+			System.err.println("ClassNotFoundException: "+cnfe);
+			return null;
+		}
+
+		return connection;
+	}
+
+	public Connection getConnectionFromPool() {
+		Connection connection = null;
+
+		//Check if there is a connection available. There are times when all the connections in the pool may be used up
+		if(connectionPool.size() > 0){
+			connection = (Connection) connectionPool.firstElement();
+			connectionPool.removeElementAt(0);
+		}else{
+			connection = createNewConnectionForPool();
+			connectionPool.addElement(connection);
+			System.out.println("Connection Pool Size :: " + connectionPool.size());
+		}
+		
+		return connection;
+	}
+
+	public void returnConnectionToPool(Connection connection) {
+		try {
+			if(connection == null || connection.isClosed()){
+				logger.error("Connection is 'null' or 'closed'");
+				connectionPool.addElement(createNewConnectionForPool());
+			}
+			else{
+				connectionPool.addElement(connection);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void shutDown() {
+		for (Connection connection : connectionPool) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				logger.error(e.getMessage());
+			}
+		}
+	}
+}
+
+class ConnectorVo{
+
+	private String driverName;
+	private String databaseUrl;
+	private String userName;
+	private String password;
+	
+	public ConnectorVo(String driverName, String databaseUrl, String userName, String password) {
+		this.driverName = driverName;
+		this.databaseUrl = databaseUrl;
+		this.userName = userName;
+		this.password = password;
+	}
+	public String getDatabaseUrl() {
+		return databaseUrl;
+	}
+	public void setDatabaseUrl(String databaseUrl) {
+		this.databaseUrl = databaseUrl;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getDriverName() {
+		return driverName;
+	}
+	public void setDriverName(String driverName) {
+		this.driverName = driverName;
+	}
+	
+}

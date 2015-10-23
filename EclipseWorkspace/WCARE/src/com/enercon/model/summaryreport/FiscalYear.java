@@ -2,6 +2,8 @@ package com.enercon.model.summaryreport;
 
 import java.text.ParseException;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.NumberUtility;
 
@@ -9,7 +11,9 @@ public enum FiscalYear{
 	
 	FY200809(2008), FY200708(2007), FY200607(2006),	FY200506(2005), FY200405(2004), FY200910(2009),FY201011(2010), FY201112(2011), FY201213(2012),	FY201314(2013), FY201415(2014), FY201516(2015);
 	
-	int value;
+	private final static Logger logger = Logger.getLogger(FiscalYear.class);
+	
+	private int value;
 
 	private FiscalYear(int value) {
 		this.value = value;
@@ -34,7 +38,7 @@ public enum FiscalYear{
 			case 2013 : return FiscalYear.FY201314;
 			case 2014 : return FiscalYear.FY201415;	
 			case 2015 : return FiscalYear.FY201516;
-			default   : throw new IllegalArgumentException("Fiscal Year '" + fiscalYear + "-" + (fiscalYear + 1) + "' is not defined");
+			default   : logger.error("Fiscal Year '" + fiscalYear + "-" + (fiscalYear + 1) + "' is not defined"); throw new IllegalArgumentException("Fiscal Year '" + fiscalYear + "-" + (fiscalYear + 1) + "' is not defined");
 		}
 	}
 	

@@ -43,6 +43,32 @@ $(function () {
     });
 });
 </script>
-</script>
+	<table border='0' cellpadding='2' cellspacing='1' width='100%'>
+		<tr align='center' height='20'>
+			<th colspan=3 class='detailsheading' width='300'>Message
+				Displayed To Customer</th>
+		</tr>
+		<tr align='center' height='20'>
+			<th class='detailsheading' width='30'>S.N.</th>
+			<th class='detailsheading' width='230'>Customer</th>
+			<th class='detailsheading' width='40'>D</th>
+		</tr>
+		<tr align='center' height='20' class='detailsbody'>
+			<td ALIGN='center'>1</td>
+			<td align='left'>A B MALLIKARJUNA</td>
+			<td align='center'>
+				<input type='image' src='/WCARE/resources/images/delet.gif' alt='Click to edit the record' onClick=DelMsgTemp('1507000010','1209000007') />
+			</td>
+		</tr>
+		<tr align='center' height='20'>
+			<td colspan=3 class='detailsheading' width='300'>
+				<input type='button' value='Send Message' onClick='SentMsg()' />
+			</td>
+		</tr>
+		<tr align='center' height='20'>
+			<td colspan=3 class='detailsheading' width='300'><input
+				type='button' value='Clear' onClick=DelCustTemp('1507000010',',1209000007')></td>
+		</tr>
+	</table>
 </body>
 </html>

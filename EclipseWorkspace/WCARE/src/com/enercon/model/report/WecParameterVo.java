@@ -1,9 +1,13 @@
 package com.enercon.model.report;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.global.utility.TimeUtility;
 import com.enercon.model.summaryreport.Parameter;
 
 public class WecParameterVo implements IWecParameterVo {
+	private final static Logger logger = Logger.getLogger(WecParameterVo.class);
+	
 	private int size;
 	
 	private long generation;
@@ -310,7 +314,10 @@ public class WecParameterVo implements IWecParameterVo {
 			case GIA:return gia();
 			case MIA:return mia();
 			
-			default: throw new IllegalArgumentException("Parameter not defined");
+			default: {
+				logger.error("Parameter '" + parameter.getParamterName() + "' not defined");
+				throw new IllegalArgumentException("Parameter not defined");
+			}
 		}
 	}
 
@@ -352,7 +359,10 @@ public class WecParameterVo implements IWecParameterVo {
 			
 			case REMARK: remark(value.toString());break;
 			
-			default: throw new IllegalArgumentException("Parameter not defined");
+			default: {
+				logger.error("Parameter '" + parameter.getParamterName() + "' not defined");
+				throw new IllegalArgumentException("Parameter not defined");
+			}
 			
 		}
 	}

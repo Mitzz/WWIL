@@ -4,6 +4,9 @@
 		<set-property property="contextConfigLocation"
 			value="/WEB-INF/classes/SpringBeans.xml" />
   	</plug-in>
+  	<plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+		<set-property property="pathnames" value="/WEB-INF/validation/validator-rules.xml, /WEB-INF/validation/validator-stdmessage.xml" />
+	</plug-in>
   <data-sources />
     <form-beans>
     		<form-bean  name="testfrm" type="TestForm" />  	
@@ -63,7 +66,9 @@
 			
 			<!-- summary report -->			
   	  		<form-bean scope="request" name="SummaryReportForm" type="com.enercon.struts.form.GridBifurcationReportForm" />
-  	  		
+  	
+  			<!-- Reform -->
+  			<form-bean scope="request" name="StdMessageForm" type="com.enercon.struts.form.StdMessageForm" />  		
   </form-beans>
   
   <global-exceptions />
@@ -468,10 +473,18 @@
 			
 			<!-- End : ireda related -->
 			
+			<!-- Reform -->
+			<action path="/StdMessageRequestProcessor" type="com.enercon.struts.requestProcessor.StdMessageRP"> 
+				<forward name="success" path="/jsppages/StdMessageN.jsp" />
+			</action>
 			
-			
+			<action scope="request" path="/StdMessageN" name="StdMessageForm" parameter="method" type="com.enercon.struts.action.StdMessageAction" input="/jsppages/StdMessageN.jsp" validate="true">
+				<forward name="success" path="/jsppages/StdMessageN.jsp" />
+			</action>
 			
   </action-mappings>
   
+  <message-resources parameter="com.enercon.properties.stdmessage" key="stdmessage"/>
   <message-resources parameter="com.enercon.struts.ApplicationResources" />
+  
 </struts-config>

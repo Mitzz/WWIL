@@ -1,7 +1,6 @@
 package com.enercon.security.controller;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -54,77 +53,77 @@ public class SecurityServlet extends HttpServlet {
 			String sLoginID = dynaBean.getProperty("sLoginID").toString().toUpperCase(); 
 			String sPassWord = dynaBean.getProperty("sPassword").toString();
 			String sroleID = null;
-				LoginMasterVo loginMasterVo = new LoginMasterDao().get(sLoginID, sPassWord);
-				boolean isEmployeeActive = false;
-				boolean isEmployeeValid = loginMasterVo != null;
+			LoginMasterVo loginMasterVo = new LoginMasterDao().get(sLoginID, sPassWord);
+			boolean isEmployeeActive = false;
+			boolean isEmployeeValid = loginMasterVo != null;
+			
+			if(isEmployeeValid) isEmployeeActive = loginMasterVo.getActive().equals("1");
+			
+			if (isEmployeeValid && isEmployeeActive) {
+				logger.debug("if block 1");
+				sroleID = loginMasterVo.getRole().getId();
+				String roleName = loginMasterVo.getRole().getName();
 				
-				if(isEmployeeValid) isEmployeeActive = loginMasterVo.getActive().equals("1");
+				HttpSession session = request.getSession(true);
+				session.setAttribute("SESSION_EXISTS", "true");
+				session.setAttribute("loginID", sLoginID);
+				session.setAttribute("pwd", sPassWord);
+				session.setAttribute("Name", loginMasterVo.getLoginDescription());
+				session.setAttribute("RoleID", sroleID);
+				session.setAttribute("LoginType", loginMasterVo.getLoginType());
+					
+				String loginRoleHistoryId = "";
+				loginRoleHistoryId = secUtil.insertLoginHistory(sLoginID,sPassWord, sroleID, ipadd,iphost);
+				logger.debug("loginRoleHistoryId->secUtil.insertLoginHistory(sLoginID, sPassWord, sroleID,ipadd,iphost):" + loginRoleHistoryId);
 				
-				if (isEmployeeValid && isEmployeeActive) {
-					sroleID = loginMasterVo.getRole().getId();
-					String roleName = loginMasterVo.getRole().getName();
-					logger.debug("if block 1");
-						logger.debug("if block 2");
-						HttpSession session = request.getSession(true);
-						session.setAttribute("SESSION_EXISTS", "true");
-						session.setAttribute("loginID", sLoginID);
-						session.setAttribute("pwd", sPassWord);
-						session.setAttribute("Name", loginMasterVo.getLoginDescription());
-						session.setAttribute("RoleID", sroleID);
-						session.setAttribute("LoginType", loginMasterVo.getLoginType());
-							
-						String loginRoleHistoryId = "";
-						loginRoleHistoryId = secUtil.insertLoginHistory(sLoginID,sPassWord, sroleID, ipadd,iphost);
-						logger.debug("loginRoleHistoryId->secUtil.insertLoginHistory(sLoginID, sPassWord, sroleID,ipadd,iphost):" + loginRoleHistoryId);
-						
-						if (loginMasterVo.getLoginType().equals("C") && sLoginID.equals("IREDA") && sPassWord.equals("iredapwd")) {
-							logger.debug("if block 5");
-							include("/ERDAmain.jsp", request, response);
-						}
-						else {
-							logger.debug("else block 5");
-
-							List roleTranList = secUtil.getAllTransactions(sroleID);
-							session.setAttribute("RoleName", roleName);
-							session.setAttribute("transactionList", roleTranList);
-							
-							GlobalUtils.displayVectorMember(roleTranList);
-							GlobalUtils.displaySessionAttribute(session);
-							
-							request.setAttribute("LoggedIn", "TRUE");
-
-							if (secUtil.isPasswordChange(sLoginID)) {
-								logger.debug("if block 11");
-								forceToChangePassword(request, response);
-							} else {
-								logger.debug("else block 11");
-								if (loginMasterVo.getLoginType().equals("C")) {
-									logger.debug("if block 12");
-									String msgg = secUtil.getCustinformation(sLoginID);
-									logger.debug("msgg: " + msgg);
-									if (msgg.equals("Informationexist")) {
-										logger.debug("if block 13");
-										List custtype = secUtil.getcustomerdetails(sLoginID);
-										logger.debug("custtype: " + custtype);
-										session.setAttribute("custtypee", custtype);
-										include(request, response);
-									} else {
-										logger.debug("else block 13");
-										include("/ManageProfile.jsp", request, response);//Redirected to '/ThankOut.jsp'
-									}
-								} else {
-									logger.debug("if block 12");
-									include(request, response);
-								}
-							}
-						}
-				} else {
-					logger.debug("else block 1");
-					if(isEmployeeValid)
-						if(isEmployeeActive) 	invalidDataHandler(request,response, "Role Not Defined");
-						else 					invalidDataHandler(request,response, "Your Username is Deactivated");
-					else 						invalidDataHandler(request,response, "Invalid Invalid User Id/Password. Try Again.");
+				if (loginMasterVo.getLoginType().equals("C") && sLoginID.equals("IREDA") && sPassWord.equals("iredapwd")) {
+					logger.debug("if block 5");
+					include("/ERDAmain.jsp", request, response);
 				}
+				else {
+					logger.debug("else block 5");
+
+					List roleTranList = secUtil.getAllTransactions(sroleID);
+					session.setAttribute("RoleName", roleName);
+					session.setAttribute("transactionList", roleTranList);
+					
+					GlobalUtils.displayVectorMember(roleTranList);
+					GlobalUtils.displaySessionAttribute(session);
+					
+					request.setAttribute("LoggedIn", "TRUE");
+
+					if (secUtil.isPasswordChange(sLoginID)) {
+						logger.debug("if block 11");
+						forceToChangePassword(request, response);
+					} else {
+						logger.debug("else block 11");
+						if (loginMasterVo.getLoginType().equals("C")) {
+							logger.debug("if block 12");
+							String msgg = secUtil.getCustinformation(sLoginID);
+							logger.debug("msgg: " + msgg);
+							if (msgg.equals("Informationexist")) {
+								logger.debug("if block 13");
+								List custtype = secUtil.getcustomerdetails(sLoginID);
+								logger.debug("custtype: " + custtype);
+								session.setAttribute("custtypee", custtype);
+								include(request, response);
+							} else {
+								logger.debug("else block 13");
+								include("/ManageProfile.jsp", request, response);//Redirected to '/ThankOut.jsp'
+							}
+						} else {
+							logger.debug("if block 12");
+							include(request, response);
+						}
+					}
+				}
+			} else {
+				logger.debug("else block 1");
+				if(isEmployeeValid)
+					if(isEmployeeActive) 	invalidDataHandler(request,response, "Role Not Defined");
+					else 					invalidDataHandler(request,response, "Your Username is Deactivated");
+				else 						invalidDataHandler(request,response, "Invalid Invalid User Id/Password. Try Again.");
+			}
 		} catch (Exception ex) {
 			logger.equals("ENERCON: SecurityServlet: doPost: Exception: " + ex.toString());
 			logger.error(ex.getMessage());

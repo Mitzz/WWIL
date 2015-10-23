@@ -137,7 +137,7 @@ public class WecDataDao implements WcareConnector{
 			while(resultSet.next()){
 				parameterVo.size(wecIds.size());
 				for (Parameter parameter : parameters) {
-					parameterVo.value(parameter, resultSet.getDouble(parameter.getParamterName()));
+					parameterVo.value(parameter, resultSet.getObject(parameter.getParamterName()));
 				}
 			}
 			
@@ -173,7 +173,7 @@ public class WecDataDao implements WcareConnector{
 			connection = wcareConnector.getConnectionFromPool();
 			
 			query = 
-					"Select D_reading_date, " + Parameter.getQuery(parameters) +
+					"Select D_reading_date, " + getSelectionPartofQuery(parameters) +
 					"from tbl_reading_summary " + 
 					"where S_wec_id in " + GlobalUtils.getStringFromArrayForQuery(wecIds) + 
 					"and D_reading_date between ? and ? " +
@@ -186,7 +186,7 @@ public class WecDataDao implements WcareConnector{
 			resultSet = preparedStatement.executeQuery();
 			while(resultSet.next()){
 				for (Parameter parameter : parameters) {
-					parameterVo.value(parameter, resultSet.getDouble(parameter.getParamterName()));
+					parameterVo.value(parameter, resultSet.getObject(parameter.getParamterName()));
 				}
 				data.put(resultSet.getString("D_reading_date"), parameterVo);
 				parameterVo = new WecParameterVo();
@@ -224,7 +224,7 @@ public class WecDataDao implements WcareConnector{
 			connection = wcareConnector.getConnectionFromPool();
 			
 			query = 
-					"Select S_wec_id, " + Parameter.getQuery(parameters) +
+					"Select S_wec_id, " + getSelectionPartofQuery(parameters) +
 					"from tbl_reading_summary " + 
 					"where S_wec_id in " + GlobalUtils.getStringFromArrayForQuery(wecIds) + 
 					"and D_reading_date between ? and ? " +

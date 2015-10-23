@@ -42,7 +42,7 @@ import org.joda.time.DateTime;
 import java.lang.reflect.Array;
 
 public class AdminDao {
-	private static Logger logger = Logger.getLogger(AdminDao.class);
+	private final static Logger logger = Logger.getLogger(AdminDao.class);
 
 	public AdminDao() {
 	}
@@ -3738,6 +3738,9 @@ public class AdminDao {
 		return msg;
 	}
 	public String getAjaxDetails(String item,String action,String UserId) throws Exception{
+		logger.debug("Ajax Call(item):::" + item);
+		logger.debug("Ajax Call(action):::" + action);
+		logger.debug("Ajax Call(userid):::" + UserId);
 		StringBuffer xml = new StringBuffer();
 		JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = conmanager.getConnection();
@@ -3958,6 +3961,7 @@ public class AdminDao {
 			}
 			else if(action.equals("findSiteByStateID"))
 			{
+				
 				sqlQuery = "SELECT * FROM TBL_SITE_MASTER WHERE S_STATE_ID IN("+item+")";
 				ps = conn.prepareStatement(sqlQuery);
 				//ps.setObject(1,item);
@@ -3976,6 +3980,7 @@ public class AdminDao {
 					xml.append("</weccode>\n");
 				}
 				xml.append("</wecmaster>\n");	
+				
 				rs.close();
 				ps.close();
 			}
@@ -7349,6 +7354,7 @@ public class AdminDao {
 				}
 			}
 		}
+		logger.debug(xml.toString());
 		return xml.toString();
 	}
 

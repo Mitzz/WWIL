@@ -2,8 +2,10 @@ package com.enercon.model.summaryreport;
 
 import java.util.Set;
 
-public enum Parameter {
+import org.apache.log4j.Logger;
 
+public enum Parameter {
+	
 	GENERATION("Generation", "N_GEN", "SUM", "GEN"), 
 	OPERATING_HOUR("OperatingHour", "N_OPHR", "SUM", "OPHR"), 
 	MA("MachineAvailability", "N_MA", "AVG", "MA"),
@@ -46,6 +48,8 @@ public enum Parameter {
 	private String columnName;
 	private String operationType;
 	private String parameterCode;
+	
+	private final static Logger logger = Logger.getLogger(Parameter.class);
 	
 	private Parameter(String parameterName, String columnName, String operationType, String parameterCode) {
 		this.paramterName = parameterName;
@@ -113,7 +117,10 @@ public enum Parameter {
 			case LR_LOSS:
 			case FM_LOSS:
 				buffer.append("round(" + parameter.getOperationType() + "(" + parameter.getColumnName() + "), 0) as " + parameter.getParamterName() + ", "); break;
-			default:				throw new IllegalArgumentException("Parameter is not defined");
+			default:{
+					logger.error("Parameter '" + parameter.getParamterName() + "' not defined");
+					throw new IllegalArgumentException("Parameter is not defined");
+				}
 			}
 		}
 		

@@ -8,6 +8,8 @@
 
 <%@ page contentType="text/html;charset=windows-1252"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ page import="com.enercon.admin.util.AdminUtil" %>
 <%@page import="com.enercon.global.utils.DynaBean"%>
 <html>
@@ -17,15 +19,15 @@
 <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/MYCSS.css" type="text/css">
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ajax.js"></script>
-
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/debug.js"></script>
 <%
-if (session.getAttribute("loginID") == null)
+/* if (session.getAttribute("loginID") == null)
 {
       response.sendRedirect(request.getContextPath());
-}
+} */
 %>
 <%
-String rn = "";
+/* String rn = "";
 String de = "";
 String ri = "";
 DynaBean dynabean = (DynaBean)session.getAttribute("dynabean");
@@ -34,29 +36,29 @@ if(dynabean != null){
 	de = dynabean.getProperty("MsgDescriptiontxt").toString();
 	ri = dynabean.getProperty("MsgIdtxt").toString();
 	session.removeAttribute("dynabean");
-}
+} */
 %>
 <%
-response.setHeader("Pragma","no-cache");
+/* response.setHeader("Pragma","no-cache");
 response.getOutputStream().flush();
-response.getOutputStream().close();
+response.getOutputStream().close(); */
 //String rolename = AdminUtil.fillMaster("TBL_ROLE_MASTER",ex);
 %>
 <script type="text/javascript">
 function findApplication() 
 {
-		
+		enter( arguments.callee.name );
 	 var req = newXMLHttpRequest();
      var ApplicationId = "";
 	 req.onreadystatechange = getReadyStateHandler(req, showAppDetails);	  
 	 req.open("POST", "<%=request.getContextPath()%>/Ajax.do", true);
 	 req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	 req.send("Admin_Input_Type=CUST_STD_MESSAGE&AppId="+ApplicationId);
-	 
+	 left( arguments.callee.name );
 }
 function showAppDetails(dataXml)
 {
-	
+	enter( arguments.callee.name );
 	var cart = dataXml.getElementsByTagName("msgmaster")[0];
 	var items = cart.getElementsByTagName("mcode");	
 		var divdetails = document.getElementById("msgdetails");
@@ -86,23 +88,23 @@ function showAppDetails(dataXml)
 		}
 		str += "</table>"
 		divdetails.innerHTML = str;
-	
+		left( arguments.callee.name );
 }
 function findDetails(roleid)
 {
 	
-	
+	enter( arguments.callee.name );
 	 var req = newXMLHttpRequest();
      var ApplicationId = roleid;
 	 req.onreadystatechange = getReadyStateHandler(req, showRoleMaster);	  
 	 req.open("POST", "<%=request.getContextPath()%>/Ajax.do", true);
 	 req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	 req.send("Admin_Input_Type=CUST_STD_MESSAGE_DETAIL&AppId="+ApplicationId);
-	
+	 left( arguments.callee.name );
 }
 function showRoleMaster(dataXml)
 {
-	
+	enter( arguments.callee.name );
 	var cart = dataXml.getElementsByTagName("msgmaster")[0];
 	var items = cart.getElementsByTagName("mcode");
 	for (var I = 0 ; I < items.length ; I++)
@@ -120,90 +122,117 @@ function showRoleMaster(dataXml)
    	 		document.forms[0].MsgIdtxt.value = "";  	 		
    	 	} 			
  	}
-	
+	left( arguments.callee.name );
 }
 
 </script>
 </head>
-<body onLoad="findApplication()">
+<body>
 <div align="center">
 <table align="center" border="0" cellpadding="0" cellspacing="0" width="700">
-<tr width="100%">
-<td width="100%" align="center">
-<form action="<%=request.getContextPath()%>/StdMessage.do" name="StdMessage" method="post" >
-<table align="center" border="0" cellpadding="0" cellspacing="0" width="400">
-	<tbody><tr>
-	<td class="newhead1"></td>
-	<th class="headtext">Message Head</th>
-	<td><img src="<%=request.getContextPath()%>/resources/images/formtab_r.gif" border="0" height="21" width="10"></td>
-	<td class="newhead3">&nbsp;</td>
-	<td class="newhead4"><img src="<%=request.getContextPath()%>/resources/images/pixel.gif" border="0" height="1" width="10"></td>
-</tr>
-<tr>
-	<td class="newheadl"><img src="<%=request.getContextPath()%>/resources/images/pixel.gif" border="0"></td>
-	<td colspan="3">
-	<img src="<%=request.getContextPath()%>/<%=request.getContextPath()%>/resources/images/pixel.gif" border="0" height="10" width="1"><br>
-	<table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td bgcolor="#dbeaf5">
-		<table border="0" cellpadding="2" cellspacing="1" width="100%">
-		<tbody>						
-		<tr class="bgcolor"> 
-			<td id="t_street_address" width="180px">&nbsp;Message&nbsp;Head:</td>
-			<td class="bgcolor" width="180px"><input type="text" id="MsgHeadtxt" name="MsgHeadtxt" size="25" value="<%=rn%>" class="BoxBorder" maxlength="30" /></td>
-		</tr>
-		<tr class="bgcolor"> 
-			<td id="t_street_address">&nbsp;Message Description:</td>
-			<td class="bgcolor"><textarea rows="3" cols="39" id="MsgDescriptiontxt" name="MsgDescriptiontxt" class="BoxBorder" ><%=de%></textarea></td>
-		</tr>			
-		<tr class="bgcolor"> 
-			<td colspan="2">
-				<html:errors />
-				<%String str=(String)session.getAttribute("msg");%>
-				<%if(str != null){%>
-				<%=str%>
-				<%}%>
-				<%session.setAttribute("msg","");%>
-			</td>
-		</tr>	
-		</tbody></table></td></tr></tbody></table>
-		<img src="<%=request.getContextPath()%>/resources/images/pixel.gif" border="0" height="10" width="1"><br>
-	</td>
-	<td class="newheadr"><img src="<%=request.getContextPath()%>/resources/images/pixel.gif" border="0"></td>
+	<tr width="100%">
+		<td width="100%" align="center">
+		<html:messages id="msg" name="SuccessfullyCreated" message="true" bundle="stdmessage">
+			<bean:write name="msg" />
+		</html:messages>
+		<html:form action="/StdMessageN.do?method=createStandardMessage">
+
+			<table align="center" border="0" cellpadding="0" cellspacing="0" width="400">
+				<tbody>
+					<tr>
+						<td class="newhead1"></td>
+						<th class="headtext">Message Head</th>
+						<td><html:img src="resources/images/formtab_r.gif" border="0" height="21" width="10" /></td>
+						<td class="newhead3">&nbsp;</td>
+						<!-- <td class="newhead4">&nbsp;</td> -->
+						<td class="newhead4"><html:img src="resources/images/pixel.gif" border="0" height="1" width="10" /></td>
+					</tr>
+					<tr>
+						<td class="newheadl"><html:img src="resources/images/pixel.gif" border="0" /></td>
+						<td colspan="3">
+							<html:img src="resources/images/pixel.gif" border="0" height="10" width="1" /><br>
+							<table border="0" cellpadding="0" cellspacing="0" width="100%">
+								<tbody>
+									<tr>
+										<td bgcolor="#dbeaf5">
+											<table border="0" cellpadding="2" cellspacing="1" width="100%">
+												<tbody>						
+													<tr class="bgcolor"> 
+														<td width="180px"><bean:message key="label.stdmessage.messageHead" bundle="stdmessage"/></td>
+														<td class="bgcolor" width="180px">
+															<!-- <input type="text" id="MsgHeadtxt" name="MsgHeadtxt" size="25" value="" class="BoxBorder" maxlength="30" /> -->
+															<html:text property="messageHead" size="50" styleClass="BoxBorder" maxlength="30" ></html:text>
+														</td>
+													</tr>
+													<logic:messagesPresent message="false" property="messageHead" >
+													<tr style="background-color: white">
+														<td colspan="2" style="color: red;background-color: white;">
+															<html:errors property="messageHead" />
+														</td>
+													</tr>
+													</logic:messagesPresent>
+													<tr class="bgcolor"> 
+														<td><bean:message key="label.stdmessage.messageDescription" bundle="stdmessage" /></td>
+														<td class="bgcolor">
+															<html:textarea rows="3" cols="39" property="messageDescription" styleClass="BoxBorder" ></html:textarea>
+														</td>
+													</tr>
+													<logic:messagesPresent message="false" property="messageDescription">
+													<tr style="background-color: white">
+														<td colspan="2" style="color: red;background-color: white;">
+															<html:errors property="messageDescription"/>
+														</td>
+													</tr>
+													</logic:messagesPresent>		
+												</tbody>
+											</table>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<html:img src="resources/images/pixel.gif" border="0" height="10" width="1" /><br>
+						</td>
+						<td class="newheadr"><html:img src="resources/images/pixel.gif" border="0" /></td>
+					</tr>
+					<tr>
+						<td width="10"><html:img src="resources/images/formtab_b.gif" border="0" height="20" width="10" /></td>
+						<td colspan="4" align="right" bgcolor="#006633">
+							<table border="0" cellpadding="0" cellspacing="0">
+								<tbody>
+									<tr>
+										<td class="btn" width="100">
+				<%-- <input type="hidden" id="MsgIdtxt" name="MsgIdtxt" value="<%=ri %>" /> --%>	
+											<input name="Submit" type="submit" class="btnform" value="Submit"/>
+										</td>
+										<td width="1"><html:img src="resources/images/pixel.gif" border="0" height="18" width="1" /></td>
+										<td class="btn" width="100"><input name="Reset" value="Cancel" class="btnform" type="reset"></td>
+										<td width="1"><html:img src="resources/images/pixel.gif" border="0" height="18" width="1" /></td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			</html:form>	
+		</td>		
 	</tr>
-<tr>
-	<td width="10"><img src="<%=request.getContextPath()%>/resources/images/formtab_b.gif" border="0" height="20" width="10"></td>
-	<td colspan="4" align="right" bgcolor="#006633">
-	<table border="0" cellpadding="0" cellspacing="0">
-	<tbody><tr>
-		<td class="btn" width="100">
-			<input type="hidden" id="MsgIdtxt" name="MsgIdtxt" value="<%=ri %>" />
-			<input type="hidden" name="Admin_Input_Type" value="StdMessage" />	
-			<input name="Submit" type="submit" class="btnform" value="Submit"/>
-		</td>
-		<td width="1"><img src="<%=request.getContextPath()%>/resources/images/pixel.gif" border="0" height="18" width="1"></td>
-		<td class="btn" width="100"><input name="Reset" value="Cancel" class="btnform" type="reset"></td>
-		<td width="1"><img src="<%=request.getContextPath()%>/resources/images/pixel.gif" border="0" height="18" width="1"></td>
-	</tr>
-	</tbody></table>
-	</td>
-</tr>
-</tbody></table>
-</form>	
-</td>		
-</tr>
-<tr>
-	<td align="center">
-		<table border="0" cellpadding="0" cellspacing="0" width="400"><tbody>
-			<tr>
-				<td >
-					<div id="msgdetails">
+	<tr>
+		<td align="center">
+			<table border="0" cellpadding="0" cellspacing="0" width="400">
+				<tbody>
+					<tr>
+						<td >
+							
+							<div id="msgdetails">
 					
-					</div>	
-				</td>
-			</tr>
-			</tbody>
-		</table>	
-	</td>
-</tr>
+							</div>	
+						</td>
+					</tr>
+				</tbody>
+			</table>	
+		</td>
+	</tr>
 </table>
 </div>
 </body>

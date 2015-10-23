@@ -306,7 +306,7 @@
 
                         <TR bgcolor='white'><td><b><font size=4 face='Times New Roman'>Dear Sir,</font></b></td></TR>
                         <TR bgcolor='white'>
-                            <TD class=white width="100%"><font color=black size=3 face='Times New Roman'><%= (String) vmsg.get(1)%></font></TD>
+                            <TD class=white width="100%"><font color=black size=3 face='Times New Roman'><%= (String) vmsg.get(0)%></font></TD>
                         <TR bgcolor='white'><td><b><font  size=4 face='Times New Roman'>Regard,</font></b></td></TR>
                         <TR bgcolor='white'><td><b><font  size=4 face='Times New Roman'>Wind World(India) CRM TEAM.</font></b></td></TR>
                                         <%}

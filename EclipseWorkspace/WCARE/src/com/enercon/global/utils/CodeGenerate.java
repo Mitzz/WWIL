@@ -1,101 +1,13 @@
 package com.enercon.global.utils;
 
-/*  Author : Sachin Sisodiya
- *  Company: Enercon India Limited
- *  Date : 10 Aug 2007
- * */
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-//import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.transaction.SystemException;
-
-import com.enercon.global.utils.GlobalSQLC;
+import java.util.Date;
 
 public class CodeGenerate {
-    /** Log4j
-     */
-    //private static Logger log = Logger.getLogger(CodeGenerate.class);
-
-    /** Logical connection to an Oracle database.
-     */
-    //private Connection conn = null;
-    /** Creates a connection to the database (if not done so already)
-     * and then returns a logical connection from a pool of connections.
-     * 
-     * @exception SystemException A JDBC SQLException error
-     * @return Logical connection to the database
-     */
-    //public Connection getConnection() throws Exception {
-     //   try {
-
-            //conn = ConnectionPoolManager.getInstance().getConnection("enerconpool");
-
-
-            //System.out.println("JDBCUtil: Got a connection object.");
-
-            /* Create an instance of ConnCacheBean */
-            //ConnCacheBean connCacheBean = ConnCacheBean.getInstance();
-
-            /* Get OracleDataSource from the ConnCacheBean */
-            //OracleDataSource ods = connCacheBean.getDataSource();
-
-            /* If Connection Cache is not properly initialized, then throw an error */
-            //if (ods == null) {
-            //    throw new Exception("Connection Cache Not Properly Initialized");
-            //}
-
-
-            /* Get Connection from the Connection Cache. */
-            //conn = ods.getConnection();
-
-
-        //} catch (Exception e) {
-            //e.printStackTrace();
-            //System.out.println("System Exception (JDBC Error) : " + 
-                               //e.getMessage());
-            //log.error("System Exception (JDBC Error) : " + e.getMessage(), e);
-        //}
-        //return conn;
-    //}
-
-    /** Closes the connection if it is open.
-     * 
-     * @exception SystemException A JDBC SQLException error
-     */
-    /*public void closeConnection() throws SystemException {
-        if (conn != null) {
-            try {
-                conn.close();
-                //System.out.println("JDBCUtil: Closing the connection object.");
-            } catch (SQLException e) {
-                logSQLError(e);
-            }
-        }
-    }*/
-
-    /** Logs a SQLException using Log4J.
-     * 
-     * @exception SystemException Always throws a SystemException after logging  
-     *     the SQLException
-     * @param e SQLException exception object
-     */
-    /*public static void logSQLError(SQLException e) throws SystemException {
-        while (e != null) {
-            log.error("\nSQL Exception:");
-            log.error(e.getMessage());
-            log.error("ANSI-92 SQL State: " + e.getSQLState());
-            log.error("Vendor Error Code: " + e.getErrorCode());
-            e = e.getNextException();
-        }
-        throw new SystemException();
-    }*/
-
-
     public static String NewCodeGenerate(String TableName) throws SQLException, 
                                                             Exception
     {
