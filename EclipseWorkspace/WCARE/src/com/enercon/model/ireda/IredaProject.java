@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.ajax.interfaces.AjaxVo;
 import com.enercon.dao.IredaDAO;
 import com.enercon.dao.WECParameterVoDao;
@@ -22,6 +24,9 @@ import com.enercon.model.thread.map.MapKeyValueMapper;
 import com.enercon.model.thread.map.MapValueEvaluatorWorker;
 
 public class IredaProject implements Comparable<IredaProject>, AjaxVo{
+	
+	private final static Logger logger = Logger.getLogger(IredaProject.class);
+	
 	private String projectNo;
 	private Integer stateCount;
 	private Map<String, String> stateIdNameMapping = new LinkedHashMap<String, String>();
@@ -63,10 +68,10 @@ public class IredaProject implements Comparable<IredaProject>, AjaxVo{
 			
 			setWecIdNameMapping(dao.getWecIdNameMapping(projectNo));
 		} catch (SQLException e) {
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 	

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -28,7 +29,7 @@ import com.enercon.struts.exception.GridBifurcationException;
 import com.enercon.struts.form.ScadaDataJumpUploadForm;
 
 public class ScadaDataJumpUploadAction extends Action {
-	
+	private final static Logger logger = Logger.getLogger(ScadaDataJumpUploadAction.class);
 	public ScadaDataJumpUploadAction() {
 		
 	}
@@ -56,40 +57,40 @@ public class ScadaDataJumpUploadAction extends Action {
 			saveMessages(request, messages); // storing messages as request attributes
 		}
 		catch(OfficeXmlFileException e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("dataNotUploaded", new ActionMessage("message.err.gridbifurcation.date.notuploaded"));
 			saveMessages(request, messages); // storing messages as request attributes
 		}
 		catch(FileNotFoundException e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("dataNotUploaded", new ActionMessage("message.err.gridbifurcation.date.notuploaded"));
 			saveMessages(request, messages); // storing messages as request attributes
 		}
 		catch(IOException e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("dataNotUploaded", new ActionMessage("message.err.gridbifurcation.date.notuploaded"));
 			saveMessages(request, messages); // storing messages as request attributes
 		}
 		catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("fileDateProblem", new ActionMessage("message.err.gridbifurcation.date.properformat"));
 			saveMessages(request, messages); // storing messages as request attributes
 		}
 		catch (GridBifurcationException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("fileTimeProblem", new ActionMessage(e.getMessage(), e.getRecordNo()));
 			saveMessages(request, messages); // storing messages as request attributes
 		}
 		catch (ExcelException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("excelSheetNotPresent", new ActionMessage(e.getMsg()));
 			saveMessages(request, messages); // storing messages as request attributes
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("dataNotUploaded", new ActionMessage("message.err.gridbifurcation.date.notuploaded"));
 			saveMessages(request, messages); // storing messages as request attributes
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			messages.add("dataNotUploaded", new ActionMessage("message.err.gridbifurcation.date.notuploaded"));
 			saveMessages(request, messages); // storing messages as request attributes
 		}

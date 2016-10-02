@@ -1,22 +1,25 @@
 package com.enercon.global.utils;
 
+import static com.enercon.connection.WcareConnector.wcareConnector;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.lang.reflect.Array;
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.text.DateFormat;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -27,13 +30,13 @@ import com.enercon.admin.dao.AdminDao;
 import com.enercon.admin.dao.AdminSQLC;
 import com.enercon.customer.dao.CustomerDao;
 import com.enercon.customer.util.CustomerUtil;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.controller.InitServlet;
-import com.enercon.global.utility.DatabaseUtility;
 import com.enercon.global.utility.DateUtility;
 
-import java.sql.Connection;	
-
-public class CallScheduler {	
+public class CallScheduler {
+	
+	private final static Logger logger = Logger.getLogger(CallScheduler.class);
 	
 	public void CallTimer() throws  Exception  {
 		
@@ -47,45 +50,35 @@ public class CallScheduler {
 	
 	public void pushScadaDataToECARE() throws Exception{
 		
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		Connection connection = wcareConnector.getConnectionFromPool();
 		
-		String sqlQuery=null;
+		String sqlQuery = null;
 		
-		CallableStatement cs = null;
+		CallableStatement callStatement = null;
 		
 		try{
+			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 			
 			Date date = new Date();
 			int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 			
 			String readingDate = dateFormat.format(date.getTime() -  MILLIS_IN_DAY);
-			
+			logger.warn("Start DATE:: " + readingDate);
 			sqlQuery = AdminSQLC.PUSH_SCADA_DATA_TO_ECARE;
-			cs = conn.prepareCall(sqlQuery);
-			cs.setObject(1, readingDate);
+			callStatement = connection.prepareCall(sqlQuery);
+			callStatement.setObject(1, readingDate);
         		        	
-			cs.executeUpdate();
+			callStatement.executeUpdate();
 			
-			cs.close();
-			
+			callStatement.close();
+			logger.warn("End DATE:: " + readingDate);
 		}
 		catch(Exception e){
-			e.getMessage();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally {
-	        try {	  
-	        	if (cs != null) cs.close();
-	            
-	            if (conn != null) {
-	            	conn.close();
-	            }
-	        } catch (Exception e) {	           
-	            cs = null;
-	        		            
-	        }
+			DaoUtility.releaseResources(callStatement, connection);
 	    }
 	}
 	
@@ -96,8 +89,8 @@ public class CallScheduler {
 	 * @throws Exception
 	 */
 	public void callSchedule(String scheduleRemark, String schedulerDate) throws  Exception {
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+	Connection conn = wcareConnector.getConnectionFromPool();
 	String sqlQuery=null;
 	PreparedStatement ps0=null,ps1=null;
 	ResultSet rs0=null,rs1=null;
@@ -1644,24 +1637,10 @@ GROUP BY S_SEND_TYPE;
 		
 	}catch(Exception e)
 	{
-		e.getMessage();
-		e.printStackTrace();
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 	}
 	finally {
-        try {
-            if (ps0 != null) ps0.close();
-            if (ps1 != null) ps1.close();
-            if (rs0 != null) rs0.close();
-            if (rs1 != null) rs1.close();
-            if (conn != null) {
-            	conn.close();
-            }
-        } catch (Exception e) {
-            ps0 = null;
-            ps1 = null;
-            rs0 = null;
-            ps1 = null;
-        }
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,ps0,ps1) , Arrays.asList(rs,rs0,rs1) , conn);
     }
 }
 }

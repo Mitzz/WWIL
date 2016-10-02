@@ -429,7 +429,7 @@ public final class DataValidation extends Action
 			return mapping.findForward("success");
 		}
 		catch(Exception e){
-			System.out.println("error:"+e);
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			msg = "<font class='errormsgtext'>"+e.toString()+"</font>";
 			session.setAttribute("msg",msg);
 			return mapping.findForward("failure");

@@ -23,10 +23,12 @@
         <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/screen.css" type="text/css">
         <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/MYCSS.css" type="text/css">
         <script type="text/javascript" src="<%=request.getContextPath()%>/scripts/mscript/lib/jquery-1.10.1.min.js"></script>
+        <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/debug.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/mySelectFunction.js"></script>
         
         <script type="text/javascript">
         	$(document).ready(function(){
+        		
         		
         		var queryResolver = -1;
         		$.fn.myFunction("customerSelection", "customerSelected", "customerLeftAll", "customerRightAll", "customerLeft", "customerRight");
@@ -35,10 +37,66 @@
         		$.fn.myFunction("areaSelection", "areaSelected", "areaLeftAll", "areaRightAll", "areaLeft", "areaRight");
         		$.fn.myFunction("siteSelection", "siteSelected", "siteLeftAll", "siteRightAll", "siteLeft", "siteRight");
         		$.fn.myFunction("wecSelection", "wecSelected", "wecLeftAll", "wecRightAll", "wecLeft", "wecRight");
+        		$.fn.myFunction("parameterSelection", "parameterSelected", "parameterLeftAll", "parameterRightAll", "parameterLeft", "parameterRight");
         		
+        		//dev();
+        		
+        		function dev(){
+        			//alert("Loaded");
+        			//$("#customerSelection option[value=" + "0905000002" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000616" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000702" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000382" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000591" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000790" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000766" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000698" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000774" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1002000003" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1002000004" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1004000026" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1002000002" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000276" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000467" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000309" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000788" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "0811000001" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1009000004" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1009000010" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1103000014" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1107000004" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1107000006" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1107000008" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1107000009" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1000000750" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1306000002" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1202000001" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1204000009" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1204000010" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1205000001" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1207000002" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1204000008" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1301000001" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1305000001" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1106000009" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1107000002" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1107000003" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1107000007" +"]").attr("selected","selected");
+        			$("#customerSelection option[value=" + "1404000004" +"]").attr("selected","selected");
+        			$('#customerRight').trigger("click");
+        			
+        		}
+
         		$("#gridBifurcationReport").submit(function(){
         			
         			if($.fn.isSelectBoxEmptyWithErrorMessage("#wecSelected", "Please select WEC.")){
+        				return false;
+        			}
+        			if($.fn.isSelectBoxEmptyWithErrorMessage("#parameterSelected", "Please select Parameter.")){
+        				return false;
+        			}
+        			if($('#structureType').val() == "ns"){
+        				alert("Please select Structure.");
         				return false;
         			}
         			if($.fn.isInputTextFieldEmptyWithErrorMessage("#fromDate", "Please select 'from' date.")){
@@ -63,6 +121,7 @@
     				}
         			alert("Report Implementation Date 01.02.2014(As we have started entering data in this specific format from 01-Feb-2014 onward).Also two additional column ('Customer Scope Shutdown' and 'Grid Trip Count') have been added from 27-AUG-2014");
         			$.fn.selectAllFunction("wecSelected");
+        			$.fn.selectAllFunction("parameterSelected");
         			
         			function validateFromDateToDate(fromDate, toDate){
         				if($.fn.calculateTimeDifferenceBetweenTwoDateInMinutes($.fn.getDateObject(fromDate),$.fn.getDateObject(toDate)) < 0){
@@ -75,6 +134,8 @@
         		
         		$("#generateArea").click(function(){
         			queryResolver = getFunctionResolver();
+        			
+        			logger("Query Resolver: " + queryResolver);
         			switch(queryResolver){
 	        			case 1:populateAreaSelectVoBasedOnCustomerIds();break;
 	        			case 2:populateAreaSelectVoBasedOnWECType();break;
@@ -117,6 +178,7 @@
     					
     					$.fn.ajaxRequest(param, populateAreaSelectionField);
     					
+    					
     				}
 					
 					function populateAreaSelectVoBasedOnStateIds(){
@@ -141,7 +203,9 @@
     					}
     					
     					$.fn.populateSelectionField("#areaSelection", data);
-    					
+    				
+    					//$('#areaRightAll').trigger("click");
+    					//$('#generateSite').trigger("click");
     				}
     			});
         		
@@ -194,6 +258,8 @@
     					
     					$.fn.populateSelectionField("#siteSelection", data);
     					
+    					//$('#siteRightAll').trigger("click");
+    					//$('#generateWec').trigger("click");
     				}
         		});
         		
@@ -244,7 +310,7 @@
         				
         				$.fn.populateSelectionField("#wecSelection", data);
         				
-        				
+        				//$('#wecRightAll').trigger("click");
         			}
         		});
         	});
@@ -433,6 +499,45 @@
 																		</select>
 																	</div>
 																</div>
+																<div class="divRow row11">
+																	<div class="divCell cell1">
+																		Select Parameters:
+																	</div>
+																	<div class="divCell cell2">
+																		<select size="5" name="parameterSelection" id="parameterSelection" multiple="multiple" style="width: 100%">
+																			 <option value="gen">Generation</option>
+																			 <option value="ma">Machine Availability</option>
+																			 <option value="ga">Grid Availability</option>
+																			 <option value="ophr">Operating Hours</option>
+																			 <option value="fm">FM</option>
+																			 <option value="ws">WS</option>
+																		</select>
+																	</div>
+																	<div class="divCell cell3">
+																		<input type="button" id="parameterRight"  value="->" alt="Move selected" /><br />
+                                                        				<input type="button" id="parameterRightAll"  value="->>" /><br />
+                                                        				<input type="button" id="parameterLeftAll"  value="<<-" /><br />
+                                                        				<input type="button" id="parameterLeft"  value="<-" />
+																	</div>
+																	<div class="divCell cell4">
+																		<select size="5" name="parameterSelected" id="parameterSelected"   multiple="multiple" style="width: 100%">
+																		</select>
+																	</div>
+																</div>
+																<div class="divRow row13">
+																	<div class="divCell cell1">
+																		Select Structure:
+																	</div>
+																	<div class="divCell cell2">
+																		<select name="structureType" id="structureType" style="width: 100%">
+																			<option value = "ns">--Select Structure--</option>
+																			<option value = "state">State-wise</option>
+																			<option value = "area">Area-wise</option>
+																			<option value = "site">Site-wise</option>
+																			<option value = "wecType">Model-wise</option>																	
+																		</select>
+																	</div>																											
+																</div>
 																<div class="divRow row12">
 																	<div class="divCell cell1">
 																		Select Period:
@@ -468,9 +573,9 @@
 																		
 																		</select>
 																	</div>																	
-																	<div class="divCell cell3">
+																	<!-- <div class="divCell cell3">
 																		<input type="checkbox" name="windspeed" id="windspeed">&nbsp; Wind speed
-																	</div>
+																	</div> -->
 														
 																</div>
 															</div>

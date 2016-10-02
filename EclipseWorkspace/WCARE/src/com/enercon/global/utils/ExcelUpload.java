@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import java.util.*;
@@ -20,6 +21,7 @@ import com.enercon.siteuser.dao.*;
 
 public final class ExcelUpload extends Action
 {
+	private final static Logger logger = Logger.getLogger(ExcelUpload.class);
 //	private static final long serialVersionUID = 1L;
 //	public void service(HttpServletRequest req,HttpServletResponse res)
 //	throws IOException, ServletException
@@ -82,7 +84,7 @@ public final class ExcelUpload extends Action
 			//req.setAttribute("msg", msg);			
 		}
 		catch(Exception e){
-			System.out.println("error:"+e);
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			msg = "<font class='errormsgtext'>"+e.toString()+"</font>";
 			session.setAttribute("msg",msg);
 			return mapping.findForward("failure");

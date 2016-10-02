@@ -13,18 +13,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.ExcelReader;
 import com.enercon.global.utils.JDBCUtils;
 			 
-public class InitialReadingUploadHandler extends Action{
+public class InitialReadingUploadHandler extends Action implements WcareConnector{
 	private final String UPLOAD_DIRECTORY = "C:/uploads";
-	
+	private final static Logger logger = Logger.getLogger(InitialReadingUploadHandler.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
@@ -136,7 +139,7 @@ public class InitialReadingUploadHandler extends Action{
 		//System.out.println("Customer Id:" + customerID);
 		//System.out.println("EB Id:" + ebId);
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -144,7 +147,7 @@ public class InitialReadingUploadHandler extends Action{
 		
 		//String customerID = null;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Merge Into Tbl_Wec_Reading T " + 
 						"        Using (Select ? As D_Reading_Date,'0808000022' As S_Mp_Id, ? As S_Wec_Id From Dual) S " + 
 						"        On (T.S_Wec_Id = S.S_Wec_Id And T.D_Reading_Date = S.D_Reading_Date And T.S_Mp_Id = S.S_Mp_Id and T.S_CREATED_BY = 'SYSTEM') " + 
@@ -222,23 +225,10 @@ public class InitialReadingUploadHandler extends Action{
 		prepStmt.close();
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			 DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		//return null;
 		
@@ -255,7 +245,7 @@ public class InitialReadingUploadHandler extends Action{
 		//System.out.println("Customer Id:" + customerID);
 		//System.out.println("EB Id:" + ebId);
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -263,7 +253,7 @@ public class InitialReadingUploadHandler extends Action{
 		
 		//String customerID = null;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Merge Into Tbl_Wec_Reading T " + 
 						"        Using (Select ? As D_Reading_Date,'0808000022' As S_Mp_Id, ? As S_Wec_Id From Dual) S " + 
 						"        On (T.S_Wec_Id = S.S_Wec_Id And T.D_Reading_Date = S.D_Reading_Date And T.S_Mp_Id = S.S_Mp_Id)" + 
@@ -341,23 +331,10 @@ public class InitialReadingUploadHandler extends Action{
 		prepStmt.close();
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			 DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		//return null;
 		
@@ -365,7 +342,7 @@ public class InitialReadingUploadHandler extends Action{
 
 	public String getEbIdFromWECId(String wecId) {
 		// Select S_Wec_Id From Tbl_Wec_Master Where S_Wecshort_Descr = '&DESCR'
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -373,7 +350,7 @@ public class InitialReadingUploadHandler extends Action{
 		
 		String ebId = null;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select S_EB_Id " + 
 						"From Customer_Meta_Data " + 
 						"where S_wec_id = ? ";  
@@ -387,30 +364,17 @@ public class InitialReadingUploadHandler extends Action{
 			return ebId;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			 DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}
 
 	public String getCustomerIDFromWECId(String wecId) {
 		// Select S_Wec_Id From Tbl_Wec_Master Where S_Wecshort_Descr = '&DESCR'
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -418,7 +382,7 @@ public class InitialReadingUploadHandler extends Action{
 		
 		String customerId = null;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select S_Customer_Id " + 
 						"From Customer_Meta_Data " + 
 						"where S_wec_id = ? " ; 
@@ -432,30 +396,17 @@ public class InitialReadingUploadHandler extends Action{
 			return customerId;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			 DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}
 
 	public String getWECIdFromDescription(String wecDescription) {
 		// Select S_Wec_Id From Tbl_Wec_Master Where S_Wecshort_Descr = '&DESCR'
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -463,7 +414,7 @@ public class InitialReadingUploadHandler extends Action{
 		
 		String wecID = null;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select S_WEC_ID From Tbl_Wec_Master Where S_Wecshort_Descr in (?)";
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, wecDescription);
@@ -474,23 +425,10 @@ public class InitialReadingUploadHandler extends Action{
 			return wecID;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			 DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}

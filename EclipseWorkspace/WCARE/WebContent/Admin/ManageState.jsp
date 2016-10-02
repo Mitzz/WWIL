@@ -73,7 +73,7 @@ function showAppDetails(dataXml)
 	   	 		document.forms[0].StateIdtxt.value = "";
 	   	 	}   	 	
 		}
-		
+		console.log(str);
 		divdetails.innerHTML = str;
 }
 function findDetails(stateid)

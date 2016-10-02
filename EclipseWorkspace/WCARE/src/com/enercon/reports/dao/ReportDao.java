@@ -18,8 +18,12 @@ import java.util.Vector;
 
 import oracle.jdbc.driver.OracleTypes;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.dao.master.StateMasterDao;
+import com.enercon.global.utility.DatabaseUtility;
 import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.MethodClass;
 import com.enercon.global.utility.TimeUtility;
@@ -34,11 +38,13 @@ import com.enercon.struts.pojo.ScadaDataJump;
 public class ReportDao implements WcareConnector{
 	
 	public ReportDao(){}
+	
+	private final static Logger logger = Logger.getLogger(ReportDao.class);
 
 	public String getRPTAjaxDetails(String item,String action,String UserId) throws Exception{
 		StringBuffer xml = new StringBuffer();
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement ps = null;
 		PreparedStatement ps1 = null;
 		PreparedStatement ps2 = null;
@@ -565,64 +571,13 @@ public class ReportDao implements WcareConnector{
 			xml.append("</projhead>\n");
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			}
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (ps != null) ps.close();
-				if (ps1 != null) ps1.close();
-				if (ps2 != null) ps2.close();
-				if (rs != null) rs.close();
-				if (rs1 != null) rs1.close();
-				if (rs2 != null) rs2.close();
-				if (conn != null) 
-				{
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				ps = null;
-				ps1 = null;
-				ps2 = null;
-				rs = null;
-				rs1 = null;
-				rs2 = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(ps,ps1,ps2) , Arrays.asList(rs,rs1,rs2) , conn);
 		}
 		return xml.toString();
 	}
@@ -673,8 +628,7 @@ public class ReportDao implements WcareConnector{
 		}
 		catch (Exception e)
 		{
-			System.out.println("Error: fetchALL: exception");
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 
@@ -682,8 +636,8 @@ public class ReportDao implements WcareConnector{
 			throws Exception {
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yyyy");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -827,28 +781,11 @@ public class ReportDao implements WcareConnector{
 			rs.close();
 		}      
 		catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conmanager.closeConnection();
-					conn = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conmanager.closeConnection();
-					conn = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 		}
 		return tranList;
 	}
@@ -857,8 +794,8 @@ public class ReportDao implements WcareConnector{
 			throws Exception {
 		// SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		// SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yyyy");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		// PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -935,28 +872,11 @@ public class ReportDao implements WcareConnector{
 			rs.close();
 		}      
 		catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conmanager.closeConnection();
-					conn = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conmanager.closeConnection();
-					conn = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -967,8 +887,8 @@ public class ReportDao implements WcareConnector{
 		SimpleDateFormat format1 = new SimpleDateFormat("dd-MMM-yyyy");
 		DecimalFormat dformat = new DecimalFormat("#########0.00");
 		DecimalFormat dformat1 = new DecimalFormat("#########0");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1381,28 +1301,11 @@ public class ReportDao implements WcareConnector{
 			rs.close();
 		}      
 		catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conmanager.closeConnection();
-					conn = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conmanager.closeConnection();
-					conn = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 		}
 		return tranList;
 	}
@@ -1503,23 +1406,10 @@ public class ReportDao implements WcareConnector{
 			return gridBifurcationReportVos;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return gridBifurcationReportVos;
 	
@@ -1557,7 +1447,9 @@ public class ReportDao implements WcareConnector{
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1, fromDate);
 				prepStmt.setObject(2, toDate);
+				logger.debug("Before Query Execute");
 				rs = prepStmt.executeQuery();
+				logger.debug("After Query Execute");
 				while (rs.next()) {
 					//displayResultSet(rs);
 					wecCount = rs.getInt("WEC_COUNT");
@@ -1603,6 +1495,7 @@ public class ReportDao implements WcareConnector{
 					gridBifurcationReportVos.add(vo);
 					
 				}
+				logger.debug("After Loop Execute");
 				if(prepStmt != null){
 					prepStmt.close();
 				}
@@ -1613,23 +1506,10 @@ public class ReportDao implements WcareConnector{
 			return gridBifurcationReportVos;
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return gridBifurcationReportVos;
 	
@@ -1678,23 +1558,10 @@ public class ReportDao implements WcareConnector{
 			return revenueTotal;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 		return revenueTotal;
 
@@ -1741,21 +1608,7 @@ public class ReportDao implements WcareConnector{
 			return generationTotal;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 	}
 
@@ -1795,20 +1648,7 @@ public class ReportDao implements WcareConnector{
 			return revenueTotal;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 
 	}
@@ -1862,11 +1702,10 @@ public class ReportDao implements WcareConnector{
 					vo.calculateDifferenceInGenOper();
 					
 					scadaDataJump.add(vo);
-					/*vo.validateData();
-					if(vo.isDataCorrupt()){
-						System.out.println(vo);
-						
-					}*/
+//					vo.validateData();
+//					if(vo.isDataCorrupt())
+//						logger.debug(vo);
+					
 					
 				}
 				if(prepStmt != null){
@@ -1879,29 +1718,16 @@ public class ReportDao implements WcareConnector{
 			return scadaDataJump;
 		}
 		catch(Exception e){
-			e.printStackTrace();
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n");
+			
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return scadaDataJump;
 	}
 	
-public static String getSqlQueryForHistoricalDataView1() {
+	public static String getSqlQueryForHistoricalDataView1() {
 		
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -1921,25 +1747,10 @@ public static String getSqlQueryForHistoricalDataView1() {
 
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 		return queryForHistoricalDataVw1;
 	}
@@ -1958,25 +1769,10 @@ public static void createViewForHistoricalData(String sqlQuery) {
 			
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 		
 	}
@@ -1985,14 +1781,14 @@ public static void createViewForHistoricalData(String sqlQuery) {
 		
 
 		List<GridBifurcationReportVo> historicalDataReportVo = new ArrayList<GridBifurcationReportVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			
 			
 				sqlQuery = 
@@ -2066,23 +1862,10 @@ public static void createViewForHistoricalData(String sqlQuery) {
 			return historicalDataReportVo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return historicalDataReportVo;
 	}
@@ -2094,14 +1877,14 @@ public static void createViewForHistoricalData(String sqlQuery) {
 		DecimalFormat df2 = new DecimalFormat("###.##");
 		
 		List<GridBifurcationReportVo> historicalDataReporttVos = new ArrayList<GridBifurcationReportVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			
 				sqlQuery = 
 						"Select S_STATE_NAME, S_SITE_NAME, S_WEC_TYPE, S_CUSTOMER_NAME, " + 
@@ -2176,23 +1959,10 @@ public static void createViewForHistoricalData(String sqlQuery) {
 			return historicalDataReporttVos;
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return historicalDataReporttVos;
 	
@@ -2284,23 +2054,10 @@ public static void createViewForHistoricalData(String sqlQuery) {
 				return overAllVo;
 		}//end of try block
 		catch(Exception e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return overAllVo;
  }
@@ -2317,6 +2074,7 @@ public static void createViewForHistoricalData(String sqlQuery) {
 		
 		try{
 			conn = wcareConnector.getConnectionFromPool();
+			
 			for(List<String> splitWecIds : GlobalUtils.splitArrayList(wecIds, 900)){
 				sqlQuery = 
 						"Select GR.S_STATE_NAME, GR.S_SITE_NAME, GR.S_WEC_TYPE, GR.S_CUSTOMER_NAME, " + 
@@ -2328,19 +2086,23 @@ public static void createViewForHistoricalData(String sqlQuery) {
 						"SUM(CFACTOR) AS CFACTOR, SUM(MAVIAL) AS MAVIAL, SUM(GAVIAL) AS GAVIAL,   SUM(RAV) AS RAV ,  SUM(GIAVIAL) AS GIAVIAL, " + 
 						"SUM(GEA) AS GEA , SUM(WECLOADRST) AS WECLOADRST, SUM(EBLOADRST) AS EBLOADRST, SUM( FAULT_HOUR) AS FAULT_HOUR, SUM(CUSTOMER_SCOPE) as CUSTOMER_SCOPE,SUM(GRID_TRIP_COUNT) as GRID_TRIP_COUNT, " +
 						"ROUND(avg(WC.n_avg_windspeed),2) as AVG_WINDSPEED,"+
-			            "ROUND(avg(WC.n_max_windspeed),2) as MAX_WINDSPEED,round(avg(WC.n_min_windspeed),2) as MIN_WINDSPEED"+
-						" From VW_GRID_REPORT GR ,SCADADW.TBL_WEC_SCADA_READING WC" + 
-						" Where GR.S_Wec_Id In " + GlobalUtils.getStringFromArrayForQuery(splitWecIds) + 
-						" And GR.D_Reading_Date between ? and ? " + 
-						" and GR.d_reading_date=WC.d_date"+
-						" and GR.S_Wec_Id=WC.S_Wec_Id"+		
+			            "ROUND(avg(WC.n_max_windspeed),2) as MAX_WINDSPEED,round(avg(WC.n_min_windspeed),2) as MIN_WINDSPEED "+
+						"From VW_GRID_REPORT GR ,SCADADW.TBL_WEC_SCADA_READING WC " + 
+						"Where GR.S_Wec_Id In " + GlobalUtils.getStringFromArrayForQuery(splitWecIds) + 
+						"And GR.D_Reading_Date between ? and ? " + 
+						"and GR.d_reading_date=WC.d_date "+
+						"and GR.S_Wec_Id=WC.S_Wec_Id "+
+						"and wc.D_date >= ? " +
 						" group by GR.S_STATE_NAME, GR.S_SITE_NAME, GR.S_WEC_TYPE,  GR.S_CUSTOMER_NAME,GR.S_WECSHORT_DESCR " +
 						" order by GR.S_CUSTOMER_NAME, GR.S_WECSHORT_DESCR" ; 
 	
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1, fromDate);
 				prepStmt.setObject(2, toDate);
+				prepStmt.setObject(3, fromDate);
+				logger.debug("Before Query Execute");
 				rs = prepStmt.executeQuery();
+				logger.debug("After Query Execute");
 				while (rs.next()) {
 					//displayResultSet(rs);
 					wecCount = rs.getInt("WEC_COUNT");
@@ -2389,40 +2151,29 @@ public static void createViewForHistoricalData(String sqlQuery) {
 					gridBifurcationReportVos.add(vo);
 					
 				}
+				logger.debug("After Loop Execute");
 				if(prepStmt != null){
 					prepStmt.close();
 				}
 				if(rs != null){
 					rs.close();
 				}
+				
 			}
 			return gridBifurcationReportVos;
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return gridBifurcationReportVos;
 		}
 
 	public static List<GridBifurcationReportVo> getWecInfoWecWiseWithWindspeedBetweenDays(List<String> wecIds, String fromDate, String toDate) {
 		List<GridBifurcationReportVo> gridBifurcationReportVos = new ArrayList<GridBifurcationReportVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -2508,23 +2259,10 @@ public static void createViewForHistoricalData(String sqlQuery) {
 			return gridBifurcationReportVos;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return gridBifurcationReportVos;
 	

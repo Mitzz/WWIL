@@ -13,11 +13,12 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
-import com.enercon.dao.master.LoginMasterDao;
 import com.enercon.global.utils.DynaBean;
 import com.enercon.global.utils.GlobalUtils;
 import com.enercon.model.master.LoginMasterVo;
 import com.enercon.security.utils.SecurityUtils;
+import com.enercon.service.TransactionMasterService;
+import com.enercon.service.master.LoginMasterService;
 
 public class SecurityServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -27,7 +28,7 @@ public class SecurityServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		System.out.println("");
+		//System.out.println("");
 	}
 
 	@Override
@@ -46,21 +47,24 @@ public class SecurityServlet extends HttpServlet {
 		if (request.getRemoteHost() != null)
 			iphost = request.getRemoteHost();
 		
-		logger.debug("DynaBean:" + dynaBean);
-		logger.debug("Client IP Addr: " + request.getRemoteAddr() + ", Client IP Host: " + request.getRemoteHost());
+		logger.trace("DynaBean:" + dynaBean);
+		logger.trace("Client IP Addr: " + request.getRemoteAddr() + ", Client IP Host: " + request.getRemoteHost());
 		
 		try {
 			String sLoginID = dynaBean.getProperty("sLoginID").toString().toUpperCase(); 
 			String sPassWord = dynaBean.getProperty("sPassword").toString();
 			String sroleID = null;
-			LoginMasterVo loginMasterVo = new LoginMasterDao().get(sLoginID, sPassWord);
-			boolean isEmployeeActive = false;
-			boolean isEmployeeValid = loginMasterVo != null;
 			
-			if(isEmployeeValid) isEmployeeActive = loginMasterVo.getActive().equals("1");
+			//LoginMasterVo has RoleMasterVo
+			LoginMasterVo loginMasterVo = LoginMasterService.getInstance().get(sLoginID, sPassWord);
 			
-			if (isEmployeeValid && isEmployeeActive) {
-				logger.debug("if block 1");
+			boolean isLoginValid = loginMasterVo != null;
+			boolean isLoginActive = false;
+			
+			if(isLoginValid) isLoginActive = loginMasterVo.getActive().equals("1");
+			
+			if (isLoginValid && isLoginActive) {
+				logger.trace("if block 1");
 				sroleID = loginMasterVo.getRole().getId();
 				String roleName = loginMasterVo.getRole().getName();
 				
@@ -74,16 +78,19 @@ public class SecurityServlet extends HttpServlet {
 					
 				String loginRoleHistoryId = "";
 				loginRoleHistoryId = secUtil.insertLoginHistory(sLoginID,sPassWord, sroleID, ipadd,iphost);
-				logger.debug("loginRoleHistoryId->secUtil.insertLoginHistory(sLoginID, sPassWord, sroleID,ipadd,iphost):" + loginRoleHistoryId);
+				logger.trace("loginRoleHistoryId->secUtil.insertLoginHistory(sLoginID, sPassWord, sroleID,ipadd,iphost):" + loginRoleHistoryId);
 				
+				session.setAttribute("Tracker", loginMasterVo.getPassword() + ":" + loginRoleHistoryId);
 				if (loginMasterVo.getLoginType().equals("C") && sLoginID.equals("IREDA") && sPassWord.equals("iredapwd")) {
-					logger.debug("if block 5");
+					logger.trace("if block 5");
 					include("/ERDAmain.jsp", request, response);
 				}
 				else {
-					logger.debug("else block 5");
+					logger.trace("else block 5");
 
 					List roleTranList = secUtil.getAllTransactions(sroleID);
+					session.setAttribute("transactions", TransactionMasterService.getInstance().get(loginMasterVo.getRole()));
+					
 					session.setAttribute("RoleName", roleName);
 					session.setAttribute("transactionList", roleTranList);
 					
@@ -93,67 +100,65 @@ public class SecurityServlet extends HttpServlet {
 					request.setAttribute("LoggedIn", "TRUE");
 
 					if (secUtil.isPasswordChange(sLoginID)) {
-						logger.debug("if block 11");
+						logger.trace("if block 11");
 						forceToChangePassword(request, response);
 					} else {
-						logger.debug("else block 11");
+						logger.trace("else block 11");
 						if (loginMasterVo.getLoginType().equals("C")) {
-							logger.debug("if block 12");
+							logger.trace("if block 12");
 							String msgg = secUtil.getCustinformation(sLoginID);
-							logger.debug("msgg: " + msgg);
+							logger.trace("msgg: " + msgg);
 							if (msgg.equals("Informationexist")) {
-								logger.debug("if block 13");
+								logger.trace("if block 13");
 								List custtype = secUtil.getcustomerdetails(sLoginID);
-								logger.debug("custtype: " + custtype);
+								logger.trace("custtype: " + custtype);
 								session.setAttribute("custtypee", custtype);
 								include(request, response);
 							} else {
-								logger.debug("else block 13");
+								logger.trace("else block 13");
 								include("/ManageProfile.jsp", request, response);//Redirected to '/ThankOut.jsp'
 							}
 						} else {
-							logger.debug("if block 12");
+							logger.trace("if block 12");
 							include(request, response);
 						}
 					}
 				}
 			} else {
-				logger.debug("else block 1");
-				if(isEmployeeValid)
-					if(isEmployeeActive) 	invalidDataHandler(request,response, "Role Not Defined");
-					else 					invalidDataHandler(request,response, "Your Username is Deactivated");
-				else 						invalidDataHandler(request,response, "Invalid Invalid User Id/Password. Try Again.");
+				logger.trace("else block 1");
+				if(isLoginValid)
+					if(isLoginActive) 	invalidDataHandler(request,response, "Role Not Defined");
+					else 					invalidDataHandler(request,response, loginMasterVo.getRemarks());
+				else 						invalidDataHandler(request,response, "Invalid User Id/Password. Try Again.");
 			}
 		} catch (Exception ex) {
-			logger.equals("ENERCON: SecurityServlet: doPost: Exception: " + ex.toString());
-			logger.error(ex.getMessage());
-//			ex.printStackTrace();
+			logger.warn(request.getSession() == null ? "Snull" : request.getSession().getAttribute("loginID"));
+			logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
 			try {
 				include("/Error.jsp", request, response);
 			} catch (Exception e) {
-				logger.equals("ENERCON: SecurityServlet: doPost: Exception: " + e.toString());
-				
-				e.printStackTrace();
+				logger.warn(request.getSession() == null ? "Snull" : request.getSession().getAttribute("loginID"));
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
 	
 	public void invalidDataHandler(HttpServletRequest request, HttpServletResponse response, String errorMessage) throws Exception{
 		HttpSession session = request.getSession(false);
-		logger.debug("Entering.....");
+		logger.trace("Entering.....");
 		session.setAttribute("valid", "false");
 		session.setAttribute( "ERROR_MSG", "<font class='errormsgtext'>" + errorMessage + "</font>");
 		include("/index.jsp", request, response);
-		logger.debug("Leaving.....");
+		logger.trace("Leaving.....");
 	}
 
 	public void include(String sPath, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		logger.debug("Entering.....");
-		logger.debug("sPath: " + sPath);
+		logger.trace("Entering.....");
+		logger.trace("sPath: " + sPath);
 		ServletConfig config = getServletConfig();
 		ServletContext context = config.getServletContext();
 		context.getRequestDispatcher(sPath).include(request, response);
-		logger.debug("Leaving.....");
+		logger.trace("Leaving.....");
 	}
 	
 	public void include(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -163,5 +168,4 @@ public class SecurityServlet extends HttpServlet {
 	public void forceToChangePassword(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		include("/ForceToChangePassword.jsp", request, response);
 	}
-	
 }

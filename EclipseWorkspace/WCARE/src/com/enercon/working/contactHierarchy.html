@@ -6,7 +6,7 @@
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 </head>
 <body>
-<!-- <p id="heading"></p>
+	<!-- <p id="heading"></p>
 <p id="row1"></p>
 <p id="row2"></p>
 <p id="row3"></p>
@@ -15,60 +15,70 @@ var contactHierarchy = "<contact-hierarchy> 	<contact> 		<contact-priority> Firs
 
 console.dir($.parseXML( contactHierarchy ));
  -->
- 
- <input type="button" id = "btnGenerate" value="Generate Table" />
-<hr />
-<div id="dvTable">
-</div>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript">
+
+	<input type="button" id="btnGenerate" value="Generate Table" />
+	<hr />
+	<div id="dvTable"></div>
+	<script type="text/javascript"
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript">
 $(function () {
     $("#btnGenerate").click(function () {
-    	
-    	var xmlData = "<contact-hierarchy> 	<contact> 		<contact-priority> First Contact Point </contact-priority> 		<name> DJ.Sharma</name> 		<designation> Head - Customer Relationship Management </designation> 		<email-id> dinesh.sharma@windworldindia.com </email-id> 		<contact-number> 9820071182</contact-number> 	</contact>  	<contact> 		<contact-priority> Second Contact Point </contact-priority> 		<name> Manjit Bhagira </name> 		<designation> Head - Central Support </designation> 		<email-id> manjit.bhagira@windworldindia.com</email-id> 		<contact-number> 9967783313</contact-number> 	</contact>  	<contact> 		<contact-priority> Third Contact Point </contact-priority> 		<name> Brig.YVR vijay </name> 		<designation> Head - WWO </designation> 		<email-id> yvr.vijay@windworldindia.com </email-id> 		<contact-number> 9167617817</contact-number> 	</contact> </contact-hierarchy>";
+/*     	
+    	<?xml version="1.0" encoding="UTF-8"?>
+    	<!-- <contact-hierarchy><contact><office-location><office> A1  </office><office> A2 </office></office-location><name> B1  </name></contact> <contact><office-location><office> A3 </office></office-location><name> B2  </name></contact></contact-hierarchy> -->
+    	<contact-hierarchy>
+    		<contact>
+    			<office-location>
+    				<office> A1  </office>
+    				<office> A2 </office>
+    			</office-location>
+    			<name> B1  </name>
+    		</contact>
+    		<contact>
+    			<office-location>
+    				<office> A3 </office>
+    			</office-location>
+    			<name> B2  </name>
+    		</contact>
+    	</contact-hierarchy>
+
+ */
+ 		$("<table/>", {id:"table",border:"1"}).appendTo("#dvTable");
+    	var xmlData = "<contact-hierarchy><contact><office-location><office> A1  </office><office> A2 </office><office> A3 </office></office-location><name> B1  </name></contact> <contact><office-location><office> A3 </office></office-location><name> B2  </name></contact></contact-hierarchy>";
         //Build an array containing Customer records.
     	var xmlDoc = $.parseXML(xmlData);
         var $xml = $(xmlDoc);
         var $contact = $xml.find('contact');
+        /* console.log(typeof $contact);
+        console.dir($contact); */
+        var className = "";
         $contact.each(function(index){
         	
         	console.log(index);
-        	console.log("Contact Priority: " + $(this).find('contact-priority').text())
-        	console.log("Name: " + $(this).find('name').text())
-        	console.log("Designation: " + $(this).find('designation').text())
-        	console.log("Email-id: " + $(this).find('email-id').text())
-        	console.log("contact-number: " + $(this).find('contact-number').text())
+        	className = "contact" + index;
+        	var contactName = $(this).find('name').text();
+        	var officeLocation = $(this).find('office-location');
+        	var offices = officeLocation.find('office');
+        	var officeName = [];
+        	var noOfOffices = offices.length;
+        	console.log("Offices: " + noOfOffices);
+        	for(var z = 0; z < noOfOffices; z++){
+        		officeName.push($(offices[z]).first().text());
+        	}
+        	console.log("Office Data: " + officeName);
         	
+            $("<tr/>", {class:className}).appendTo("#table");
+            $("<td/>", {text:officeName[0]}).appendTo("." + className)/* .css({"text-align" : "center", "font-size" : "15px"})*/;
+            $("<td/>", {text:contactName, rowspan:noOfOffices }).appendTo("." + className)
+            
+            for(var i = 1; i < noOfOffices; i++){
+            	$("<td/>", {text:officeName[i]}).appendTo($("<tr/>").appendTo("#table"))/* .css({"text-align" : "center", "font-size" : "15px"}) */;	
+            }
         });
     });
 });
 </script>
-	<table border='0' cellpadding='2' cellspacing='1' width='100%'>
-		<tr align='center' height='20'>
-			<th colspan=3 class='detailsheading' width='300'>Message
-				Displayed To Customer</th>
-		</tr>
-		<tr align='center' height='20'>
-			<th class='detailsheading' width='30'>S.N.</th>
-			<th class='detailsheading' width='230'>Customer</th>
-			<th class='detailsheading' width='40'>D</th>
-		</tr>
-		<tr align='center' height='20' class='detailsbody'>
-			<td ALIGN='center'>1</td>
-			<td align='left'>A B MALLIKARJUNA</td>
-			<td align='center'>
-				<input type='image' src='/WCARE/resources/images/delet.gif' alt='Click to edit the record' onClick=DelMsgTemp('1507000010','1209000007') />
-			</td>
-		</tr>
-		<tr align='center' height='20'>
-			<td colspan=3 class='detailsheading' width='300'>
-				<input type='button' value='Send Message' onClick='SentMsg()' />
-			</td>
-		</tr>
-		<tr align='center' height='20'>
-			<td colspan=3 class='detailsheading' width='300'><input
-				type='button' value='Clear' onClick=DelCustTemp('1507000010',',1209000007')></td>
-		</tr>
-	</table>
+	
 </body>
 </html>

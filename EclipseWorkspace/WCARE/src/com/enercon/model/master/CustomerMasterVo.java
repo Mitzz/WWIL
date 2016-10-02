@@ -78,8 +78,8 @@ public class CustomerMasterVo implements WecsPresent {
 		return login;
 	}
 
-	public void setLogin(LoginMasterVo login) {
+	/*public void setLogin(LoginMasterVo login) {
 		login.addCustomer(this);
 		this.login = login;
-	}
+	}*/
 }

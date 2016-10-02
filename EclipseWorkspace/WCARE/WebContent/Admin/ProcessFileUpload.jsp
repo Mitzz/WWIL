@@ -1,3 +1,5 @@
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%@page import="org.apache.log4j.Logger"%>
 <%@page import="com.enercon.global.utility.MethodClass"%>
 <%@ page contentType="text/html;charset=windows-1252"%>
 <%@ page import="org.apache.commons.fileupload.DiskFileUpload"%>
@@ -7,6 +9,8 @@
 <%@ page import="java.io.File"%>
 
 <%@ page import="com.enercon.global.controller.InitServlet"%>
+
+<%! private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
 <html>
 <head>
 <%
@@ -18,7 +22,7 @@
 <title>Process File Upload</title>
 </head>
 <%
-	//System.out.println("Content Type ="+request.getContentType());
+	//logger.debug("Content Type ="+request.getContentType());
 	String msg = "";
 	String extension = "";
 	String filename = "";
@@ -31,48 +35,52 @@
 	Iterator itr = fileItems.iterator();
 
 	while (itr.hasNext()) {
+		logger.debug("while loop");
 		FileItem fi = (FileItem) itr.next();
 		//Check if not form field so as to only handle the file inputs
 		//else condition handles the submit button input
 		filename = fi.getFieldName();
-		//System.out.println("Filename:" + filename);
+		logger.debug("Filename:" + filename);
 		if (filename.equals("filestype")) {
+			logger.debug("if 1");
 			extension = fi.getString();
-			//System.out.println(extension);
+			logger.debug("Extension: " + extension);
 		}
 		if (!fi.isFormField()) {
-			//System.out.println(//System.getProperty("user.dir"));
-			//System.out.println("NAME: "+fi.getName());
-			//System.out.println("SIZE: "+fi.getSize());
-			//			//System.out.println("PATH: "+application.getRealPath("/"));
-			//System.out.println("Upload file path : "+servlet.getDatabaseProperty("uploadfilepath"));
-			//System.out.println("Linux Path : "+servlet.getDatabaseProperty("luploadfilepath"));
-			//System.out.println(fi.getOutputStream().toString());
+			logger.debug("if 2");
+			logger.debug("user.dir: " + System.getProperty("user.dir"));
+			logger.debug("NAME: "+fi.getName());
+			logger.debug("SIZE: "+fi.getSize());
+			logger.debug("PATH: "+application.getRealPath("/"));
+			logger.debug("Upload file path : "+servlet.getDatabaseProperty("uploadfilepath"));
+			//logger.debug("Linux Path : "+servlet.getDatabaseProperty("luploadfilepath"));
+			logger.debug("Output: " + fi.getOutputStream().toString());
 			File tempFileRef = new File(fi.getName());
 			String name = tempFileRef.getName();
 			String userSeparator = "\\";
 			name = name.substring(name.lastIndexOf(userSeparator) + 1,
 					name.length());
-			//System.out.println("File name:"+ name);
+			logger.debug("File name:"+ name);
 			if (name.toLowerCase().endsWith(extension)) {
+				logger.debug("if 3");
 				request.setAttribute("filenm", name);
 				request.setAttribute("Exceltxt",
 						servlet.getDatabaseProperty("uploadfilepath")
 								+ "/" + extension + "/" + name);
 				//				File fNew = new File(application.getRealPath("/")+"Admin/" + extension + "/",tempFileRef.getName());
-				File fNew = new File(
-						servlet.getDatabaseProperty("uploadfilepath")
-								+ "/" + extension + "/", name);
-				//System.out.println(fNew.getAbsolutePath());	            
+				File fNew = new File(servlet.getDatabaseProperty("uploadfilepath") + "/" + extension + "/", name);
+				logger.debug(fNew.getAbsolutePath());	            
 				fi.write(fNew);
 				msg = "<font class='sucessmsgtext'>Upload Successful!</font>";
 			} else {
+				logger.debug("else 3");
 				msg = "<font class='errormsgtext'>Please select "
 						+ extension.toUpperCase() + " File</font>";
 				request.setAttribute("FileError", "fileerror");
 			}
 		} else {
-			//System.out.println("Field ="+fi.getFieldName());
+			logger.debug("else 2");
+			//logger.debug("Field ="+fi.getFieldName());
 			request.setAttribute(fi.getFieldName().toString(), fi
 					.getString().toString());
 		}
@@ -82,12 +90,12 @@
 	}
 	ServletConfig sc = getServletConfig();
 	ServletContext context = sc.getServletContext();
-	String admin_input_type = (String) request
-			.getAttribute("Admin_Input_Type");
+	String admin_input_type = (String) request.getAttribute("Admin_Input_Type");
 	if (admin_input_type.equals("UploadFederData")) {
 		context.getRequestDispatcher("/uploadfederdata.do").forward(
 				request, response);
 	} else if (admin_input_type.equals("UploadEBData")) {
+		logger.debug("s1");
 		context.getRequestDispatcher("/uploadebdata.do").forward(
 				request, response);
 	} else if (admin_input_type.equals("UploadWECData")) {

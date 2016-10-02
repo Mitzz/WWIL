@@ -1,3 +1,5 @@
+
+
 package com.enercon.customer.dao;
 import java.io.File;
 import java.io.FileReader;
@@ -15,6 +17,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +35,7 @@ import org.apache.log4j.Logger;
 
 import com.enercon.admin.dao.AdminDao;
 import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utility.DatabaseUtility;
 import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.DebuggerUtility;
@@ -40,7 +44,6 @@ import com.enercon.global.utility.TimeUtility;
 import com.enercon.global.utils.CodeGenerate;
 import com.enercon.global.utils.DynaBean;
 import com.enercon.global.utils.GlobalUtils;
-import com.enercon.global.utils.JDBCUtils;
 import com.enercon.security.dao.SecuritySQLC;
 
 public class CustomerDao extends DebuggerUtility implements WcareConnector{
@@ -96,23 +99,10 @@ public class CustomerDao extends DebuggerUtility implements WcareConnector{
 			return stateID_siteId;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 			
 		}
 		return stateID_siteId;
@@ -157,23 +147,10 @@ public class CustomerDao extends DebuggerUtility implements WcareConnector{
 			return siteID_siteDetail;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 			
 		}
 		return siteID_siteDetail;
@@ -206,10 +183,11 @@ public class CustomerDao extends DebuggerUtility implements WcareConnector{
 		prepStmt = conn.prepareStatement(sqlQuery);
 		prepStmt.setObject(1, ebId);
 		
-
+			DaoUtility.displayQueryWithParameter(23, sqlQuery, ebId);
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			while (rs.next()) {
+				DaoUtility.getRowCount(23, rs);
 				tranList.add((String)rs.getObject(1));
 				/*String machineQuery = "Select SUM(n_actual_value) " +
 										"From TBL_WEC_READING " +
@@ -259,21 +237,9 @@ public class CustomerDao extends DebuggerUtility implements WcareConnector{
 			
 
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,machinePrepStmt,gridPrepStmt) , Arrays.asList(rs,machineRS,gridRS) , conn);
 		}
 		return tranList;
 	}
@@ -302,25 +268,11 @@ public String getCustemail(String UserId)throws Exception {
 		prepStmt.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		 logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return msg;
 }
@@ -357,25 +309,11 @@ public static String getCustCapacity(String CustId)throws Exception {
 		prepStmt.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-		}
+		 DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return msg;
 }
@@ -411,25 +349,11 @@ public static String getSiteRemarks(String siteName)throws Exception {
 		prepStmt.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-		}
+		 DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return msg;
 }
@@ -458,8 +382,7 @@ try {
 	java.util.Date ttd = format.parse(td);
 	java.sql.Date todate = new java.sql.Date(ttd.getTime());
 	String msgid = "";
-	if (dynaBean.getProperty("MsgIdtxt") == null
-			|| dynaBean.getProperty("MsgIdtxt").equals("")) {
+	if (dynaBean.getProperty("MsgIdtxt") == null || dynaBean.getProperty("MsgIdtxt").equals("")) {
 		msgid = CodeGenerate.NewCodeGenerate("TBL_MESSAGE_DETAIL");
 		sqlQuery = CustomerSQLC.CHECK_MESSAGE_DETAIL;
 		//sqlQuery.replaceAll("<BR>", "");
@@ -520,28 +443,12 @@ try {
 		rs.close();
 	}
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null)
-			prepStmt.close();
-		if (ps != null)
-			ps.close();
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			wcareConnector.returnConnectionToPool(conn);
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		ps = null;
-		rs = null;
-		if (conn != null) {
-			wcareConnector.returnConnectionToPool(conn);
-		}
-	}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
+
 	}
 	return msg;
 	}
@@ -617,28 +524,12 @@ try {
 				rs.close();
 			}
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
+			
 		}
 		return msg;
 	}
@@ -762,28 +653,12 @@ try {
 							}
 							
 				} catch (SQLException sqlExp) {
-					sqlExp.printStackTrace();
+					logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 					Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 					throw exp;
 				} finally {
-					try {
-						if (prepStmt != null)
-							prepStmt.close();
-						if (ps != null)
-							ps.close();
-						if (rs != null)
-							rs.close();
-						if (conn != null) {
-							wcareConnector.returnConnectionToPool(conn);
-						}
-					} catch (Exception e) {
-						prepStmt = null;
-						ps = null;
-						rs = null;
-						if (conn != null) {
-							wcareConnector.returnConnectionToPool(conn);
-						}
-					}
+					DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
+					
 				}
 				return msg;
 	}
@@ -982,28 +857,11 @@ try {
 				}
 						
 			} catch (SQLException sqlExp) {
-				sqlExp.printStackTrace();
+				logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 				Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 				throw exp;
 			} finally {
-				try {
-					if (prepStmt != null)
-						prepStmt.close();
-					if (ps != null)
-						ps.close();
-					if (rs != null)
-						rs.close();
-					if (conn != null) {
-						wcareConnector.returnConnectionToPool(conn);
-					}
-				} catch (Exception e) {
-					prepStmt = null;
-					ps = null;
-					rs = null;
-					if (conn != null) {
-						wcareConnector.returnConnectionToPool(conn);
-					}
-				}
+				DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 			}
 			return msg;
 }
@@ -1037,26 +895,11 @@ try {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return tranList;
 	}
@@ -1099,25 +942,12 @@ try {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return tranList;
 	}
@@ -1125,8 +955,8 @@ try {
 	
 	public static List getStateWise(String custId,String rdate) throws Exception {
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		List tranList = new ArrayList();
@@ -1149,7 +979,6 @@ try {
 			while (rs.next()) {
 				String msgstr;
 				Vector tranVector = new Vector();
-				
 
 				tranVector.add(rs.getObject("s_site_id"));
 				tranVector.add(rs.getObject("s_site_name"));
@@ -1165,34 +994,11 @@ try {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return tranList;
 	}
@@ -1203,8 +1009,8 @@ try {
 			MethodClass.displayMethodClassName();
 		}
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		List tranList = new ArrayList();
@@ -1263,34 +1069,11 @@ try {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return tranList;
 	}
@@ -1300,8 +1083,8 @@ try {
 			MethodClass.displayMethodClassName();
 		}
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement prepStmt1 = null;
 		PreparedStatement ps = null;
@@ -1428,42 +1211,19 @@ try {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,prepStmt1,ps) , Arrays.asList(rs,rs1) , conn);
 		}
 		return tranList;
 	}
 
 	public static List getWECWise(String custId) throws Exception {
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		List tranList = new ArrayList();
@@ -1493,34 +1253,11 @@ try {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return tranList;
 	}
@@ -1595,9 +1332,10 @@ try {
 //	}
 	
 	public List getMessageByLogid(String logid) throws Exception {
+		logger.debug("sdsdf");
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		List tranList = new ArrayList();
@@ -1620,6 +1358,7 @@ try {
 				else
 					msgstr = rs.getObject("S_MESSAGE_DESCRIPTION").toString();
 
+				logger.debug(msgstr);
 				//cname = changestr(rs.getObject("S_CUSTOMER_NAME") == null ? "." : rs.getObject("S_CUSTOMER_NAME").toString().replace("&", "AND"));
 				//tranVector.add(cname);
 				tranVector.add(msgstr);
@@ -1628,37 +1367,15 @@ try {
 				i++;
 			}
 
+			logger.debug(tranList);
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return tranList;
 	}
@@ -1669,8 +1386,8 @@ try {
 			MethodClass.displayMethodClassName();
 		}
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		List tranList = new ArrayList();
@@ -1703,34 +1420,11 @@ try {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return tranList;
 	}
@@ -1739,8 +1433,8 @@ try {
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -1754,7 +1448,7 @@ try {
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, custid);
 			prepStmt.setObject(2, reportdate);
-			
+			DaoUtility.displayQueryWithParameter(53, sqlQuery, custid,reportdate);
 			/*Vector<Object> v = new Vector<Object>();
 			List<Object> overAllTotalInfo = new ArrayList<Object>();
 			
@@ -1781,6 +1475,7 @@ try {
 			prepStmt.setObject(1, custid);
 			prepStmt.setObject(2, reportdate);
 			prepStmt.setObject(3, reportdate);
+			DaoUtility.displayQueryWithParameter(53, sqlQuery, custid,reportdate,reportdate);
 		}
 		if (RType.equals("Y")) { // Calendar cal = Calendar.getInstance();
 			int day = reportdate.getDay();
@@ -1802,6 +1497,7 @@ try {
 			prepStmt.setObject(1, custid);
 			prepStmt.setObject(2, pdate);
 			prepStmt.setObject(3, ndate);
+			DaoUtility.displayQueryWithParameter(53, sqlQuery, custid,pdate,ndate);
 		}
 
 		// ps.setObject(1,item.toUpperCase() + "%");
@@ -1810,6 +1506,7 @@ try {
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			while (rs.next()) {
+				DaoUtility.getRowCount(53, rs);
 				Vector tranVector = new Vector();
 				tranVector.add("OverALL");
 				tranVector.add(rs.getObject("GENERATION"));
@@ -1827,34 +1524,11 @@ try {
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -1863,8 +1537,8 @@ try {
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -1958,34 +1632,11 @@ try {
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}	
@@ -1994,8 +1645,8 @@ public List getEBDataDetail(String fd,String td,String site, String state, Strin
 	throws Exception {
 // public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -2057,34 +1708,12 @@ try {
 	rs.close();
 
 } catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 } finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
+	
 }
 return tranList;
 }
@@ -2093,8 +1722,8 @@ public List getBillDataDetail(String month,String year,String site, String state
 throws Exception {
 //public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -2365,34 +1994,11 @@ try {
 	rs.close();
 
 } catch (SQLException sqlExp) {
-sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 throw exp;
 } finally {
-try {
-	if (prepStmt != null) {
-		prepStmt.close();
-	}
-	if (rs != null)
-		rs.close();
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-} catch (Exception e) {
-	prepStmt = null;
-	rs = null;
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }
@@ -2401,8 +2007,8 @@ public List getStateTotal(String custid, String rdate, String RType)
 		throws Exception {
 	// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -2418,7 +2024,7 @@ public List getStateTotal(String custid, String rdate, String RType)
 		prepStmt.setObject(1, custid);
 		prepStmt.setObject(2, reportdate);
 		prepStmt.setObject(3, reportdate);
-		
+		DaoUtility.displayQueryWithParameter(51,sqlQuery,custid,reportdate,reportdate);
 	}
 	if (RType.equals("M")) {
 		sqlQuery = CustomerSQLC.SELECT_MSTATEWISE_TOTAL;
@@ -2427,9 +2033,9 @@ public List getStateTotal(String custid, String rdate, String RType)
 		prepStmt.setObject(2, reportdate);
 		prepStmt.setObject(3, reportdate);
 		
-		System.out.println("Customer Id : " + custid);
-		System.out.println("Report Date : " + reportdate);
-		
+		logger.debug("Customer Id : " + custid);
+		logger.debug("Report Date : " + reportdate);
+		DaoUtility.displayQueryWithParameter(51,sqlQuery,custid,reportdate,reportdate);
 	}
 	if (RType.equals("Y")) {
 		int day = reportdate.getDate();
@@ -2452,7 +2058,7 @@ public List getStateTotal(String custid, String rdate, String RType)
 		prepStmt.setObject(1, custid);
 		prepStmt.setObject(2, pdate);
 		prepStmt.setObject(3, ndate);
-		
+		DaoUtility.displayQueryWithParameter(51,sqlQuery,custid,pdate,ndate);
 		
 	}
 	
@@ -2462,6 +2068,7 @@ public List getStateTotal(String custid, String rdate, String RType)
 		rs = prepStmt.executeQuery();
 		int i = 0;
 		while (rs.next()) {
+			DaoUtility.getRowCount(51, rs);
 			Vector tranVector = new Vector();
 			tranVector.add(rs.getObject("S_state_name"));
 			tranVector.add(rs.getObject("GENERATION"));
@@ -2481,34 +2088,11 @@ public List getStateTotal(String custid, String rdate, String RType)
 		rs.close();
 
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
@@ -2517,8 +2101,8 @@ public List getSubstationTotal(String custid, String rdate, String RType)
 	throws Exception {
 	// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 	
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -2588,34 +2172,12 @@ public List getSubstationTotal(String custid, String rdate, String RType)
 	rs.close();
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
+		
 	}
 	return tranList;
 }
@@ -2625,8 +2187,8 @@ public List getSubstationTotal(String custid, String rdate, String RType)
 		throws Exception {
 	// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 	
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -2667,34 +2229,11 @@ public List getSubstationTotal(String custid, String rdate, String RType)
 		rs.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
@@ -2843,8 +2382,8 @@ return tranList;
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -2891,34 +2430,11 @@ return tranList;
 		rs.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
@@ -2929,8 +2445,9 @@ return tranList;
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -2980,34 +2497,12 @@ return tranList;
 		rs.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+		
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
@@ -3015,8 +2510,8 @@ return tranList;
 public List getMailDataCLP(String custid, String rdate,String Type)	throws Exception {
 // public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -3077,34 +2572,11 @@ try {
 	rs.close();
 
 } catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 } finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }	
@@ -3113,8 +2585,8 @@ public List getStateTotalAdmin(String custid, String rdate, String RType)
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -3212,34 +2684,11 @@ public List getStateTotalAdmin(String custid, String rdate, String RType)
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -3250,8 +2699,8 @@ public List getStateWiseDash(String stateid, String fdate, String tdate)
 		 throws Exception {
 	// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 	
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -3318,34 +2767,11 @@ public List getStateWiseDash(String stateid, String fdate, String tdate)
 		rs.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
@@ -3353,8 +2779,8 @@ public List getStateWiseDashAvg(String stateid, String fdate, String tdate)
 throws Exception {
 // public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -3418,34 +2844,11 @@ prepStmt.close();
 rs.close();
 
 } catch (SQLException sqlExp) {
-sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 throw exp;
 } finally {
-try {
-	if (prepStmt != null) {
-		prepStmt.close();
-	}
-	if (rs != null)
-		rs.close();
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-} catch (Exception e) {
-	prepStmt = null;
-	rs = null;
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }
@@ -3454,8 +2857,8 @@ public List getStateWiseAverage(String fdate, String tdate)
 	throws Exception {
 	//public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 	
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -3491,34 +2894,11 @@ public List getStateWiseAverage(String fdate, String tdate)
 	rs.close();
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
@@ -3527,8 +2907,8 @@ public List getSiteWiseAverage(String id,String fdate, String tdate)
 throws Exception {
 //public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -3569,42 +2949,20 @@ prepStmt.close();
 rs.close();
 
 } catch (SQLException sqlExp) {
-sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 throw exp;
 } finally {
-try {
-	if (prepStmt != null) {
-		prepStmt.close();
-	}
-	if (rs != null)
-		rs.close();
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-} catch (Exception e) {
-	prepStmt = null;
-	rs = null;
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }
 public List getSiteWiseAverageGeneration(String id,String fdate, String tdate) throws Exception {
 //public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+
+	//JDBCUtils conmanager = new JDBCUtils();
+	Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -3645,42 +3003,19 @@ prepStmt.close();
 rs.close();
 
 } catch (SQLException sqlExp) {
-sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 throw exp;
 } finally {
-try {
-	if (prepStmt != null) {
-		prepStmt.close();
-	}
-	if (rs != null)
-		rs.close();
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-} catch (Exception e) {
-	prepStmt = null;
-	rs = null;
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }
 public List getWECTypeWiseAverageGeneration(String id,String fdate, String tdate) throws Exception {
 //	public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -3723,42 +3058,19 @@ public List getWECTypeWiseAverageGeneration(String id,String fdate, String tdate
 	rs.close();
 
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
 public List getSiteWiseAverageGenerationAvg(String id,String fdate, String tdate) throws Exception {
 //	public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -3800,42 +3112,19 @@ public List getSiteWiseAverageGenerationAvg(String id,String fdate, String tdate
 		rs.close();
 	
 		} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 		} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
 public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String tdate) throws Exception {
 //	public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -3878,34 +3167,12 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 		rs.close();
 	
 		} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 		} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 	}
 	return tranList;
 }
@@ -3915,8 +3182,8 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -3976,34 +3243,12 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -4012,8 +3257,8 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -4075,34 +3320,11 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -4111,8 +3333,8 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -4174,34 +3396,11 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -4210,8 +3409,9 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -4227,7 +3427,7 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			prepStmt.setObject(2, reportdate);
 			prepStmt.setObject(3, stateid);
 			prepStmt.setObject(4, reportdate);
-			
+			DaoUtility.displayQueryWithParameter(52, sqlQuery, custid,reportdate,stateid,reportdate);
 		}
 		
 		if (RType.equals("M")) {
@@ -4237,7 +3437,7 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			prepStmt.setObject(2, reportdate);
 			prepStmt.setObject(3, reportdate);
 			prepStmt.setObject(4, stateid);
-			
+			DaoUtility.displayQueryWithParameter(52, sqlQuery, custid,reportdate,reportdate,stateid);
 		}
 		if (RType.equals("Y")) {
 			int day = reportdate.getDate();
@@ -4260,7 +3460,7 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			prepStmt.setObject(2, pdate);
 			prepStmt.setObject(3, ndate);
 			prepStmt.setObject(4, stateid);
-			
+			DaoUtility.displayQueryWithParameter(52, sqlQuery, custid,pdate,ndate,stateid);
 			
 		}
 
@@ -4268,6 +3468,7 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			while (rs.next()) {
+				DaoUtility.getRowCount(52, rs);
 				Vector tranVector = new Vector();
 				tranVector.add(rs.getObject("S_site_name"));
 				tranVector.add(rs.getObject("GENERATION"));
@@ -4288,34 +3489,11 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -4324,8 +3502,8 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -4423,34 +3601,11 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -4459,8 +3614,8 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -4529,34 +3684,12 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -4564,8 +3697,8 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 public List getEBHeading(String custid, String rdate, String Stateid,String Siteid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -4597,10 +3730,12 @@ DESC;
 		prepStmt.setObject(1, custid);
 		prepStmt.setObject(2, Stateid);
 		prepStmt.setObject(3, Siteid);
+		DaoUtility.displayQueryWithParameter(10, sqlQuery, custid, Stateid, Siteid);
 		try {
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			while (rs.next()) {
+				DaoUtility.getRowCount(10, rs);
 				Vector tranVector = new Vector();
 				tranVector.add(rs.getObject("S_CUSTOMER_NAME") == null ? "." : rs.getObject("S_CUSTOMER_NAME").toString().replace("&", "AND"));
 				tranVector.add(rs.getObject("S_EBSHORT_DESCR"));
@@ -4624,13 +3759,16 @@ Group By N_Wec_Capacity;
 				ps = conn.prepareStatement(sqlQuery);
 				ps.setObject(1, rs.getObject("S_EB_ID"));
 				ps.setObject(2, rs.getObject("S_EB_ID"));
+				DaoUtility.displayQueryWithParameter(11, sqlQuery, rs.getObject("S_EB_ID"), rs.getObject("S_EB_ID"));
 				// ps.setObject(2,reportdate);
 				rswec = ps.executeQuery();
 				if (rswec.next()) {
+					DaoUtility.getRowCount(11, rswec);
 					tranVector.add(rswec.getObject("cnt"));
 					tranVector.add(rswec.getObject("lcapacity"));
 					tranVector.add(rswec.getObject("S_WEC_TYPE"));
 				} else {
+					DaoUtility.getRowCount(11, rswec);
 					tranVector.add("0");
 					tranVector.add("0");
 					tranVector.add("0");
@@ -4642,44 +3780,21 @@ Group By N_Wec_Capacity;
 			prepStmt.close();
 			rs.close();
 
-			rswec.close();
+			if(rswec != null)rswec.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
 public List getWECCurtailmentList(String custid, String fromDate, String toDate) throws Exception {	
 
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;	
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -4718,41 +3833,19 @@ public List getWECCurtailmentList(String custid, String fromDate, String toDate)
 		rs.close();
 
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
+		
 	}
 	return tranList;
 }
 public List getNearByWECCurtailmentList(String wecid, String fromDate, String toDate) throws Exception {	
 
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;	
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -4786,34 +3879,12 @@ public List getNearByWECCurtailmentList(String wecid, String fromDate, String to
 		rs.close();
 
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+		
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
@@ -4821,8 +3892,9 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			String Siteid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+
+	//JDBCUtils conmanager = new JDBCUtils();
+	Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -4835,13 +3907,14 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 
 		sqlQuery = CustomerSQLC.GET_EB_HEADING_DATA_SITE;
 		prepStmt = conn.prepareStatement(sqlQuery);
-		prepStmt.setObject(1, custid);
-		
+		prepStmt.setObject(1, custid);	
 		prepStmt.setObject(2, Siteid);
+		DaoUtility.displayQueryWithParameter(56, sqlQuery, custid,Siteid);
 		try {
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			if (rs.next()) {
+				DaoUtility.getRowCount(56, rs);
 				Vector tranVector = new Vector();
 				tranVector.add(rs.getObject("S_CUSTOMER_NAME") == null ? "." : rs.getObject("S_CUSTOMER_NAME").toString().replace("&", "AND"));				
 				
@@ -4861,34 +3934,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -4897,8 +3947,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	public List getEBHeadingState(String custid, String rdate, String Stateid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -4911,13 +3961,14 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 
 		sqlQuery = CustomerSQLC.GET_EB_HEADING_DATA_STATE;
 		prepStmt = conn.prepareStatement(sqlQuery);
-		prepStmt.setObject(1, custid);
-		
+		prepStmt.setObject(1, custid);		
 		prepStmt.setObject(2, Stateid);
+		DaoUtility.displayQueryWithParameter(64, sqlQuery, custid,Stateid);
 		try {
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			if (rs.next()) {
+				DaoUtility.getRowCount(64, rs);
 				Vector tranVector = new Vector();
 				tranVector.add(rs.getObject("S_CUSTOMER_NAME") == null ? "." : rs.getObject("S_CUSTOMER_NAME").toString().replace("&", "AND"));
 				
@@ -4936,34 +3987,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();			
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -4973,8 +4001,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			String Siteid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -5011,34 +4039,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();			
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -5046,8 +4051,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	public List getEBHeadingTotal(String custid, String rdate) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -5101,42 +4106,19 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rswec.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
 	
 	public List getBillingDetail(String custid,String month,String year,String site,String state) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();		
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();		
 		
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
@@ -5395,34 +4377,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();			
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,ps1) , Arrays.asList(rs,rswec,res) , conn);
 		}
 		return tranList;
 	}
@@ -5431,8 +4390,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -5507,34 +4466,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();			
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -5544,8 +4480,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -5622,34 +4558,12 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();			
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -5658,8 +4572,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	public List getCustMPRHeading(String cid,String stateid,String siteid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -5728,34 +4642,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 				rswec.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -5766,8 +4657,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -5854,34 +4745,12 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -5890,8 +4759,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	public List getFindWECByEB(String ebid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -5927,34 +4796,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
 		}
 		return tranList;
 	}
@@ -5963,8 +4809,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		
 		ResultSet rs = null;
@@ -6001,34 +4847,12 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();			
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -6039,8 +4863,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		
 		ResultSet rs = null;
@@ -6086,34 +4910,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -6122,8 +4923,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		
 		ResultSet rs = null;
@@ -6172,34 +4973,13 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}
@@ -6209,8 +4989,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rswec = null;
@@ -6273,42 +5053,20 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rswec.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rswec) , conn);
+			
 		}
 		return tranList;
 	}
 	
 	public List getWECDateWise(String ebid, String rdate) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -6329,7 +5087,7 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		prepStmt.setObject(1, ebid);
 		prepStmt.setObject(2, reportdate);
 		prepStmt.setObject(3, reportdate);
-		
+		DaoUtility.displayQueryWithParameter(54, sqlQuery, ebid,reportdate,reportdate);
 //		System.out.println("Eb Id : " + ebid);
 //		System.out.println("Report Date : " + reportdate);
 		
@@ -6344,6 +5102,7 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			while (rs.next()) {
+				DaoUtility.getRowCount(54, rs);
 				Vector tranVector = new Vector();
 				tranVector.add(rs.getObject("S_WECSHORT_DESCR"));
 				tranVector.add(rs.getObject("WECTYPE"));
@@ -6380,34 +5139,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -6416,8 +5152,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -6509,34 +5245,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -6677,8 +5390,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	public List getWECData(String ebid, String rdate, String RType)
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -6696,7 +5409,7 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			prepStmt.setObject(2, ebid);
 			prepStmt.setObject(3, reportdate);
 			prepStmt.setObject(4, reportdate);
-			
+			DaoUtility.displayQueryWithParameter(59, sqlQuery, reportdate,ebid,reportdate,reportdate);
 		}
 
 		if (RType.equals("M")) {
@@ -6705,7 +5418,7 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			prepStmt.setObject(1, ebid);
 			prepStmt.setObject(2, reportdate);
 			prepStmt.setObject(3, reportdate);
-			
+			DaoUtility.displayQueryWithParameter(59, sqlQuery,ebid,reportdate,reportdate);
 		}
 		
 		if (RType.equals("Y")) {
@@ -6728,7 +5441,7 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			prepStmt.setObject(1, ebid);
 			prepStmt.setObject(2, pdate);
 			prepStmt.setObject(3, ndate);
-			
+			DaoUtility.displayQueryWithParameter(59, sqlQuery, ebid,pdate,ndate);
 			
 		}
 
@@ -6740,6 +5453,7 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			String Remarks = "";
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(59, rs);
 				//System.out.println("---------New Processing---------");
 				String wecId = (String) rs.getObject("S_WEC_ID");
 				if (RType.equals("D")) {
@@ -6832,34 +5546,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 
 		}
 		return tranList;
@@ -6868,8 +5559,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	public List getWECDataNew(String ebid, String rdate, String RType)
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -6964,34 +5655,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 
 		}
 		return tranList;
@@ -7000,14 +5668,14 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	/*Returns Value for 'Load Resting' if present in TBL_WEC_Reading Otherwise return "0"*/
 	private String getLoadRest(String wecID, java.util.Date date) {
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 			
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select Rea.N_Actual_Value " + 
 						"From Tbl_Wec_Reading Rea, Tbl_Mp_Master Mp, Tbl_Wec_Master Wecm " + 
 						"Where Rea.D_Reading_Date = ? " + 
@@ -7026,43 +5694,33 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 			return "0";
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return "0";
 
 		
 	}
 
-
-
 	private boolean checkLullHour(String wecID, Connection conn, java.sql.Date reportdate){	
 		boolean makeLullHourDash = false;
 		double operatingHourPresent = 0;
 		double totalOfMSMFandGSGF = 0;
-		String wecScadaConnectivityQuery = CustomerSQLC.CHECK_WEC_SCADA_CONNECTIVITY;
+		String wecScadaConnectivityQuery = CustomerSQLC.CHECK_WEC_STATUS_SCADA_CONNECTIVITY;
 		/*"Select s_status,s_scada_flag From Tbl_Wec_Master Where S_Wec_id = ?";*/
-		PreparedStatement myPrepareStmt;
+		PreparedStatement myPrepareStmt = null;
+		PreparedStatement myPrepareStmt1 = null;
+		ResultSet myResultSet  = null;
+		ResultSet myResultSet1 = null;
 		try {
 			myPrepareStmt = conn.prepareStatement(wecScadaConnectivityQuery);
 			myPrepareStmt.setObject(1, wecID);
-			ResultSet myResultSet = myPrepareStmt.executeQuery();
+			DaoUtility.displayQueryWithParameter(60, wecScadaConnectivityQuery, wecID);
+			myResultSet = myPrepareStmt.executeQuery();
 			while(myResultSet.next()){
+				DaoUtility.getRowCount(60, myResultSet);
 				String machineActiveStatus = (String) myResultSet.getObject(1);
 				String scadaStatus = (String) myResultSet.getObject(2);
 				if(scadaStatus.equals("1") && machineActiveStatus.equals("1")){
@@ -7075,11 +5733,13 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 									"where s_wec_id = ? " +
 									"and d_reading_date = ? " +
 									"and s_mp_id = '0808000023' ";
-					PreparedStatement myPrepareStmt1 = conn.prepareStatement(myQuery1);
+					 myPrepareStmt1 = conn.prepareStatement(myQuery1);
 					myPrepareStmt1.setObject(2, reportdate);
 					myPrepareStmt1.setObject(1, wecID);
-					ResultSet myResultSet1 = myPrepareStmt1.executeQuery();
+					DaoUtility.displayQueryWithParameter(61, myQuery1, reportdate,wecID);
+					 myResultSet1 = myPrepareStmt1.executeQuery();
 					while(myResultSet1.next()){
+						DaoUtility.getRowCount(61, myResultSet1);
 						if(myResultSet1.getObject(1) != null){
 							operatingHourPresent = myResultSet1.getDouble(1);
 						}
@@ -7103,10 +5763,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 					myPrepareStmt1 = conn.prepareStatement(myQuery1);
 					myPrepareStmt1.setObject(1, wecID);
 					myPrepareStmt1.setObject(2, reportdate);
-					
+					DaoUtility.displayQueryWithParameter(62, myQuery1, wecID,reportdate);
 					myResultSet1 = myPrepareStmt1.executeQuery();
 					
 					while(myResultSet1.next()){
+						DaoUtility.getRowCount(62, myResultSet1);
 						totalOfMSMFandGSGF = myResultSet1.getDouble(1);
 					}
 					
@@ -7143,10 +5804,12 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 						myPrepareStmt1 = conn.prepareStatement(myQuery1);
 						myPrepareStmt1.setObject(1, reportdate);
 						myPrepareStmt1.setObject(2, wecID);
+						DaoUtility.displayQueryWithParameter(63, myQuery1, reportdate,wecID);
 						myResultSet1 = myPrepareStmt1.executeQuery();
 						boolean systemCreatedValue = false;
 						
 						while(myResultSet1.next()){
+							DaoUtility.getRowCount(63, myResultSet1);
 							systemCreatedValue = true;
 							//System.out.println("888888888888888888888888->" + myResultSet1.getDouble(1));
 						}
@@ -7235,8 +5898,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		}finally{
+			DaoUtility.releaseResources(Arrays.asList(myPrepareStmt,myPrepareStmt1) , Arrays.asList(myResultSet,myResultSet1));
 		}
+		
 		return makeLullHourDash;
 	}
 	
@@ -7266,8 +5932,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		}
 		return tranList;*/
 		List tranList = new ArrayList();
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	ResultSet rs = null;
@@ -7342,34 +6008,13 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		return tranList;
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+		
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
+		
 		return tranList;
 	}
 	
@@ -7382,8 +6027,9 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	ResultSet rs = null;
@@ -7482,34 +6128,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	rs.close();
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 	}
 	return tranList;
 }
@@ -7519,8 +6142,8 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	ResultSet rs = null;
@@ -7623,34 +6246,11 @@ public List getEBHeadingSite(String custid, String rdate, String Stateid,
 	rs.close();
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 	}
 	return tranList;
 }
@@ -7659,8 +6259,9 @@ public static List getWECSiteWise(String rdate,String custid) throws Exception {
 	if(methodClassName){
 		MethodClass.displayMethodClassName();
 	}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+
+	//JDBCUtils conmanager = new JDBCUtils();
+	Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	PreparedStatement ps1 = null;
@@ -7831,34 +6432,12 @@ public static List getWECSiteWise(String rdate,String custid) throws Exception {
 	rs.close();
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+		
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,ps1,ps3) , Arrays.asList(rs,rs1,rs2,rs3) , conn);
 	}
 	return tranList;
 }
@@ -7866,9 +6445,8 @@ public static int getStateCount(String rdate,String custid, String stateId) thro
 	if(methodClassName){
 		MethodClass.displayMethodClassName();
 	}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
-	
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement ps = null;
 	ResultSet rs = null;
 	
@@ -7901,34 +6479,11 @@ public static int getStateCount(String rdate,String custid, String stateId) thro
 			stateCount = rs.getInt("stateCount");
 		rs.close();
 		ps.close();
-		conn.close();
+		//conn.close();
 	}catch(Exception e){
-		e.printStackTrace();
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 	}finally {
-		try {
-			if (ps != null) {
-				ps.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-		
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			ps = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-		
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(ps, rs, conn);
 		}
 	
 	return stateCount;
@@ -7938,8 +6493,8 @@ public static List getWECSiteWisePhase2( String dateInString,String custid) thro
 	if(methodClassName){
 		MethodClass.displayMethodClassName();
 	}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	PreparedStatement ps1 = null;
@@ -8122,34 +6677,11 @@ public static List getWECSiteWisePhase2( String dateInString,String custid) thro
 	rs.close();
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,ps1,ps3) , Arrays.asList(rs,rs1,rs2,rs3) , conn);
 	}
 	return tranList;
 }
@@ -8157,8 +6689,8 @@ public static List getWECSiteWisePhase2( String dateInString,String custid) thro
 	public static List getWECSiteWisePhase1(String rdate,String custid) throws Exception {
 	//public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 	
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	PreparedStatement ps1 = null;
@@ -8328,34 +6860,11 @@ public static List getWECSiteWisePhase2( String dateInString,String custid) thro
 	rs.close();
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,ps1,ps3) , Arrays.asList(rs,rs1,rs2,rs3) , conn);
 	}
 	return tranList;
 	}
@@ -8363,8 +6872,8 @@ public static List getWECSiteWisePhase2( String dateInString,String custid) thro
 	public List getWECDataUpload(String ebid, String rdate, String RType) throws Exception {
 // public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -8426,34 +6935,12 @@ try {
 	rs.close();
 
 } catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+	
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 } finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }	
@@ -8461,8 +6948,8 @@ return tranList;
 	public List getWECDataAdmin(String ebid, String rdate, String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -8565,34 +7052,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -8600,8 +7064,8 @@ return tranList;
 	public List getFeedbackReport()	throws Exception {
 	// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 	
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -8706,34 +7170,11 @@ return tranList;
 		rs.close();
 	
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-	
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 	}
@@ -8741,8 +7182,8 @@ return tranList;
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -8833,34 +7274,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -8868,8 +7286,8 @@ return tranList;
 	public List getCompareWECData(String ebid, String wecid, String rdate,String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -8966,34 +7384,12 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}
@@ -9003,8 +7399,8 @@ return tranList;
 	public List getCustomerDetail(String custid,String stateid,String siteid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9092,34 +7488,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -9128,8 +7501,8 @@ return tranList;
 	public List getLoginHistoryDetail() throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9169,34 +7542,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -9204,8 +7554,8 @@ return tranList;
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9262,42 +7612,19 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
 	public List getWECSitewise(String siteid, String stid,String custid, String rdate) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9329,13 +7656,14 @@ return tranList;
 		prepStmt.setObject(2, siteid);
 		prepStmt.setObject(3, pdate);
 		prepStmt.setObject(4, ndate);
-
+        DaoUtility.displayQueryWithParameter(57, sqlQuery,custid,siteid,pdate,ndate );
 		// ps.setObject(1,item.toUpperCase() + "%");
 
 		try {
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			while (rs.next()) {
+				DaoUtility.getRowCount(57, rs);
 				Vector tranVector = new Vector();
 
 				tranVector.add(rs.getObject("monthname")+"-"+rs.getObject("REPYR"));
@@ -9354,42 +7682,19 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
 	public List getWECStatewise(String stid,String custid, String rdate) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9421,13 +7726,14 @@ return tranList;
 		prepStmt.setObject(2, stid);
 		prepStmt.setObject(3, pdate);
 		prepStmt.setObject(4, ndate);
-
+        DaoUtility.displayQueryWithParameter(65, sqlQuery, custid,stid,pdate,ndate);
 		// ps.setObject(1,item.toUpperCase() + "%");
 
 		try {
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			while (rs.next()) {
+				DaoUtility.getRowCount(65, rs);
 				Vector tranVector = new Vector();
 
 				tranVector.add(rs.getObject("monthname")+"-"+rs.getObject("REPYR"));
@@ -9446,34 +7752,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -9482,8 +7765,8 @@ return tranList;
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9550,34 +7833,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -9586,8 +7846,8 @@ return tranList;
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9694,34 +7954,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -9730,8 +7967,8 @@ return tranList;
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9800,34 +8037,12 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -9836,8 +8051,9 @@ return tranList;
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -9944,34 +8160,12 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}
@@ -9979,8 +8173,8 @@ return tranList;
 	public String getEBRemarks(String ebid,String fdate) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sremarks="";
@@ -10011,34 +8205,12 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return sremarks;
 	}
@@ -10051,8 +8223,8 @@ return tranList;
 		String ofadate = fdate;
 		String otdate = tdate;
 		AdminDao ad = new AdminDao();
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
@@ -10188,34 +8360,11 @@ return tranList;
 
 		} catch (SQLException sqlExp) {
 			System.out.println("getMPRDetail Exception");
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -10223,7 +8372,7 @@ return tranList;
 	private int getTotalLoadResting(String fdate, String tdate, String WECId) {
 		//System.out.println("Inside getTotalLoadResting");
 	
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -10238,7 +8387,7 @@ return tranList;
 		int[] minuteHour = new int[2];
 		int recordCount = 0;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			//System.out.println("-------" + WECId + " -------");
 			sqlQuery = "Select count(*) From Tbl_Wec_Reading Where S_Wec_Id = ? And S_Mp_Id IN ('0810000001') And D_Reading_Date between '"+fdate+"' and '"+tdate+"' order by D_Reading_Date";
 			prepStmt1 = conn.prepareStatement(sqlQuery);
@@ -10286,35 +8435,17 @@ return tranList;
 		}
 		catch(Exception e){
 			System.out.println("getTotalLoadResting Exception");
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return totalLoadInMinute;
 	}
 	private int getTotalLullHourInMinutesBasedOnWECIdForParticularDay(String wecID,java.sql.Date date, Connection conn) {
 		// Select S_Wec_Id From Tbl_Wec_Master Where S_Wecshort_Descr = '&DESCR'
-				JDBCUtils conmanager = new JDBCUtils();
 				
-				String sqlQuery = "";
-				PreparedStatement prepStmt = null;
-				ResultSet rs = null;
+				
 				
 				int MFMSInMinutes = getMFMSInMinutesForOneWECUsingWECId(wecID,date,conn);
 				int GSGFInMinutes = getGFGSInMinutesPerWECUsingId(wecID,date,conn);
@@ -10366,20 +8497,11 @@ return tranList;
 			return totalTimesInMinutes;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, null);
+			
 		}
 		return 0;
 	}
@@ -10425,20 +8547,11 @@ return tranList;
 			return totalTimesInMinutes;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, null);
+			
 		}
 		return 0;
 	}
@@ -10483,26 +8596,17 @@ return tranList;
 			return totalTimesInMinutes;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, null);
+			
 		}
 		return 0;
 	}
 
 	private Object JDBCCommonFormat() {
-		JDBCUtils conmanager = new JDBCUtils();
+	//	JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -10510,7 +8614,7 @@ return tranList;
 		
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "";
 			prepStmt = conn.prepareStatement(sqlQuery);
 			
@@ -10521,23 +8625,10 @@ return tranList;
 			return null;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 		}
@@ -10551,7 +8642,7 @@ return tranList;
 			fromDate = format.parse(fdate);
 			toDate = format.parse(tdate);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		
 		//System.out.println(fdate + " to " + tdate);
@@ -10567,7 +8658,7 @@ return tranList;
 
 	private String getWECIDFromDescription(String wecDescription) {
 		// Select S_Wec_Id From Tbl_Wec_Master Where S_Wecshort_Descr = '&DESCR'
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -10575,7 +8666,7 @@ return tranList;
 		
 		String wecID = null;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select S_WEC_ID From Tbl_Wec_Master Where S_Wecshort_Descr in (?)";
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, wecDescription);
@@ -10586,23 +8677,10 @@ return tranList;
 			return wecID;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}
@@ -10617,8 +8695,8 @@ return tranList;
 			MethodClass.displayMethodClassName();
 		}
 		AdminDao ad = new AdminDao();
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -10695,34 +8773,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -10730,8 +8785,8 @@ return tranList;
 	public List getCpmDetailAdmin(String siteid,String customerid,String rdate,String wectype,String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -10899,34 +8954,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -10935,8 +8967,9 @@ return tranList;
 	public List getCustList(String uid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -10972,34 +9005,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11008,8 +9018,8 @@ return tranList;
 	public List getSiteList(String uid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11045,34 +9055,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11080,8 +9067,8 @@ return tranList;
 	public List getStateList(String uid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11117,34 +9104,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11152,8 +9116,8 @@ return tranList;
 	public List getWecTypeList(String uid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11189,34 +9153,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11225,8 +9166,8 @@ return tranList;
 	public List getIPAddress(String uid,String rdate) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11263,34 +9204,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11299,8 +9217,8 @@ return tranList;
 	public List getQueryDetail(String userid,String type) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11374,34 +9292,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11410,8 +9305,8 @@ return tranList;
 		if(methodClassName){
 			MethodClass.displayMethodClassName();
 		}
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11486,34 +9381,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11521,8 +9393,8 @@ return tranList;
 	public List getFilterDetail(String stateid,String siteid,String fdate,String tdate,String wectype,String fobject,String ftype,String firstparam,String secparam,String ebobject) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11678,34 +9550,12 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}
@@ -11714,8 +9564,8 @@ return tranList;
 	public List getWecSelectedListDetail(String weclist,String fdate,String tdate,String ptype) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11787,34 +9637,11 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -11823,8 +9650,8 @@ return tranList;
 	public List getEBSelectDetail(String weclist,String fdate,String tdate,String ptype) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11885,42 +9712,20 @@ return tranList;
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}
 public List getEBSelectedListDetail(String weclist,String fdate,String tdate) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -11974,42 +9779,19 @@ public List getEBSelectedListDetail(String weclist,String fdate,String tdate) th
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	return tranList;
 }
 public List getCustFilterDetail(String fdate,String tdate,String fobject,String ftype,String firstparam,String secparam,String userid,String ebobject) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -12130,34 +9912,11 @@ public List getCustFilterDetail(String fdate,String tdate,String fobject,String 
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -12167,8 +9926,8 @@ public List getMPRDetailAdminTotal(String siteid,String customerid,String fdate,
 			MethodClass.displayMethodClassName();
 		}
 		AdminDao ad = new AdminDao();
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -12248,34 +10007,12 @@ public List getMPRDetailAdminTotal(String siteid,String customerid,String fdate,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -12283,8 +10020,8 @@ public List getSubMPRDetailAdminTotal(String siteid,String customerid,String fda
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
 		AdminDao ad = new AdminDao();
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -12359,42 +10096,21 @@ public List getSubMPRDetailAdminTotal(String siteid,String customerid,String fda
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
 
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}	
 public List getCMPDetailAdminTotal(String siteid,String customerid,String fdate,String wectype,String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -12545,42 +10261,19 @@ public List getCMPDetailAdminTotal(String siteid,String customerid,String fdate,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
 public List getMPRSerachByWecTotal(String siteid,String customerid,String fdate,String tdate,String wectype,String wecid,String ebid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -12644,34 +10337,11 @@ public List getMPRSerachByWecTotal(String siteid,String customerid,String fdate,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -12679,8 +10349,8 @@ public List getWECDetailTotalAdmin(String ebid, String wecid, String rdate,
 			String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -12770,34 +10440,11 @@ public List getWECDetailTotalAdmin(String ebid, String wecid, String rdate,
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -12805,8 +10452,8 @@ public List getWECDetailTotalAdmin(String ebid, String wecid, String rdate,
 public List getEBData(String ebid, String rdate, String RType) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -12820,6 +10467,7 @@ public List getEBData(String ebid, String rdate, String RType) throws Exception 
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, ebid);
 			prepStmt.setObject(2, reportdate);
+			DaoUtility.displayQueryWithParameter(20, sqlQuery, ebid, reportdate);
 		}
 
 		// ps.setObject(1,item.toUpperCase() + "%");
@@ -12830,6 +10478,7 @@ public List getEBData(String ebid, String rdate, String RType) throws Exception 
 				rs = prepStmt.executeQuery();
 
 				if (rs.next()) {
+					DaoUtility.getRowCount(20, rs);
 					Vector tranVector = new Vector();
 					tranVector.add("Daily");
 					tranVector.add(rs.getObject("KWHEXPORT"));
@@ -12853,9 +10502,11 @@ public List getEBData(String ebid, String rdate, String RType) throws Exception 
 				prepStmt.setObject(1, ebid);
 				prepStmt.setObject(2, reportdate);
 				prepStmt.setObject(3, reportdate);
+				DaoUtility.displayQueryWithParameter(21, sqlQuery, ebid, reportdate, reportdate);
 				rs = prepStmt.executeQuery();
 
 				if (rs.next()) {
+					DaoUtility.getRowCount(21, rs);
 					Vector tranVector = new Vector();
 					tranVector.add("Monthly");
 					tranVector.add(rs.getObject("KWHEXPORT")== null ? "0":rs.getObject("KWHEXPORT").toString());
@@ -12890,9 +10541,11 @@ public List getEBData(String ebid, String rdate, String RType) throws Exception 
 				prepStmt.setObject(1, ebid);
 				prepStmt.setObject(2, pdate);
 				prepStmt.setObject(3, ndate);
+				DaoUtility.displayQueryWithParameter(22, sqlQuery, ebid, pdate, ndate);
 				rs = prepStmt.executeQuery();
 
 				if (rs.next()) {
+					DaoUtility.getRowCount(22, rs);
 					Vector tranVector = new Vector();
 					tranVector.add("Yearly");
 					tranVector.add(rs.getObject("KWHEXPORT")== null ? "0":rs.getObject("KWHEXPORT").toString());
@@ -12907,34 +10560,11 @@ public List getEBData(String ebid, String rdate, String RType) throws Exception 
 			}
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
@@ -12943,8 +10573,8 @@ public List getEBData(String ebid, String rdate, String RType) throws Exception 
 public List getEBDataCum(String ebid, String rdate)	throws Exception {
 // public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs = null;
 List tranList = new ArrayList();
@@ -13044,34 +10674,11 @@ try {
 	
 
 } catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 } finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }
@@ -13081,8 +10688,8 @@ return tranList;
 public List getEBWiseTotal(String ebid, String rdate, String RType)	throws Exception {
 	// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 			//System.out.println("RDATE: " + rdate);
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	ResultSet rs = null;
 	List tranList = new ArrayList();
@@ -13100,7 +10707,7 @@ public List getEBWiseTotal(String ebid, String rdate, String RType)	throws Excep
 			//System.out.println("reportdate"+reportdate);
 			prepStmt.setObject(2, reportdate);
 			prepStmt.setObject(3, reportdate);
-		
+		DaoUtility.displayQueryWithParameter(55, sqlQuery, ebid,reportdate,reportdate);
 	}
 	if (RType.equals("M")) {
 		sqlQuery = CustomerSQLC.SELECT_EBWISEM_TOTAL;
@@ -13108,7 +10715,7 @@ public List getEBWiseTotal(String ebid, String rdate, String RType)	throws Excep
 		prepStmt.setObject(1, ebid);
 		prepStmt.setObject(2, reportdate);
 		prepStmt.setObject(3, reportdate);
-		
+		DaoUtility.displayQueryWithParameter(55, sqlQuery, ebid,reportdate,reportdate);
 	}
 	if (RType.equals("Y")) {
 		int day = reportdate.getDate();
@@ -13130,7 +10737,7 @@ public List getEBWiseTotal(String ebid, String rdate, String RType)	throws Excep
 		prepStmt.setObject(1, ebid);
 		prepStmt.setObject(2, pdate);
 		prepStmt.setObject(3, ndate);
-		
+		DaoUtility.displayQueryWithParameter(55, sqlQuery, ebid,pdate,ndate);
 	}
 
 	// ps.setObject(1,item.toUpperCase() + "%");
@@ -13139,6 +10746,7 @@ public List getEBWiseTotal(String ebid, String rdate, String RType)	throws Excep
 		rs = prepStmt.executeQuery();
 		int i = 0;
 		if (rs.next()) {
+			DaoUtility.getRowCount(55, rs);
 			Vector tranVector = new Vector();
 			
 			tranVector.add(rs.getObject("cnt"));
@@ -13160,41 +10768,19 @@ public List getEBWiseTotal(String ebid, String rdate, String RType)	throws Excep
 		rs.close();
 
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+		
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return tranList;
 }
 
 private int getLoadRestForParticularDateWRTEB(String ebid, String rdate) {
 
-	JDBCUtils conmanager = new JDBCUtils();
+	//JDBCUtils conmanager = new JDBCUtils();
 	Connection conn = null;
 	String sqlQuery = "";
 	PreparedStatement prepStmt = null;
@@ -13202,7 +10788,7 @@ private int getLoadRestForParticularDateWRTEB(String ebid, String rdate) {
 		
 	int totalLoadMinutesForEB = 0;
 	try{
-		conn = conmanager.getConnection();
+		conn = wcareConnector.getConnectionFromPool();
 		sqlQuery = "Select S_WEC_ID,S_MP_ID,N_Actual_Value From Tbl_Wec_Reading " +
 					"Where D_Reading_Date = ? " +
 					"And S_Mp_Id = '0810000001' " +
@@ -13218,23 +10804,10 @@ private int getLoadRestForParticularDateWRTEB(String ebid, String rdate) {
 		return totalLoadMinutesForEB;
 	}
 	catch(Exception e){
-		System.out.println(e.getMessage());
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 	}
 	finally{
-		try{
-			if(conn != null){
-				conn.close();
-			}
-			if(prepStmt != null){
-				prepStmt.close();
-			}
-			if(rs != null){
-				rs.close();
-			}
-		}
-		catch(Exception e){
-			System.out.println(e.getMessage());
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return totalLoadMinutesForEB;
 
@@ -13244,8 +10817,8 @@ private int getLoadRestForParticularDateWRTEB(String ebid, String rdate) {
 	public List getSiteWiseTotal(String siteid,String custid, String rdate, String RType)
 	throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -13277,7 +10850,7 @@ private int getLoadRestForParticularDateWRTEB(String ebid, String rdate) {
 			prepStmt.setObject(2, siteid);
 			prepStmt.setObject(3, pdate);
 			prepStmt.setObject(4, ndate);
-		
+			DaoUtility.displayQueryWithParameter(58, sqlQuery, custid,siteid,pdate,ndate);
 		
 		// ps.setObject(1,item.toUpperCase() + "%");
 		
@@ -13285,6 +10858,7 @@ private int getLoadRestForParticularDateWRTEB(String ebid, String rdate) {
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			if (rs.next()) {
+				DaoUtility.getRowCount(58, rs);
 				Vector tranVector = new Vector();
 				
 				tranVector.add(rs.getObject("cnt"));
@@ -13306,34 +10880,12 @@ private int getLoadRestForParticularDateWRTEB(String ebid, String rdate) {
 			rs.close();
 		
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-		
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-		
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 return tranList;
 }
@@ -13342,8 +10894,8 @@ return tranList;
 	public List getStateWiseTotal(String siteid,String custid, String rdate, String RType)
 	throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -13375,7 +10927,7 @@ return tranList;
 			prepStmt.setObject(2, siteid);
 			prepStmt.setObject(3, pdate);
 			prepStmt.setObject(4, ndate);
-		
+		    DaoUtility.displayQueryWithParameter(66, sqlQuery, custid,siteid,pdate,ndate);
 		
 		// ps.setObject(1,item.toUpperCase() + "%");
 		
@@ -13383,6 +10935,7 @@ return tranList;
 			rs = prepStmt.executeQuery();
 			int i = 0;
 			if (rs.next()) {
+				DaoUtility.getRowCount(66, rs);
 				Vector tranVector = new Vector();
 				
 				tranVector.add(rs.getObject("cnt"));
@@ -13404,34 +10957,12 @@ return tranList;
 			rs.close();
 		
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-		
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-		
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 return tranList;
 }
@@ -13439,8 +10970,8 @@ return tranList;
 public List getEBWiseTotalCum(String ebid, String rdate)
 	throws Exception {
 // public List searchempbyfilter(DynaBean dynaBean) throws Exception {
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 ResultSet rs1 = null;
 PreparedStatement ps = null;
@@ -13509,34 +11040,12 @@ try {
 	rs.close();
 
 } catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 } finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	} catch (Exception e) {
-		prepStmt = null;
-		rs = null;
-		if (conn != null) {
-			conn.close();
-			conn = null;
-
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-	}
+	DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
+	
 }
 return tranList;
 }
@@ -13547,8 +11056,8 @@ return tranList;
 	public List getUploadStatus(String userid, String rdate) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -13718,34 +11227,11 @@ return tranList;
 			}
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 		}
 		return tranList;
 	}
@@ -13804,20 +11290,7 @@ private Set<String> getSrNoScadaConnectedInWcareStateWise(String stateId) throws
 		
 		return srNoInWcareStateWise;
 	} finally {
-		try {
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 }
 
@@ -13842,20 +11315,7 @@ private Set<String> getAllStateIds() throws SQLException {
 		
 		return allStateIds;
 	} finally {
-		try {
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 }
 
@@ -13887,20 +11347,7 @@ public Set<String> getAllScadaSrNoUploaded(Date reportdate) throws SQLException 
 		
 		return allScadaSrNoUploaded;
 	} finally {
-		try {
-			if (conn != null) {
-				wcareConnector.returnConnectionToPool(conn);
-			}
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 }
 
@@ -13910,8 +11357,9 @@ throws Exception {
 	if(methodClassName){
 		MethodClass.displayMethodClassName();
 	}
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+
+	//JDBCUtils conmanager = new JDBCUtils();
+	Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	ResultSet rs = null;
@@ -14018,34 +11466,11 @@ throws Exception {
 	}
 	
 	} catch (SQLException sqlExp) {
-	sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 	Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 	throw exp;
 	} finally {
-	try {
-		if (prepStmt != null) {
-			prepStmt.close();
-		}
-		if (rs != null)
-			rs.close();
-		if (conn != null) {
-			conn.close();
-			conn = null;
-	
-			conmanager.closeConnection();
-			conmanager = null;
-		}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-		
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 	}
 	return tranList;
 }
@@ -14055,8 +11480,8 @@ public List getEmployeeEmailList() throws Exception {
 	if(methodClassName){
 		MethodClass.displayMethodClassName();
 	}
-JDBCUtils conmanager = new JDBCUtils();
-Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 PreparedStatement prepStmt = null;
 
 ResultSet rs = null;
@@ -14083,34 +11508,11 @@ prepStmt.close();
 rs.close();
 
 } catch (SQLException sqlExp) {
-sqlExp.printStackTrace();
+	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 throw exp;
 } finally {
-try {
-	if (prepStmt != null) {
-		prepStmt.close();
-	}
-	if (rs != null)
-		rs.close();
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-} catch (Exception e) {
-	prepStmt = null;
-	rs = null;
-	if (conn != null) {
-		conn.close();
-		conn = null;
-
-		conmanager.closeConnection();
-		conmanager = null;
-	}
-}
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 return tranList;
 }
@@ -14118,8 +11520,8 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -14212,34 +11614,13 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			rs.close();
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
+			
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}
@@ -14251,8 +11632,8 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 		logger.debug("Ajax Call(userid):::" + UserId);
 		//System.out.println("Item :: " + item + ", Action :: " + action + ", UserId :: " + UserId);
 		StringBuffer xml = new StringBuffer();
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+				Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement ps = null;
 		PreparedStatement ps1 = null;
 		PreparedStatement ps2 = null;
@@ -14737,6 +12118,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				sqlQuery = CustomerSQLC.GET_SENTTEMPMESSAGE_DETAIL;
 				ps = conn.prepareStatement(sqlQuery);
 				ps.setObject(1, item);
+				DaoUtility.displayQueryWithParameter(sqlQuery, item);
 				rs = ps.executeQuery();
 				String Email = "";
 				xml.append("<?xml version=\"1.0\"?>\n");
@@ -14812,6 +12194,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				sqlQuery = CustomerSQLC.GET_MESSAGE_DETAIL_BY_ID;
 				ps = conn.prepareStatement(sqlQuery);
 				ps.setObject(1, item);
+				DaoUtility.displayQueryWithParameter(sqlQuery, item);
 				rs = ps.executeQuery();
 				xml.append("<?xml version=\"1.0\"?>\n");
 				xml.append("<msgmaster generated=\""
@@ -14897,6 +12280,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				String comma[] = item.split(",");
 				ps.setObject(1, comma[0]);
 				ps.setObject(2, comma[1]);
+				DaoUtility.displayQueryWithParameter(sqlQuery, comma[0], comma[1]);
 			    ps.executeQuery();
 
 				xml.append("<?xml version=\"1.0\"?>\n");
@@ -14922,6 +12306,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				 ps = conn.prepareStatement(sqlQuery);
 				 ps.setObject(1, comma[0]);
 				 ps.setObject(2, cust[i]);
+				 DaoUtility.displayQueryWithParameter(sqlQuery, comma[0], cust[i]);
 				 ps.executeQuery();
 		       }
 
@@ -14942,22 +12327,23 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			else if (action.equals("CUST_TEMP_TO_POST")) {
 
 				sqlQuery = CustomerSQLC.DELETE_MESSAGE_POST;
-				logger.debug("sqlQuery:::" + sqlQuery);
+				DaoUtility.displayQueryWithParameter(sqlQuery, "NA");
 				ps = conn.prepareStatement(sqlQuery);
 
 				 ps.executeQuery();
 				//.close();
 				ps.close();
 				sqlQuery = CustomerSQLC.INSERT_MESSAGE_TEMP_TO_POST;
-				logger.debug("sqlQuery:::" + sqlQuery);
+				DaoUtility.displayQueryWithParameter(sqlQuery, "NA");
 				ps = conn.prepareStatement(sqlQuery);
 				rs = ps.executeQuery();
 				rs.close();
 				ps.close();
 				sqlQuery = CustomerSQLC.DELETE_MESSAGE_TEMP;
-				logger.debug("sqlQuery:::" + sqlQuery);
+				
 				ps = conn.prepareStatement(sqlQuery);
 				ps.setObject(1, UserId);
+				DaoUtility.displayQueryWithParameter(sqlQuery, UserId);
 				 ps.executeQuery();
 				xml.append("<?xml version=\"1.0\"?>\n");
 				xml.append("<msgmaster generated=\""
@@ -14975,8 +12361,6 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 
 			else if (action.equals("CUST_ADD_TEMP_MESSAGE")) 
 			{
-				
-				
 				xml.append("<?xml version=\"1.0\"?>\n");
 				xml.append("<msgmaster generated=\""
 						+ System.currentTimeMillis() + "\">\n");
@@ -14999,6 +12383,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 					    	ps = conn.prepareStatement(sqlQuery);
 						    ps.setObject(1, comma[0]);
 					        ps.setObject(2, site[i]);
+					        DaoUtility.displayQueryWithParameter(sqlQuery, comma[0], site[i]);
 					    	//ps.setObject(3, comma[2]);
 						    rs = ps.executeQuery();
 						    if (rs.next())
@@ -15015,6 +12400,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 							ps1.setObject(2, UserId);
 							ps1.setObject(3, site[i]);
 							ps1.setObject(4, site[i]);
+							DaoUtility.displayQueryWithParameter(sqlQuery, comma[0], UserId, site[i], site[i]);
 							rs1 = ps1.executeQuery();
 							rs1.close();
 							ps1.close();
@@ -15026,7 +12412,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 					
 				}// if part of customer
 				
-				else 
+				else
 				{  
 					
 					 String[] customer =comma[1].split(",");
@@ -15081,48 +12467,15 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 		}//end of if loop
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (ps != null)
-					ps.close();
-				if (ps1 != null)
-					ps1.close();
-				if (ps2 != null)
-					ps2.close();
-				if (rs != null)
-					rs.close();
-				if (rs1 != null)
-					rs1.close();
-				if (rs2 != null)
-					rs2.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				ps = null;
-				ps1 = null;
-				ps2 = null;
-				rs = null;
-				rs1 = null;
-				rs2 = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(ps,ps1,ps2) , Arrays.asList(rs,rs1,rs2) , conn);
+		
 		}
 		//System.out.println("XML :: " + xml);
-//		logger.debug(xml.toString());
+		logger.debug(xml.toString());
 		return xml.toString();
 	}
 
@@ -15151,13 +12504,14 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 	}
 
 	public static void fetchAll(ResultSet rs) {
+		ResultSetMetaData stmtInfo = null;
 		try {
 			System.out
 					.println("=============================================================");
 
 			// retrieve the number, types and properties of the
 			// resultset's columns
-			ResultSetMetaData stmtInfo = rs.getMetaData();
+			stmtInfo = rs.getMetaData();
 
 			int numOfColumns = stmtInfo.getColumnCount();
 			int r = 0;
@@ -15175,9 +12529,11 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				}
 				//System.out.println();
 			}
+			
+			
 		} catch (Exception e) {
 			System.out.println("Error: fetchALL: exception");
-		    System.out.println(e.getMessage());
+		    logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 	
@@ -15322,8 +12678,8 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 		throws Exception {
 //	 public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-	JDBCUtils conmanager = new JDBCUtils();
-	Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 	PreparedStatement prepStmt = null;
 	PreparedStatement ps = null;
 	ResultSet rs = null;
@@ -15459,34 +12815,11 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 		rs.close();
 
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 	}
 	return tranList;
 	}
@@ -15494,8 +12827,8 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 	 public List getERDAWECWiseDetail(String custid,String stateid,String rdate)
 		throws Exception {
 		
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -15572,7 +12905,10 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			prepStmt.close();
 			rs.close();
 		}catch(Exception e){
-			
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		}
+		finally{
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , conn);
 		}
 		System.out.println("tranList.toString()"+tranList.toString());
 		return tranList;
@@ -15581,8 +12917,8 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 	 public List getMissingScadaDataReport1(String stateName, String areaName, String siteName, String reportDate) throws Exception {
 			// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-			JDBCUtils conmanager = new JDBCUtils();
-			Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 			PreparedStatement prepStmt = null;
 			ResultSet rs = null;
 			List tranList = new ArrayList();
@@ -15665,34 +13001,11 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				rs.close();
 
 			} catch (SQLException sqlExp) {
-				sqlExp.printStackTrace();
+				logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 				Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 				throw exp;
 			} finally {
-				try {
-					if (prepStmt != null) {
-						prepStmt.close();
-					}
-					if (rs != null)
-						rs.close();
-					if (conn != null) {
-						conn.close();
-						conn = null;
-
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				} catch (Exception e) {
-					prepStmt = null;
-					rs = null;
-					if (conn != null) {
-						conn.close();
-						conn = null;
-
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 			}
 		return tranList;
 	}
@@ -15838,8 +13151,8 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 	 public List getMissingScadaDataReport(String stateId, String areaName, String siteName, String reportDate) throws Exception {
 			// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-			JDBCUtils conmanager = new JDBCUtils();
-			Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 			PreparedStatement prepStmt = null;
 			ResultSet rs = null;
 			List tranList = new ArrayList();
@@ -15906,34 +13219,11 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				rs.close();
 
 			} catch (SQLException sqlExp) {
-				sqlExp.printStackTrace();
+				logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 				Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 				throw exp;
 			} finally {
-				try {
-					if (prepStmt != null) {
-						prepStmt.close();
-					}
-					if (rs != null)
-						rs.close();
-					if (conn != null) {
-						conn.close();
-						conn = null;
-
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				} catch (Exception e) {
-					prepStmt = null;
-					rs = null;
-					if (conn != null) {
-						conn.close();
-						conn = null;
-
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 			}
 			
 		return tranList;
@@ -15941,7 +13231,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 
 	public ArrayList<String> getStateID() {
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -15950,7 +13240,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 		ArrayList<String> stateID = new ArrayList<String>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select S_State_Id,S_State_Name From Tbl_State_Master " + 
 						"WHERE UPPER(S_STATE_NAME) NOT IN (UPPER('DUMMY'))" +
 						"ORDER BY S_STATE_NAME";
@@ -15964,29 +13254,16 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			return stateID;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}
 
 	public ArrayList<String> getStateNames() {
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -15995,7 +13272,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 		ArrayList<String> stateNames = new ArrayList<String>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn =wcareConnector.getConnectionFromPool();;
 			sqlQuery = "Select S_State_Name From Tbl_State_Master " + 
 						"WHERE UPPER(S_STATE_NAME) NOT IN (UPPER('DUMMY'))" +
 						"ORDER BY S_STATE_NAME";
@@ -16008,23 +13285,10 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 			return stateNames;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}
@@ -16133,20 +13397,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				}
 			}
 			finally {
-				try {
-					if (conn != null) {
-						wcareConnector.returnConnectionToPool(conn);
-					}
-					if (prepStmt != null) {
-						prepStmt.close();
-					}
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (Exception e) {
-					MethodClass.displayMethodClassName();
-					e.printStackTrace();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 			}
 			return result;
 		}
@@ -16179,20 +13430,7 @@ public List getEBWiseTotalAdmin(String ebid, String rdate, String RType)
 				}
 			}
 			finally {
-				try {
-					if (conn != null) {
-						wcareConnector.returnConnectionToPool(conn);
-					}
-					if (prepStmt != null) {
-						prepStmt.close();
-					}
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (Exception e) {
-					MethodClass.displayMethodClassName();
-					e.printStackTrace();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 			}
 			return result;
 		}

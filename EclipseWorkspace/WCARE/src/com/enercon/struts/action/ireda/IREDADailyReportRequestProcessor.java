@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -18,7 +19,7 @@ import com.enercon.global.utility.MethodClass;
 import com.enercon.model.ireda.IredaProject;
 
 public class IREDADailyReportRequestProcessor extends Action{
-
+	private final static Logger logger = Logger.getLogger(IREDADailyReportRequestProcessor.class);
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response){
 
@@ -41,8 +42,7 @@ public class IREDADailyReportRequestProcessor extends Action{
 				iredaProjectList.add(new IredaProject(projectNo).populateStateWiseTotalDataForOneDayWithThreading(date).populateGrandTotalForOneDay(date));
 			}
 		} catch (SQLException e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		
 		request.setAttribute("iredaDetails", iredaProjectList);

@@ -1,26 +1,6 @@
 package com.enercon.admin.dao;
 
-import com.enercon.Time24HoursValidator;
-import com.enercon.admin.bean.CreateRoleBean;
-import com.enercon.admin.bean.RoleMappingBean;
-import com.enercon.admin.job.InsertPESData;
-import com.enercon.global.utility.DatabaseUtility;
-import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utility.MethodClass;
-import com.enercon.global.utils.CallScheduler;
-import com.enercon.global.utils.DynaBean;
-import com.enercon.global.utils.GlobalSQLC;
-import com.enercon.global.utils.JDBCUtils;
-import com.enercon.global.utils.CodeGenerate;
-import com.enercon.customer.dao.CustomerDao;
-import com.enercon.global.utils.Diff;
-import com.enercon.reports.pojo.PESDataStorage;
-import com.enercon.reports.pojo.WECReadingTrackerDataStorage;
-import com.enercon.struts.CustomerIdName;
-import com.enercon.struts.action.submit.InitialReadingUploadHandler;
-import com.enercon.struts.exception.GridBifurcationException;
-import com.enercon.struts.pojo.LocationMasterMapper;
-
+import java.lang.reflect.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -29,8 +9,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.*;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -39,9 +24,29 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
-import java.lang.reflect.Array;
+import com.enercon.Time24HoursValidator;
+import com.enercon.admin.bean.CreateRoleBean;
+import com.enercon.admin.bean.RoleMappingBean;
+import com.enercon.admin.job.InsertPESData;
+import com.enercon.connection.WcareConnector;
+import com.enercon.customer.dao.CustomerDao;
+import com.enercon.dao.DaoUtility;
+import com.enercon.global.utility.DatabaseUtility;
+import com.enercon.global.utility.DateUtility;
+import com.enercon.global.utility.MethodClass;
+import com.enercon.global.utils.CallScheduler;
+import com.enercon.global.utils.Diff;
+import com.enercon.global.utils.DynaBean;
+import com.enercon.global.utils.GlobalSQLC;
+import com.enercon.model.graph.Graph;
+import com.enercon.reports.pojo.PESDataStorage;
+import com.enercon.reports.pojo.WECReadingTrackerDataStorage;
+import com.enercon.service.CodeGenerateService;
+import com.enercon.struts.CustomerIdName;
+import com.enercon.struts.exception.GridBifurcationException;
+import com.enercon.struts.pojo.LocationMasterMapper;
 
-public class AdminDao {
+public class AdminDao implements WcareConnector {
 	private final static Logger logger = Logger.getLogger(AdminDao.class);
 
 	public AdminDao() {
@@ -77,7 +82,7 @@ public class AdminDao {
 
 	public String blockScheduledMail(String blockSchedule, String schedulerDate) throws Exception{
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
@@ -86,7 +91,7 @@ public class AdminDao {
 		String scheduleRemark = "rescheduledMail";
 		String msg="";
 		try {		
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 
 			Statement st = conn.createStatement();
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -159,43 +164,19 @@ public class AdminDao {
 			}
 			st.close();
 			conn.commit();
-			conn.close();
-
+	
 		} catch (Exception e) {			
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}finally{
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();				
-
-					conmanager.closeConnection();					
-				}
-			} catch (Exception e) {
-				ps = null;
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-
-					conmanager.closeConnection();					
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 
 	}
 	public byte[] imageDetailsDisplay() throws Exception
 	{
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		//ArrayList alist = new ArrayList();
 
 		PreparedStatement ps = null;
@@ -203,27 +184,31 @@ public class AdminDao {
 		Blob image;
 		//String image = "";
 		byte[ ] imgData = null ; 
-
-		String sqlQuery = AdminSQLC.GET_IMAGE_DETAIL_DISPLAY;
-		ps = conn.prepareStatement(sqlQuery);
-
-		rs = ps.executeQuery();
-
-		while (rs.next()){
-			//alist.add(rs.getString(1));
-			image = rs.getBlob(1);
-			imgData = image.getBytes(1,(int)image.length());
-			//alist.add(image.getBytes(1,(int)image.length())) ;
-			//alist.add(imgData);
-
-		}
+        
+			String sqlQuery = AdminSQLC.GET_IMAGE_DETAIL_DISPLAY;
+			ps = conn.prepareStatement(sqlQuery);
+		try{
+			rs = ps.executeQuery();
+	
+			while (rs.next()){
+				//alist.add(rs.getString(1));
+				image = rs.getBlob(1);
+				imgData = image.getBytes(1,(int)image.length());
+				//alist.add(image.getBytes(1,(int)image.length())) ;
+				//alist.add(imgData);
+	
+			}
+        }
+        finally{
+        	DaoUtility.releaseResources(ps, rs, conn);		
+        }
 		return imgData;
 	}
 
 	public String getImageDesc() throws Exception
 	{
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -239,32 +224,9 @@ public class AdminDao {
 				imageDesc= rs.getString(1)==null?"Wind World (India) Ltd":rs.getString(1);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}finally{
-			try {
-				if (ps != null) {
-					ps.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(ps, rs, conn);
 		}
 		return imageDesc;
 	}
@@ -273,14 +235,14 @@ public class AdminDao {
 	{
 
 		List list1 = new ArrayList();
-		try{
-			JDBCUtils conmanager = new JDBCUtils();
-			Connection conn = conmanager.getConnection();
+		
+			//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();	
 			PreparedStatement prepStmt = null;
 
 			ResultSet rs = null;
 			int size1 = 0;
-
+		try{
 			String query ="SELECT A.*,B.S_ROLE_NAME FROM TBL_LOGIN_MASTER A,TBL_ROLE B WHERE B.S_ROLE_ID=A.S_ROLE_ID ORDER BY A.S_USER_ID";
 			prepStmt = conn.prepareStatement(query);
 			rs = prepStmt.executeQuery();
@@ -301,7 +263,9 @@ public class AdminDao {
 			rs.close();
 		}catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		}finally{
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return list1;
 	}
@@ -309,12 +273,14 @@ public class AdminDao {
 	{
 
 		List list1 = new ArrayList();
-		try{
-			JDBCUtils conmanager = new JDBCUtils();
-			Connection conn = conmanager.getConnection();
+		
+			//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
+			
 			PreparedStatement prepStmt = null;
 
 			ResultSet rs = null;
+			try{
 			int size1 = 0;
 			String query = "";
 			if(areaid.equalsIgnoreCase("")||areaid==null)
@@ -349,16 +315,17 @@ public class AdminDao {
 			rs.close();
 		}catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		}finally{
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return list1;
 	}
 
 	public List getAuthDetail(String roleid) throws Exception {
 		// public List searchempbyfilter(DynaBean dynaBean) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
-
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 
 		PreparedStatement prepStmt = null;
 		//PreparedStatement ps = null;
@@ -407,52 +374,27 @@ public class AdminDao {
 
 
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+			
 		}
 		return tranList;
 	}
 
 	public String getMsg(String msgid) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection con = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 
 		ResultSet rs = null;
 
 		String msg="";
 
-
-
-
 		String sqlQuery = AdminSQLC.GET_MESSAGE_DETAIL;
-		prepStmt = con.prepareStatement(sqlQuery);
+		prepStmt = conn.prepareStatement(sqlQuery);
 		prepStmt.setObject(1, msgid);
 
 		try {
@@ -463,40 +405,20 @@ public class AdminDao {
 				msg =rs.getString("S_MESSAGE_DESCRIPTION");
 
 
-
-
-
 			}
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (con != null) {
-					conmanager.closeConnection();
-					con = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (con != null) {
-					conmanager.closeConnection();
-					con = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return msg;
 	}
 
 	public List getLoginDetail(String fdt,String ldt) throws Exception {
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection con = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 
 		ResultSet rs = null;
@@ -512,7 +434,7 @@ public class AdminDao {
 		java.sql.Date pdt2 = new java.sql.Date(ffd1.getTime());
 
 		String sqlQuery = AdminSQLC.GET_LoginDetail;
-		prepStmt = con.prepareStatement(sqlQuery);
+		prepStmt = conn.prepareStatement(sqlQuery);
 		prepStmt.setObject(1, pdt1);
 		prepStmt.setObject(2, pdt2);
 		try {
@@ -533,36 +455,19 @@ public class AdminDao {
 				i++;
 			}
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (con != null) {
-					conmanager.closeConnection();
-					con = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (con != null) {
-					conmanager.closeConnection();
-					con = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
 
 	public String addCustomer(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -586,7 +491,7 @@ public class AdminDao {
 			if (dynaBean.getProperty("CustIdtxt") == null || dynaBean.getProperty("CustIdtxt").equals(""))
 
 			{
-				custid = CodeGenerate.NewCodeGenerate("TBL_CUSTOMER_MASTER");
+				custid = CodeGenerateService.getInstance().getId("TBL_CUSTOMER_MASTER");
 				sqlQuery = AdminSQLC.CHECK_CUSTOMER_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,custname);
@@ -660,42 +565,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);		
 		}
 		return msg;
 	}
 
 	public String addEBMaster(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -714,7 +596,7 @@ public class AdminDao {
 			String ebid="";
 			if (dynaBean.getProperty("EBId") == null || dynaBean.getProperty("EBId").equals(""))
 			{
-				ebid = CodeGenerate.NewCodeGenerate("TBL_EB_MASTER");
+				ebid = CodeGenerateService.getInstance().getId("TBL_EB_MASTER");
 				if(FDDesctxt.equals("")){
 					sqlQuery = AdminSQLC.CHECK_EB_MASTER_WITHOUT_FEDER;
 
@@ -794,42 +676,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);			
 		}
 		return msg;
 	}
 
 	public String addEBMFactor(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -852,7 +711,7 @@ public class AdminDao {
 			java.sql.Date todate = new java.sql.Date(td.getTime());
 			if (dynaBean.getProperty("FacId") == null || dynaBean.getProperty("FacId").equals(""))
 			{
-				FacId = CodeGenerate.NewCodeGenerate("TBL_EB_MFACTOR");
+				FacId = CodeGenerateService.getInstance().getId("TBL_EB_MFACTOR");
 				sqlQuery = AdminSQLC.CHECK_EB_MFACTOR;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,EBIdtxt);
@@ -922,42 +781,20 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
+			
 		}
 		return msg;
 	}
 
 	public String addFDMFactor(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -980,7 +817,7 @@ public class AdminDao {
 			java.sql.Date todate = new java.sql.Date(td.getTime());
 			if (dynaBean.getProperty("FacId") == null || dynaBean.getProperty("FacId").equals(""))
 			{
-				FacId = CodeGenerate.NewCodeGenerate("TBL_FEDER_MFACTOR");
+				FacId = CodeGenerateService.getInstance().getId("TBL_FEDER_MFACTOR");
 				sqlQuery = AdminSQLC.CHECK_FD_MFACTOR;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1, FDIdtxt);
@@ -1050,42 +887,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);			
 		}
 		return msg;
 	}
 
 	public String addFDMaster(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1098,7 +912,7 @@ public class AdminDao {
 			String fdid="";
 			if (dynaBean.getProperty("FDIdtxt") == null || dynaBean.getProperty("FDIdtxt").equals(""))
 			{
-				fdid = CodeGenerate.NewCodeGenerate("TBL_FEDER_MASTER");
+				fdid = CodeGenerateService.getInstance().getId("TBL_FEDER_MASTER");
 				sqlQuery = AdminSQLC.CHECK_FEDER_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,FDDesctxt);
@@ -1159,42 +973,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addNewSite(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1211,7 +1002,7 @@ public class AdminDao {
 			String siteid="";
 			if (dynaBean.getProperty("SiteIdtxt") == null || dynaBean.getProperty("SiteIdtxt").equals(""))
 			{
-				siteid = CodeGenerate.NewCodeGenerate("TBL_SITE_MASTER");
+				siteid = CodeGenerateService.getInstance().getId("TBL_SITE_MASTER");
 				sqlQuery = AdminSQLC.CHECK_SITE_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,sitename);
@@ -1278,42 +1069,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addNewFeeder(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1325,7 +1093,7 @@ public class AdminDao {
 			String feederid="";
 			if (dynaBean.getProperty("SiteIdtxt") == null || dynaBean.getProperty("SiteIdtxt").equals(""))
 			{
-				feederid = CodeGenerate.NewCodeGenerate("TBL_FEEDER_MASTER");
+				feederid = CodeGenerateService.getInstance().getId("TBL_FEEDER_MASTER");
 				sqlQuery = AdminSQLC.CHECK_FEEDER_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,feedername);
@@ -1385,42 +1153,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addNewArea(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1435,7 +1180,7 @@ public class AdminDao {
 			String areaid="";
 			if (dynaBean.getProperty("AreaIdtxt") == null || dynaBean.getProperty("AreaIdtxt").equals(""))
 			{
-				areaid = CodeGenerate.NewCodeGenerate("TBL_AREA_MASTER");
+				areaid = CodeGenerateService.getInstance().getId("TBL_AREA_MASTER");
 				sqlQuery = AdminSQLC.CHECK_AREA_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,areaname);
@@ -1498,41 +1243,18 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 	public String addNewSubstation(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1624,42 +1346,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addMeterPiont(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1688,7 +1387,7 @@ public class AdminDao {
 			}
 			if (dynaBean.getProperty("MPIdtxt") == null || dynaBean.getProperty("MPIdtxt").equals(""))
 			{
-				mpid = CodeGenerate.NewCodeGenerate("TBL_MP_MASTER");
+				mpid = CodeGenerateService.getInstance().getId("TBL_MP_MASTER");
 				sqlQuery = AdminSQLC.CHECK_MP_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,mpdesc);
@@ -1757,42 +1456,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addRemarks(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1805,7 +1481,7 @@ public class AdminDao {
 			String RemarksIdtxt="";
 			if (dynaBean.getProperty("RemarksIdtxt") == null || dynaBean.getProperty("RemarksIdtxt").equals(""))
 			{
-				RemarksIdtxt = CodeGenerate.NewCodeGenerate("TBL_REMARKS");
+				RemarksIdtxt = CodeGenerateService.getInstance().getId("TBL_REMARKS");
 				sqlQuery = AdminSQLC.CHECK_REMARKS_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,Remarkstxt);
@@ -1869,42 +1545,19 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addSiteRemarks(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1942,42 +1595,19 @@ public class AdminDao {
 			rs.close();
 
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addNewStateIn(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -1988,7 +1618,7 @@ public class AdminDao {
 			statename=statename.toUpperCase();
 			String stateid = "";
 			if (dynaBean.getProperty("StateIdtxt") == null || dynaBean.getProperty("StateIdtxt").equals("")){
-				stateid  = CodeGenerate.NewCodeGenerate("TBL_STATE_MASTER");
+				stateid  = CodeGenerateService.getInstance().getId("TBL_STATE_MASTER");
 				sqlQuery = AdminSQLC.CHECK_STATE_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,statename);
@@ -2044,42 +1674,19 @@ public class AdminDao {
 				rs.close();
 			}				
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	} 
 
 	public String addTypeMaster(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -2090,7 +1697,7 @@ public class AdminDao {
 			TypeNametxt=TypeNametxt.toUpperCase();
 			String TypeIdtxt = "";
 			if (dynaBean.getProperty("TypeIdtxt") == null || dynaBean.getProperty("TypeIdtxt").equals("")){
-				TypeIdtxt  = CodeGenerate.NewCodeGenerate("TBL_WEC_TYPE");
+				TypeIdtxt  = CodeGenerateService.getInstance().getId("TBL_WEC_TYPE");
 				sqlQuery = AdminSQLC.CHECK_TYPE_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,TypeNametxt);
@@ -2146,46 +1753,24 @@ public class AdminDao {
 				rs.close();
 			}				
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addLoginMaster(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
+		logger.debug(dynaBean);
 		try{	    	    	
 			String loginidtxt = dynaBean.getProperty("loginidtxt").toString().trim();
 			String active = dynaBean.getProperty("activetxt").toString().trim();
@@ -2207,14 +1792,16 @@ public class AdminDao {
 			String	desctxt = dynaBean.getProperty("desctxt").toString();	    	
 			String loginmasterid = "";	
 			if (dynaBean.getProperty("loginmasteridtxt") == null || dynaBean.getProperty("loginmasteridtxt").equals("") ){	
-				loginmasterid = CodeGenerate.NewCodeGenerate( "TBL_LOGIN_MASTER");	
+				loginmasterid = CodeGenerateService.getInstance().getId("TBL_LOGIN_MASTER");	
 				sqlQuery = AdminSQLC.CHECK_LOGINMASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,loginidtxt.trim());	
-				prepStmt.setObject(2,loginmasterid);	
+				prepStmt.setObject(2,loginmasterid);
+//				DaoUtility.displayQueryWithParameter(25, sqlQuery, loginidtxt.trim(), loginmasterid);
 				rs = prepStmt.executeQuery();
 				if (rs.next())
 				{
+//					DaoUtility.getRowCount(25, rs);
 					msg = "<font class='errormsgtext'>login code already exists!</font>";						    				
 				}
 				else
@@ -2231,6 +1818,10 @@ public class AdminDao {
 					ps.setObject(8, UserId);
 					ps.setObject(9, active);
 					ps.setObject(10, remarks);
+//					DaoUtility.displayQueryWithParameter(26, sqlQuery, 
+//							loginmasterid, loginidtxt, Passwordtxt.trim().length() == 0 ? loginidtxt : Passwordtxt, 
+//									logintypetxt, roletxt, desctxt, 
+//									UserId, UserId,active,remarks);
 					int iInserteddRows = ps.executeUpdate();
 					//conn.commit();
 					if (iInserteddRows != 1)
@@ -2246,10 +1837,12 @@ public class AdminDao {
 				sqlQuery = AdminSQLC.CHECK_LOGINMASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,loginidtxt);	
-				prepStmt.setObject(2,loginmasterid);	
+				prepStmt.setObject(2,loginmasterid);
+//				DaoUtility.displayQueryWithParameter(27, sqlQuery, loginidtxt, loginmasterid);
 				rs = prepStmt.executeQuery();
 				if (rs.next())
 				{
+//					DaoUtility.getRowCount(27, rs);
 					msg = "<font class='errormsgtext'>User already exists!</font>";
 				}
 				else
@@ -2264,7 +1857,10 @@ public class AdminDao {
 					ps.setObject(6, UserId);
 					ps.setObject(7, active);
 					ps.setObject(8, remarks);
-					ps.setObject(9, loginmasterid);				
+					ps.setObject(9, loginmasterid);
+//					DaoUtility.displayQueryWithParameter(28, sqlQuery, 
+//							loginidtxt, Passwordtxt.trim().length() == 0 ? loginidtxt : Passwordtxt, 
+//							logintypetxt, roletxt, desctxt, UserId, active,remarks, loginmasterid);
 					ps.executeUpdate();
 					//conn.commit();
 					ps.close();
@@ -2292,42 +1888,19 @@ public class AdminDao {
 
    			}*/
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String UpdateLoginMaster(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -2355,41 +1928,18 @@ public class AdminDao {
 
 			}
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 	public String addNews(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -2406,7 +1956,7 @@ public class AdminDao {
 			java.sql.Date tdate = new java.sql.Date(tdt.getTime());
 			String NewsIdtxt = "";	
 			if (dynaBean.getProperty("NewsIdtxt") == null || dynaBean.getProperty("NewsIdtxt").equals("") ){	
-				NewsIdtxt = CodeGenerate.NewCodeGenerate( "TBL_NEWS");	
+				NewsIdtxt = CodeGenerateService.getInstance().getId( "TBL_NEWS");	
 
 				sqlQuery = AdminSQLC.INSERT_NEWS;
 				ps = conn.prepareStatement(sqlQuery);
@@ -2443,42 +1993,19 @@ public class AdminDao {
 
 			}	
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String AddWecMaster(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -2529,7 +2056,7 @@ public class AdminDao {
 			String wecid="";
 			if (dynaBean.getProperty("wecidtxt") == null || dynaBean.getProperty("wecidtxt").equals("")){   		
 
-				wecid = CodeGenerate.NewCodeGenerate("TBL_WEC_MASTER");
+				wecid = CodeGenerateService.getInstance().getId("TBL_WEC_MASTER");
 				sqlQuery = AdminSQLC.CHECK_WEC_MASTER_I;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,wecsdesc);
@@ -2572,9 +2099,11 @@ public class AdminDao {
 					ps.setObject(27, scadaDataTxt);
 					int iInserteddRows = ps.executeUpdate();
 					//conn.commit();
+					Graph.getInstance().initialize();
 					if (iInserteddRows != 1)
 						throw new Exception("DB_UPDATE_ERROR", null);
 					ps.close();
+					
 					msg = "<font class='sucessmsgtext'>WEC Data Inserted Successfully!</font>";
 				}	
 				prepStmt.close();
@@ -2624,6 +2153,7 @@ public class AdminDao {
 
 
 					ps.executeUpdate();
+					Graph.getInstance().initialize();
 					//conn.commit();
 					ps.close();
 					msg = "<font class='sucessmsgtext'>WEC Data Updated Successfully!</font>";
@@ -2632,34 +2162,11 @@ public class AdminDao {
 				rs.close();
 			}		
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
@@ -2667,8 +2174,8 @@ public class AdminDao {
 	public List searchempbyfilter(String empcode,String firname,String lastname,String location,String bloodgroup) throws Exception {
 		//public List searchempbyfilter(DynaBean dynaBean) throws Exception {
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;    	  		
 		ResultSet rs = null;
 		List tranList = new ArrayList();
@@ -2731,40 +2238,19 @@ public class AdminDao {
 
 		}      
 		catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return tranList;
 	}
 
 	public Hashtable getAllTransactionNamesDao() throws Exception { 
 		logger.debug("ENERCON_DEBUG: AdminDAO: getAllTransactionNamesDao: Method Invoked. ");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = GlobalSQLC.GET_ALL_TRANSCTION_NAMES;
@@ -2778,31 +2264,11 @@ public class AdminDao {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 
 		return retHash;
@@ -2812,8 +2278,8 @@ public class AdminDao {
 	public Hashtable getAllUserDao() throws Exception {
 		logger.debug("ENERCON_DEBUG: AdminDAO: getAllUserDao: Method Invoked. ");
 		// //System.out.println("Enter In to the getAllUser In Global");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = GlobalSQLC.GET_ALL_USER;
@@ -2833,37 +2299,19 @@ public class AdminDao {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) prepStmt.close();
-				if (rs != null) rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return retHash;
 	}
 
 	public Hashtable getAllRolesDao() throws Exception {
 		logger.debug("PWC_ISPAT_DEBUG: AdminDAO: getAllRolesDao: Method Invoked. ");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = GlobalSQLC.GET_ALL_ROLES;
@@ -2880,31 +2328,11 @@ public class AdminDao {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return retHash;
 	}
@@ -2912,8 +2340,9 @@ public class AdminDao {
 
 	public boolean checkRoleExists(String roleName) throws Exception {
 		logger.debug("ENERCON_DEBUG: AdminDAO: checkRoleExists: Method Invoked. ");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+
+		//JDBCUtils conmanager = new JDBCUtils();
+        Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		boolean roleExists = false;
@@ -2929,33 +2358,15 @@ public class AdminDao {
 			prepStmt.close();
 			rs.close();
 		} catch (Exception exp) {
-			exp.printStackTrace();
-			if (conn != null) {
+			logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+			/*if (conn != null) {
 				conn.close();
 				conn = null;
 
 				conmanager.closeConnection();conmanager = null;
-			}
+			}*/
 		} finally {
-			try {
-				if (prepStmt != null) prepStmt.close();
-				if (rs != null) rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return roleExists;
 	}
@@ -3046,8 +2457,8 @@ public class AdminDao {
 
 	public String addNewRoleIn(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -3057,7 +2468,7 @@ public class AdminDao {
 			String roledesc = dynaBean.getProperty("RoleDescriptiontxt").toString();
 			String roleid = "";
 			if (dynaBean.getProperty("RoleIdtxt") == null || dynaBean.getProperty("RoleIdtxt").equals("")){
-				roleid = CodeGenerate.NewCodeGenerate("TBL_ROLE_MASTER");
+				roleid = CodeGenerateService.getInstance().getId("TBL_ROLE_MASTER");
 				sqlQuery = AdminSQLC.CHECK_ROLE_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,rolename);
@@ -3113,42 +2524,20 @@ public class AdminDao {
 				rs.close();
 			}				
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String UpdateLoginDetail(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
+		
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -3195,42 +2584,19 @@ public class AdminDao {
 
 
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String addNewRoleTran(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -3238,7 +2604,7 @@ public class AdminDao {
 		try{
 			String rolename = dynaBean.getProperty("RoleNametxt").toString();
 			String tran = dynaBean.getProperty("Transactiontxt").toString();
-			String tranroleid = CodeGenerate.NewCodeGenerate("TBL_ROLE_TRAN_MAPPING");
+			String tranroleid = CodeGenerateService.getInstance().getId("TBL_ROLE_TRAN_MAPPING");
 			sqlQuery = AdminSQLC.CHECK_ROLE_TRAN_MASTER;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1,rolename);
@@ -3268,42 +2634,19 @@ public class AdminDao {
 			prepStmt.close();
 			rs.close();
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 	public String addNewRoleTranNew(String UserId, DynaBean dynaBean)
 			throws Exception {
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -3320,7 +2663,7 @@ public class AdminDao {
 					tranid = (String)Array.get(trans, i);
 					if (! tranid.equals("."))
 					{
-						String tranroleid = CodeGenerate.NewCodeGenerate("TBL_ROLE_TRAN_MAPPING");
+						String tranroleid = CodeGenerateService.getInstance().getId("TBL_ROLE_TRAN_MAPPING");
 						sqlQuery = AdminSQLC.CHECK_ROLE_TRAN_MASTER;
 						prepStmt = conn.prepareStatement(sqlQuery);
 						prepStmt.setObject(1, tran);
@@ -3350,43 +2693,18 @@ public class AdminDao {
 				}
 			}
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 	public String UserRoleTran(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		String sqlQuery = "";
 		try{
@@ -3403,35 +2721,19 @@ public class AdminDao {
 			prepStmt.close();
 			msg = "<font class='sucessmsgtext'>User/Customer Role Update Successfully!</font>";
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) prepStmt.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, conn);
 		}
 		return msg;
 	}
 
 	public String AddLocationRight(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -3458,7 +2760,7 @@ public class AdminDao {
 						//msg = "<font class='errormsgtext'>State & Site Right for " + SUserId + " already exists!</font>";    				    				
 					}
 					else
-					{    rightsid = CodeGenerate.NewCodeGenerate( "TBL_STATE_SITE_RIGHTS");				
+					{    rightsid = CodeGenerateService.getInstance().getId( "TBL_STATE_SITE_RIGHTS");				
 					sqlQuery = AdminSQLC.INSERT_STATE_SITE_RIGHT;
 					ps = conn.prepareStatement(sqlQuery);
 					ps.setObject(1, rightsid);
@@ -3511,42 +2813,19 @@ public class AdminDao {
 				msg = "<font class='sucessmsgtext'>State & Site Right Added Successfull!</font>";
 			}
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		}finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 
 	public String ChangePassword(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -3583,41 +2862,18 @@ public class AdminDao {
 			rs.close();
 			prepStmt.close();
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
 		}
 		return msg;
 	}
 	public String wecCurtailment(String UserId, DynaBean dynaBean) throws Exception{
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -3702,37 +2958,11 @@ public class AdminDao {
 			msg = "<font class='sucessmsgtext'>WEC Curtailment Added Successfully!</font>";
 		}
 		catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (myPrepareStatement1 != null)
-					myPrepareStatement1.close();
-				if(myResultSet1 != null){
-					myResultSet1.close();
-				}
-				if (prepStmt != null)
-					prepStmt.close();
-				if(rs != null){
-					rs.close();
-				}
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,myPrepareStatement1,myPrepareStatement2) , Arrays.asList(rs,myResultSet1,myResultSet2) , conn);
 		}
 
 		return msg;
@@ -3742,8 +2972,8 @@ public class AdminDao {
 		logger.debug("Ajax Call(action):::" + action);
 		logger.debug("Ajax Call(userid):::" + UserId);
 		StringBuffer xml = new StringBuffer();
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		CustomerDao cd = new CustomerDao();
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
@@ -4039,11 +3269,13 @@ public class AdminDao {
 				// System.out.println("comma[state]--"+comma[1].toString());
 				// System.out.println("comma[customer]--"+comma[0].toString());
 				ps = conn.prepareStatement(sqlQuery);
+				DaoUtility.displayQueryWithParameter(73, sqlQuery, comma[1],comma[0] );
 				//ps.setObject(1,item);
 				rs = ps.executeQuery();
 				xml.append("<?xml version=\"1.0\"?>\n");
 				xml.append("<wecmaster generated=\""+System.currentTimeMillis()+"\">\n");
 				while(rs.next()){	
+					DaoUtility.getRowCount(73, rs);
 					xml.append("<weccode>");
 					xml.append("<sid>");
 					xml.append(rs.getObject("S_SITE_ID"));
@@ -4312,8 +3544,9 @@ public class AdminDao {
 			}
 			else if (action.equals("uploadScadaWECData"))
 			{
-				JDBCUtils publishconmanager = new JDBCUtils();
-				Connection publishconn = publishconmanager.getConnection();
+				//JDBCUtils publishconmanager = new JDBCUtils();
+				Connection publishconn = wcareConnector.getConnectionFromPool();
+				
 
 				String pubDetails[] = item.split(",");
 
@@ -4374,8 +3607,8 @@ public class AdminDao {
 			}
 			else if (action.equals("updateScadaWECData"))
 			{
-				JDBCUtils publishconmanager = new JDBCUtils();
-				Connection publishconn = publishconmanager.getConnection();
+				//JDBCUtils publishconmanager = new JDBCUtils();
+				Connection publishconn = wcareConnector.getConnectionFromPool();
 
 				String pubDetails[] = item.split(",");
 
@@ -4565,6 +3798,7 @@ public class AdminDao {
 						" WHERE A.S_STATE_ID =B.S_STATE_ID and B.s_site_id in(select distinct  s_site_id from tbl_eb_master     "+
 						" where s_customer_id in ("+item+") and s_status=1)";
 				prepStmt = conn.prepareStatement(sqlQuery);
+				DaoUtility.displayQueryWithParameter(72, sqlQuery, item);
 				// prepStmt.setObject(1,item);
 				rs = prepStmt.executeQuery();
 				xml.append("<?xml version=\"1.0\"?>\n");
@@ -4572,6 +3806,7 @@ public class AdminDao {
 
 				while (rs.next())
 				{	
+					DaoUtility.getRowCount(72, rs);
 					xml.append("<sitecode>\n");
 					xml.append("<sid>");
 					xml.append(rs.getObject("S_STATE_ID"));
@@ -4663,7 +3898,7 @@ public class AdminDao {
 					prepStmt = conn.prepareStatement(sqlQuery);
 					// System.out.println("s[0]--"+s[0].toString());
 					prepStmt.setObject(1,s[0]);
-
+					DaoUtility.displayQueryWithParameter(150, sqlQuery, s[0]);	
 				}
 				else
 				{
@@ -4671,14 +3906,17 @@ public class AdminDao {
 					prepStmt = conn.prepareStatement(sqlQuery);
 					prepStmt.setObject(1,s[0]);
 					prepStmt.setObject(2,UserId);
+					DaoUtility.displayQueryWithParameter(150, sqlQuery, s[0], UserId);
 				}
 
 				rs = prepStmt.executeQuery();
+				
 				xml.append("<?xml version=\"1.0\"?>\n");
 				xml.append("<sitehead generated=\""+System.currentTimeMillis()+"\">\n");	
 
 				while (rs.next())
 				{	
+					DaoUtility.getRowCount(150, rs);
 					xml.append("<sitecode>\n");
 					xml.append("<sid>");
 					xml.append(rs.getObject("S_SITE_ID"));
@@ -5043,6 +4281,7 @@ public class AdminDao {
 				sqlQuery = AdminSQLC.SELECT_SITE_ID_MASTER;
 				prepStmt = conn.prepareStatement(sqlQuery);
 				prepStmt.setObject(1,item);
+				DaoUtility.displayQueryWithParameter(241, sqlQuery, item);
 				rs = prepStmt.executeQuery();
 				xml.append("<?xml version=\"1.0\"?>\n");
 				xml.append("<maskhead generated=\""+System.currentTimeMillis()+"\">\n");	
@@ -5885,10 +5124,12 @@ public class AdminDao {
 				sqlQuery = AdminSQLC.SELECT_FD_MASTER;
 				ps = conn.prepareStatement(sqlQuery);
 				ps.setObject(1,SiteIdtxt);
+				DaoUtility.displayQueryWithParameter(240, sqlQuery, SiteIdtxt);
 				rs = ps.executeQuery();
 				xml.append("<?xml version=\"1.0\"?>\n");
 				xml.append("<fdmaster generated=\""+System.currentTimeMillis()+"\">\n");
 				while(rs.next()){	
+					DaoUtility.getRowCount(240, rs);
 					xml.append("<fdcode>");
 					xml.append("<fdid>");
 					xml.append(rs.getObject("S_FEDER_ID"));
@@ -7325,34 +6566,11 @@ public class AdminDao {
 				}
 			}
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (ps != null)
-					ps.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				ps = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,ps1) , Arrays.asList(rs,rs1,rs2) , conn);
 		}
 		logger.debug(xml.toString());
 		return xml.toString();
@@ -7371,8 +6589,8 @@ public class AdminDao {
 	public String  getAllloginhistory() throws Exception {
 
 
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null; 
 		String sqlQuery="";	
@@ -7389,32 +6607,11 @@ public class AdminDao {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 
 		return tranList; 
@@ -7436,8 +6633,8 @@ public class AdminDao {
 	public static String Eligible(String loginid) throws Exception {
 
 		String eligible="1";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = AdminSQLC.GET_ELIGIBLE_CUSTOMER;
@@ -7457,39 +6654,22 @@ public class AdminDao {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null) prepStmt.close();
-				if (rs != null) rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return eligible;
 	}
 	public String getLoginId(String abc){
 		String logindetail = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		try{
-			Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		
+			Connection conn = wcareConnector.getConnectionFromPool();
 			PreparedStatement prepStmt = null;
 			ResultSet rs = null;
+		try{
 			String sqlQuery = AdminSQLC.VIEW_LOGIN_MASTER_ID;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, abc);
@@ -7499,7 +6679,9 @@ public class AdminDao {
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		}finally{
+			DaoUtility.releaseResources(prepStmt, rs, conn);	
 		}
 		return logindetail;
 	}
@@ -7507,7 +6689,7 @@ public class AdminDao {
 	public List<PESDataStorage> getPESStatusWECWise(){
 
 		ArrayList<PESDataStorage> pesStatusForWECData = null;
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -7519,14 +6701,15 @@ public class AdminDao {
 		String pesStatus = "";
 
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
+		
 			sqlQuery = AdminSQLC.GET_PES_STATUS_REPORT_FOR_WEC;
 			prepStmt = conn.prepareStatement(sqlQuery);
 
 			rs = prepStmt.executeQuery();
 
 			pesStatusForWECData = new ArrayList<PESDataStorage>();
-
+			
 			while (rs.next()) {
 
 				wecName = rs.getString("WEC_NAME");
@@ -7541,24 +6724,10 @@ public class AdminDao {
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 
@@ -7566,7 +6735,7 @@ public class AdminDao {
 
 	public String activateWECForPESData(String UserId, DynaBean dynaBean) throws Exception{
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
@@ -7581,7 +6750,8 @@ public class AdminDao {
 		DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 		boolean conflict = false;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
+			
 			String locationNo = (String) dynaBean.getProperty("locationNo");
 			String plantNo = (String) dynaBean.getProperty("plantNo");
 
@@ -7630,40 +6800,13 @@ public class AdminDao {
 
 		}
 		catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (myPrepareStatement1 != null)
-					myPrepareStatement1.close();
-				if(myResultSet1 != null){
-					myResultSet1.close();
-				}
-				if (prepStmt != null)
-					prepStmt.close();
-				if(rs != null){
-					rs.close();
-				}
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				if (conn != null) {
-
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,myPrepareStatement1,myPrepareStatement2) , Arrays.asList(myResultSet1,rs,myResultSet2) , conn);
 		}
 
 		return msg;
@@ -7671,7 +6814,7 @@ public class AdminDao {
 
 	public String deactivateWECForPESData(String UserId, DynaBean dynaBean) throws Exception{
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		PreparedStatement ps = null;
@@ -7686,7 +6829,8 @@ public class AdminDao {
 		DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 		boolean conflict = false;
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
+			
 			String locationNo = (String) dynaBean.getProperty("locationNo");
 			String plantNo = (String) dynaBean.getProperty("plantNo");
 
@@ -7735,40 +6879,13 @@ public class AdminDao {
 
 		}
 		catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (myPrepareStatement1 != null)
-					myPrepareStatement1.close();
-				if(myResultSet1 != null){
-					myResultSet1.close();
-				}
-				if (prepStmt != null)
-					prepStmt.close();
-				if(rs != null){
-					rs.close();
-				}
-				if (conn != null) {
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();
-					conmanager = null;
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				if (conn != null) {
-
-					conn.close();
-					conn = null;
-
-					conmanager.closeConnection();conmanager = null;
-				}
-			}
+			DaoUtility.releaseResources(Arrays.asList(myPrepareStatement1,prepStmt,ps,myPrepareStatement2) , Arrays.asList(myResultSet1,rs,myResultSet2) , conn);	
 		}
 
 		return msg;
@@ -7776,7 +6893,7 @@ public class AdminDao {
 
 	public Object getCustomerIdName() {
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -7784,7 +6901,8 @@ public class AdminDao {
 		ArrayList<CustomerIdName> custNameId = new ArrayList<CustomerIdName>();
 
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
+			
 			sqlQuery = 	"Select S_customer_id, S_Customer_Name " + 
 					"from tbl_customer_master " +
 					"order by S_Customer_Name " ; 
@@ -7800,24 +6918,10 @@ public class AdminDao {
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 
@@ -7826,7 +6930,7 @@ public class AdminDao {
 	public List<WECReadingTrackerDataStorage> getWECReadingTrackerReport(DynaBean dynaBean) {
 
 		ArrayList<WECReadingTrackerDataStorage> wecReadingTrackerData = null;
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -7854,7 +6958,7 @@ public class AdminDao {
 		String modifiedBy;
 
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			if(forAllCustomer){
 				sqlQuery = AdminSQLC.GET_WEC_READING_HISTORY;
 				prepStmt = conn.prepareStatement(sqlQuery);
@@ -7898,24 +7002,10 @@ public class AdminDao {
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 
@@ -7923,7 +7013,7 @@ public class AdminDao {
 
 	public Object getLocationNo() {
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -7931,7 +7021,7 @@ public class AdminDao {
 		ArrayList<LocationMasterMapper> locationNo = new ArrayList<LocationMasterMapper>();
 
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select S_Location_No  " + 
 					"From Scadadw.Tbl_Location_Master " + 
 					"order by S_Location_no " ;
@@ -7946,24 +7036,10 @@ public class AdminDao {
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 
@@ -7972,7 +7048,7 @@ public class AdminDao {
 	public String callPESDataInsertionProcedure(DynaBean dynaBean) {
 
 		//ArrayList<WECReadingTrackerDataStorage> wecReadingTrackerData = null;
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -7993,7 +7069,7 @@ public class AdminDao {
 		boolean forAllPlant = plantNoSelectedValue.equalsIgnoreCase("All");
 
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			if(forAllLocations){
 				new InsertPESData().insertParameterDateWiseIntoWECReading(conn, dateValueInSQL);
 			}
@@ -8008,24 +7084,10 @@ public class AdminDao {
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 
@@ -8132,7 +7194,7 @@ public class AdminDao {
 			}
 		}
 		Connection conn = null;
-		JDBCUtils jdbcUtils = new JDBCUtils();
+		//JDBCUtils jdbcUtils = new JDBCUtils();
 		String customerID = getCustomerIDFromWECId(wecId);
 		String ebId = getEbIdFromWECId(wecId);
 		String sqlQuery = "";
@@ -8147,7 +7209,7 @@ public class AdminDao {
 //		System.out.println("eb:" + ebId);
 		//String customerID = null;
 		try{
-			conn = jdbcUtils.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Merge Into Tbl_Wec_Reading T " + 
 						"        Using (Select ? As D_Reading_Date,? As S_Mp_Id, ? As S_Wec_Id From Dual) S " + 
 						"        On (T.S_Wec_Id = S.S_Wec_Id And T.D_Reading_Date = S.D_Reading_Date And T.S_Mp_Id = S.S_Mp_Id) " + 
@@ -8197,27 +7259,14 @@ public class AdminDao {
 			
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					conn.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		
 	}
 	
 	public String getEbIdFromWECId(String wecId) throws SQLException , Exception{
 		// Select S_Wec_Id From Tbl_Wec_Master Where S_Wecshort_Descr = '&DESCR'
-		JDBCUtils jdbcUtils = new JDBCUtils();
+		//JDBCUtils jdbcUtils = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -8225,7 +7274,7 @@ public class AdminDao {
 		
 		String ebId = null;
 		try{
-			conn = jdbcUtils.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select S_EB_Id " + 
 						"From Customer_Meta_Data " + 
 						"where S_wec_id = ? ";  
@@ -8239,26 +7288,13 @@ public class AdminDao {
 			return ebId;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					conn.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
 	public String getCustomerIDFromWECId(String wecId) throws SQLException, Exception {
 		// Select S_Wec_Id From Tbl_Wec_Master Where S_Wecshort_Descr = '&DESCR'
-		JDBCUtils jdbcUtils = new JDBCUtils();
+		//JDBCUtils jdbcUtils = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -8266,7 +7302,7 @@ public class AdminDao {
 		
 		String customerId = null;
 		try{
-			conn = jdbcUtils.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select S_Customer_Id " + 
 						"From Customer_Meta_Data " + 
 						"where S_wec_id = ? " ; 
@@ -8280,20 +7316,7 @@ public class AdminDao {
 			return customerId;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					conn.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -8423,7 +7446,7 @@ public class AdminDao {
 			String dateValue, String dateFormat) throws SQLException, Exception {
 
 		DateTime givenDate = new DateTime(DateUtility.stringDateFormatToUtilDate(dateValue, dateFormat));
-		JDBCUtils jdbcUtils = new JDBCUtils();
+		//JDBCUtils jdbcUtils = new JDBCUtils();
 		Connection conn = null;
 		ArrayList<Double> generationOperatingHour = new ArrayList<Double>();
 		String sqlQuery = "";
@@ -8431,7 +7454,7 @@ public class AdminDao {
 		ResultSet rs = null;
 		
 		try{
-			conn = jdbcUtils.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"select N_Value " + 
 					"from tbl_wec_reading " + 
@@ -8453,20 +7476,7 @@ public class AdminDao {
 			return generationOperatingHour;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					conn.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -8476,10 +7486,10 @@ public class AdminDao {
 		ResultSet rs = null;
 		//System.out.println("WEC Id:" + wecId);
 		int scadaStatus = -1;
-		JDBCUtils jdbcUtils = new JDBCUtils();
+		//JDBCUtils jdbcUtils = new JDBCUtils();
 		Connection conn = null;
 		try{
-			conn = jdbcUtils.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_SCADA_FLAG " + 
 					"from tbl_wec_master " + 
@@ -8493,20 +7503,7 @@ public class AdminDao {
 			return scadaStatus;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					conn.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -8515,11 +7512,11 @@ public class AdminDao {
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
-		JDBCUtils jdbcUtils = new JDBCUtils();
+		//JDBCUtils jdbcUtils = new JDBCUtils();
 		Connection conn = null;
 		String wecID = null;
 		try{
-			conn = jdbcUtils.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select S_WEC_ID From Customer_meta_data Where S_Wecshort_Descr in (?)";
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, wecDescription);
@@ -8530,20 +7527,7 @@ public class AdminDao {
 			return wecID;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					conn.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	

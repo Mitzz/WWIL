@@ -1,14 +1,21 @@
 <%@ page import="java.io.*,java.sql.*,com.enercon.global.utils.JDBCUtils,com.enercon.global.utils.CodeGenerate,java.sql.CallableStatement,java.sql.PreparedStatement,java.sql.ResultSet,java.sql.SQLException" %>
-
+<%@page import="com.enercon.admin.dao.AdminDao"%>
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%@page import="com.enercon.connection.WcareConnector"%>
+<%@page import="com.enercon.dao.DaoUtility" %>
+<%@page import="java.util.Arrays" %>
+<%! private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
 
 <head>
 
 </head>
-<%@page import="com.enercon.admin.dao.AdminDao"%>
+
 <html>
 <%  
-    JDBCUtils conmanager = new JDBCUtils();
-    Connection conn = conmanager.getConnection();
+    /* JDBCUtils conmanager = new JDBCUtils(); */
+    Connection conn = null;
+    conn = WcareConnector.wcareConnector.getConnectionFromPool();
 	String contentType = request.getContentType();
 	
 	ResultSet rs = null;
@@ -273,34 +280,12 @@
 		   
            }
         catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("Admin/DelProject:"+ "\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (pst != null)
-                    pst.close();
-                if (ps != null)
-                    ps.close();
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                prepStmt = null;
-                ps = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(Arrays.asList(ps,psUpdate,prepStmt) , Arrays.asList(rs) , conn);
+            
         }
     	
 

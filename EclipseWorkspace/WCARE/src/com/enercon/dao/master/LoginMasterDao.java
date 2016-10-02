@@ -1,36 +1,160 @@
 package com.enercon.dao.master;
 
-import static com.enercon.connection.WcareConnector.wcareConnector;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
-import com.enercon.global.utils.GlobalUtils;
-import com.enercon.model.comparator.CustomerMasterVoComparator;
-import com.enercon.model.comparator.StateMasterVoComparator;
-import com.enercon.model.master.CustomerMasterVo;
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.model.master.LoginMasterVo;
 import com.enercon.model.master.RoleMasterVo;
-import com.enercon.model.master.StateMasterVo;
-import com.enercon.model.report.IWecParameterVo;
-import com.enercon.model.summaryreport.Parameter;
-import com.enercon.model.summaryreport.ParameterEvaluator;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.enercon.model.table.LoginDetailVo;
 
-public class LoginMasterDao {
+public class LoginMasterDao implements WcareConnector {
+	
 	private final static Logger logger = Logger.getLogger(LoginMasterDao.class);
 
+	private static class SingletonHelper{
+		public final static LoginMasterDao INSTANCE = new LoginMasterDao();
+	}
+	
+	public static LoginMasterDao getInstance(){
+		return SingletonHelper.INSTANCE;
+	}
+	
+	private LoginMasterDao(){}
+	
+	
+   public List<LoginMasterVo> getAll() throws SQLException  {
+		
+		Connection conn = null;
+		String sqlQuery = "";
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		
+		LoginMasterVo vo = null;
+		List<LoginMasterVo> vos = new ArrayList<LoginMasterVo>();
+		
+		try{
+			conn = wcareConnector.getConnectionFromPool();
+			
+			sqlQuery =  " SELECT S_LOGIN_MASTER_ID, S_LOGIN_DESCRIPTION, S_USER_ID, S_LOGIN_TYPE " +
+						" FROM TBL_LOGIN_MASTER " +
+						" ORDER BY S_LOGIN_DESCRIPTION ";
+			
+			prepStmt = conn.prepareStatement(sqlQuery);
+			rs = prepStmt.executeQuery();
+			while (rs.next()) {
+				
+				vo = new LoginMasterVo();
+				vo.setId(rs.getString("S_LOGIN_MASTER_ID"));
+				vo.setLoginDescription(rs.getString("S_LOGIN_DESCRIPTION"));
+				vo.setUserId(rs.getString("S_USER_ID"));
+				vo.setLoginType(rs.getString("S_LOGIN_TYPE"));
+				//vo.setCustomers(CustomerMasterService.getInstance().get(rs.getString("")));
+		
+				vos.add(vo);
+				
+			}
+			return vos;	
+        }
+		finally{
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+		}
+   }
+   
+	
+   /*public boolean update(LoginMasterVo vo) throws SQLException {
+		
+		Connection conn = null;
+		String sqlQuery = "";
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		//UPDATE TBL_CUSTOMER_MASTER SET S_LOGIN_MASTER_ID =?,S_LAST_MODIFIED_BY=?,D_LAST_MODIFIED_DATE=SYSDATE WHERE  S_CUSTOMER_ID = ?";
+		try{
+			conn = wcareConnector.getConnectionFromPool();
+			sqlQuery =  " UPDATE TBL_CUSTOMER_MASTER " +
+						" SET  S_LOGIN_MASTER_ID = ?,  S_LAST_MODIFIED_BY = ?, D_LAST_MODIFIED_DATE = localtimestamp " +										
+						" WHERE S_CUSTOMER_ID = ?  " ;
+	
+			prepStmt = conn.prepareStatement(sqlQuery);
+			
+			prepStmt.setObject(1, vo.getId());
+			prepStmt.setObject(2, vo.getModifiedBy());
+			prepStmt.setObject(3, vo.getCustomerId());
+				
+			int rowUpdated = prepStmt.executeUpdate();
+			
+			return(rowUpdated == 1);
+			
+		}
+		finally{
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+		}
+		
+	}
+   
+   public boolean updateLogin(LoginMasterVo vo) throws SQLException{
+	   
+	   SortedMap<String, Object> m = new TreeMap<String, Object>();
+	   
+	   CustomerMasterVo updateCustomer = new CustomerMasterVo();
+	  
+	   updateCustomer.setLoginId(vo.getId());
+	   m.put("S_LOGIN_MASTER_ID", vo.getId());
+	   
+	   updateCustomer.setModifiedBy(vo.getModifiedBy());
+	   m.put("S_LAST_MODIFIED_BY", vo.getModifiedBy());
+  
+	   updateCustomer.setModifiedAt("localtimestamp");
+	   m.put("D_LAST_MODIFIED_DATE", "localtimestamp");
+	   
+	   updateCustomer.setId(vo.getCustomerId());
+	   m.put("S_CUSTOMER_ID", vo.getCustomerId());
+	   updateCustomer.setId(vo.getCustomerId());
+	   return partialUpdate(updateCustomer, m);
+	  
+   }
+   
+	private boolean partialUpdate(CustomerMasterVo vo, Map<String, Object> m) throws SQLException  {
+		logger.debug("map : "+m);
+		Connection conn = null;
+		StringBuilder query = new StringBuilder();
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		int paramterCount = m.size();
+		int index = 0;
+		try {
+			conn = wcareConnector.getConnectionFromPool();
+			query.append("UPDATE TBL_CUSTOMER_MASTER SET ");
+			for(String column: m.keySet()){
+				query.append(column + " = ?, ");
+			}
+			query = new StringBuilder(query).deleteCharAt(query.length() - 2);
+			query.append("WHERE S_CUSTOMER_ID = ? ");
+			logger.debug("S_CUSTOMER_ID :: "+vo.getId());
+			prepStmt = conn.prepareStatement(new String(query));
+			logger.debug("query :: "+query);
+			for(String column: m.keySet()){
+				index++;
+				prepStmt.setObject(index, m.get(column));
+			}
+			prepStmt.setObject(paramterCount + 1, vo.getId());
+			
+			return (prepStmt.executeUpdate() == 1);
+			//return true;
+			
+		} finally {
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+		}
+		
+	}*/
+   
 	public LoginMasterVo get(String userId, String password)
 			throws SQLException {
 
@@ -101,140 +225,19 @@ public class LoginMasterDao {
 			}
 
 			logger.debug(loginMasterVo);
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
-
 			return loginMasterVo;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 
+	}
+
+	public List<LoginMasterVo> populate(List<LoginDetailVo> loginDetails) throws SQLException {
+		List<LoginMasterVo> logins = getAll();
+		
+		return logins;
 	}
 	
-	public static void main(String[] args) {
-		logger.debug("Start");
-		LoginMasterDao dao = new LoginMasterDao();
-		LoginMasterVo login = null;
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(Parameter.GENERATION);
-		parameters.add(Parameter.OPERATING_HOUR);
-		parameters.add(Parameter.LULL_HOUR);
-		parameters.add(Parameter.CF);
-		parameters.add(Parameter.MA);
-		parameters.add(Parameter.GA);
-		
-		Map<StateMasterVo, IWecParameterVo> stateWiseCustomerWiseWecParameterVo = new TreeMap<StateMasterVo, IWecParameterVo>(StateMasterVoComparator.CUSTOMER);
-		
-		try {
-			login = dao.get("GPEC", "CLPWIND");
-			List<CustomerMasterVo> customers = new CustomerMasterDao().get(login);
-//			Collections.sort(customers, CustomerMasterVoComparator.NAME);
-			for (CustomerMasterVo customer : customers) {
-				List<StateMasterVo> states = customer.getStates();
-//				Collections.sort(states, StateMasterVoComparator.NAME);
-				Map<StateMasterVo, IWecParameterVo> stateWiseWecParameterVo = new ParameterEvaluator().getStateWiseWecParameterVo(states, "14-OCT-2015", parameters);
-				
-				for(StateMasterVo state : states){
-					stateWiseCustomerWiseWecParameterVo.put(state, stateWiseWecParameterVo.get(state));
-				}
-				
-			}
-			
-			for(StateMasterVo state: stateWiseCustomerWiseWecParameterVo.keySet()){
-				IWecParameterVo wecP = stateWiseCustomerWiseWecParameterVo.get(state);
-				logger.debug(wecP.generation() + "  :" + state.getName() + ":" + state.getCustomers().get(0).getName());
-			}
-			
-			logger.debug("End");
-			wcareConnector.shutDown();
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-	}
 
-	private static void stateWiseCustomerWiseGenerationUsingLoginMaster() {
-		logger.debug("Start");
-		LoginMasterDao dao = new LoginMasterDao();
-		LoginMasterVo login = null;
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(Parameter.GENERATION);
-		parameters.add(Parameter.OPERATING_HOUR);
-		parameters.add(Parameter.LULL_HOUR);
-		parameters.add(Parameter.CF);
-		parameters.add(Parameter.MA);
-		parameters.add(Parameter.GA);
-		
-		Map<StateMasterVo, Map<CustomerMasterVo, IWecParameterVo>> stateWiseCustomerWiseWecParameterVo = new TreeMap<StateMasterVo, Map<CustomerMasterVo, IWecParameterVo>>(StateMasterVoComparator.CUSTOMER);
-		
-		try {
-			login = dao.get("GPEC", "CLPWIND");
-			List<CustomerMasterVo> customers = new CustomerMasterDao().get(login);
-			Collections.sort(customers, CustomerMasterVoComparator.NAME);
-			for (CustomerMasterVo customer : customers) {
-//				logger.debug("Customer Name::" + customer.getName());
-				List<StateMasterVo> states = customer.getStates();
-				Collections.sort(states, StateMasterVoComparator.NAME);
-				Map<StateMasterVo, IWecParameterVo> stateWiseWecParameterVo = new ParameterEvaluator().getStateWiseWecParameterVo(states, "14-OCT-2015", parameters);
-				
-				for(StateMasterVo state : states){
-					
-					if(stateWiseCustomerWiseWecParameterVo.containsKey(state)){
-						Map<CustomerMasterVo, IWecParameterVo> oldInner = stateWiseCustomerWiseWecParameterVo.get(state);
-						oldInner.put(customer, stateWiseWecParameterVo.get(state));
-					} else {
-						Map<CustomerMasterVo, IWecParameterVo> newInner = new HashMap<CustomerMasterVo, IWecParameterVo>();
-						newInner.put(customer, stateWiseWecParameterVo.get(state));
-						stateWiseCustomerWiseWecParameterVo.put(state, newInner);
-					}
-				}
-				
-//				logger.debug("------" + s);
-//				logger.debug(new ParameterEvaluator().getStateWiseWecParameterVo(states, "14-OCT-2015", parameters));
-//				for(StateMasterVo state : states){
-//					List<AreaMasterVo> areas = state.getAreas();
-//					logger.debug(new ParameterEvaluator().getAreaWiseWecParameterVo(areas, "14-OCT-2015", parameters));
-//					for(AreaMasterVo area : areas){
-//						List<SiteMasterVo> sites = area.getSites();
-//						logger.debug(new ParameterEvaluator().getSiteWiseWecParameterVo(sites, "14-OCT-2015", parameters));
-//						for(SiteMasterVo site : sites){
-//							List<EbMasterVo> ebs = site.getEbs();
-//							logger.debug(new ParameterEvaluator().getEbWiseWecParameterVo(ebs, "14-OCT-2015", parameters));
-//						}
-//					}
-//				}
-			}
-			
-			for(StateMasterVo state: stateWiseCustomerWiseWecParameterVo.keySet()){
-				logger.debug(state.getName());
-				Map<CustomerMasterVo, IWecParameterVo> cstomers = stateWiseCustomerWiseWecParameterVo.get(state);
-				for(CustomerMasterVo customer: cstomers.keySet()){
-					IWecParameterVo wecP = cstomers.get(customer);
-					logger.debug(customer.getName() + ":" + wecP.generation());
-				}
-			}
-			logger.debug("End");
-			wcareConnector.shutDown();
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-	}
 }

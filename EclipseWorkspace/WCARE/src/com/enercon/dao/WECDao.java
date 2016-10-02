@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.connection.WcareConnector;
 import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utility.MethodClass;
 import com.enercon.global.utility.NumberUtility;
 import com.enercon.global.utils.GlobalUtils;
-import com.enercon.model.WECData;
 import com.enercon.model.WecLocationData;
 import com.enercon.model.report.ManyWECsManyDatesDateWiseTotal;
 import com.enercon.model.report.ManyWECsManyDatesTotal;
@@ -31,7 +31,7 @@ import com.enercon.model.report.OneWECOneDayInfoOrTotal;
 import com.enercon.sqlQuery.AllQueries;
 
 public class WECDao implements WcareConnector, AllQueries {
-
+	private final static Logger logger = Logger.getLogger(WECDao.class);
 	protected long generation = 0  ;
 	protected long cumulativeGeneration =  0 ;
 	protected long operatingHour =  0 ;
@@ -116,20 +116,7 @@ public class WECDao implements WcareConnector, AllQueries {
 
 			return oneWECOneDayInfoOrTotalModel;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -194,20 +181,7 @@ public class WECDao implements WcareConnector, AllQueries {
 
 			return oneWECManyDatesWECWiseTotalModel;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -325,20 +299,7 @@ public class WECDao implements WcareConnector, AllQueries {
 			oneWECManyDatesDateWiseTotalModel = new OneWECManyDatesDateWiseTotal(wecId, fromDate, toDate,  oneWECOneDayInfoOrTotalList, overallgeneration, overalloperatingHour, overalllullHours, overallmavial/overallWecCount, overallgavial/overallWecCount, overallcapacityFactor/overallWecCount, overallgiavail/overallWecCount, overallmiavail/overallWecCount, overalltrialRun, overallmachineFault, overallmachineShutdown, overallloadRestriction, overallinternalFault, overallinternalShutdown, overallexternalGridFault, overallexternalGridShutdown, overallwecSpecialShutdown); 
 			return oneWECManyDatesDateWiseTotalModel;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 
@@ -455,20 +416,8 @@ public class WECDao implements WcareConnector, AllQueries {
 			manyWECsOneDateWECWiseTotalModel = new ManyWECsOneDateWECWiseTotal(wecIds, readingDate, oneWECOneDayInfoOrTotalList, overallgeneration, overalloperatingHour, overalllullHours, overallmavial/overallWecCount, overallgavial/overallWecCount, overallcapacityFactor/overallWecCount, overallgiavail/overallWecCount, overallmiavail/overallWecCount, overalltrialRun, overallmachineFault, overallmachineShutdown, overallloadRestriction, overallinternalFault, overallinternalShutdown, overallexternalGridFault, overallexternalGridShutdown, overallwecSpecialShutdown); 
 			return manyWECsOneDateWECWiseTotalModel;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 	}
 
@@ -550,20 +499,8 @@ public class WECDao implements WcareConnector, AllQueries {
 
 			return manyWECsOneDateDateWiseTotalModel;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 	}
 	
@@ -676,20 +613,8 @@ public class WECDao implements WcareConnector, AllQueries {
 				manyWECsManyDatesWECWiseTotalModel = new ManyWECsManyDatesWECWiseTotal(wecIds, fromDate, toDate, oneWECManyDatesWECWiseTotalList, overallgeneration, overalloperatingHour, overalllullHours, NumberUtility.round(overallmavial/overallWecCount,2), NumberUtility.round(overallgavial/overallWecCount,2), NumberUtility.round(overallcapacityFactor/overallWecCount,2), NumberUtility.round(overallgiavail/overallWecCount,2), NumberUtility.round(overallmiavail/overallWecCount,2), overalltrialRun, overallmachineFault, overallmachineShutdown, overallloadRestriction, overallinternalFault, overallinternalShutdown, overallexternalGridFault, overallexternalGridShutdown, overallwecSpecialShutdown); 
 				return manyWECsManyDatesWECWiseTotalModel;
 			} finally {
-				try {
-					if (conn != null) {
-						wcareConnector.returnConnectionToPool(conn);
-					}
-					if (prepStmt != null) {
-						prepStmt.close();
-					}
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (Exception e) {
-					MethodClass.displayMethodClassName();
-					e.printStackTrace();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
+
 			}
 		}
 	
@@ -799,20 +724,8 @@ public class WECDao implements WcareConnector, AllQueries {
 			manyWECsManyDatesDateWiseTotalModel = new ManyWECsManyDatesDateWiseTotal(wecIds, fromDate, toDate, manyWECsOneDayDateWiseTotalList, overallgeneration, overalloperatingHour, overalllullHours, overallmavial/overallWecCount, overallgavial/overallWecCount, overallcapacityFactor/overallWecCount, overallgiavail/overallWecCount, overallmiavail/overallWecCount, overalltrialRun, overallmachineFault, overallmachineShutdown, overallloadRestriction, overallinternalFault, overallinternalShutdown, overallexternalGridFault, overallexternalGridShutdown, overallwecSpecialShutdown); 
 			return manyWECsManyDatesDateWiseTotalModel;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 	}
 
@@ -904,20 +817,8 @@ public class WECDao implements WcareConnector, AllQueries {
 			return manyWECsTotalmanyDaysReport;
 			
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 	}
 	
@@ -1030,20 +931,8 @@ public class WECDao implements WcareConnector, AllQueries {
 			return manyWECsOneDateTotal;
 			
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 	}
 
@@ -1109,21 +998,8 @@ public class WECDao implements WcareConnector, AllQueries {
 			}
 		}
 		finally{
-			try{
-				if(preparedStatement != null){
-					preparedStatement.close();
-				}
-				if(resultSet != null){
-					resultSet.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-				
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(preparedStatement, resultSet, connection);
+
 		}
 		
 		return wecIdWECDataMapping;
@@ -1153,20 +1029,7 @@ public class WECDao implements WcareConnector, AllQueries {
 			return wecIds;
 		}
 		finally{
-			try{
-				if(preparedStatement != null){
-					preparedStatement.close();
-				}
-				if(resultSet != null){
-					resultSet.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(preparedStatement, resultSet, connection);
 		}
 		
 	}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -18,7 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.enercon.struts.exception.ExcelException;
 
 public class ReadWriteExcelFile {
-
+	 private final static Logger logger = Logger.getLogger(ReadWriteExcelFile.class);
 	public static ArrayList<ArrayList<String>> readXLSFile() throws IOException{
 		ArrayList<ArrayList<String>> excelData = new ArrayList<ArrayList<String>>();
 		ArrayList<String> rowData = new ArrayList<String>();
@@ -76,9 +77,9 @@ public class ReadWriteExcelFile {
 		    //System.out.println(excelData.toString());
 		    file.close();
 		} catch (FileNotFoundException e) {
-		    e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-		    e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return excelData;
 	}
@@ -141,9 +142,9 @@ public class ReadWriteExcelFile {
 		    //System.out.println(excelData.toString());
 		    file.close();
 		} catch (FileNotFoundException e) {
-		    e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-		    e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return excelData;
 	}
@@ -278,9 +279,9 @@ public class ReadWriteExcelFile {
 			out.close();
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return excelData;
 	}
@@ -350,9 +351,9 @@ public class ReadWriteExcelFile {
 			out.close();
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return excelData;
 	}
@@ -426,9 +427,9 @@ public class ReadWriteExcelFile {
 			out.close();
 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return excelData;
 	}

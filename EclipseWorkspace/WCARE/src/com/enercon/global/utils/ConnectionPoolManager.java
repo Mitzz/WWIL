@@ -1,9 +1,6 @@
 package com.enercon.global.utils;
 
-import com.enercon.global.controller.InitServlet;
-
 import java.sql.Connection;
-
 import java.util.Hashtable;
 
 import javax.transaction.SystemException;
@@ -13,9 +10,11 @@ import oracle.jdbc.pool.OracleConnectionPoolDataSource;
 
 import org.apache.log4j.Logger;
 
+import com.enercon.global.controller.InitServlet;
+
 
 public class ConnectionPoolManager {
-
+	 private final static Logger logger = Logger.getLogger(ConnectionPoolManager.class);
     /** Instance of this class.
      */
     private static ConnectionPoolManager thisInstance = null;
@@ -105,8 +104,7 @@ public class ConnectionPoolManager {
                 servlet = null;
 
         } catch (java.sql.SQLException ex) {
-            ex.printStackTrace();
-            System.out.println(ex);
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
             log.debug("SQL Error while initializing connection pool : \n" + 
                       ex.toString());
             throw new SystemException();

@@ -34,13 +34,13 @@ public class RoleMasterVo extends MasterVo{
 		this.description = description;
 	}
 
-	@Override
-	public String toString() {
-		return "RoleMasterVo [id=" + id + ", name=" + name + ", description="
-				+ description + ", createdBy=" + createdBy + ", createdAt="
-				+ createdAt + ", modifiedBy=" + modifiedBy + ", modifiedAt="
-				+ modifiedAt + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "RoleMasterVo [id=" + id + ", name=" + name + ", description="
+//				+ description + ", createdBy=" + createdBy + ", createdAt="
+//				+ createdAt + ", modifiedBy=" + modifiedBy + ", modifiedAt="
+//				+ modifiedAt + "]";
+//	}
 	
 
 	

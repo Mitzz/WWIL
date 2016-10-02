@@ -4,10 +4,10 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Set;
 
-import com.enercon.dao.WecDataDao;
-import com.enercon.model.report.IWecParameterVo;
+import com.enercon.dao.WecParameterDataDao;
+import com.enercon.model.parameter.wec.IWecParameterVo;
 import com.enercon.model.summaryreport.Month;
-import com.enercon.model.summaryreport.Parameter;
+import com.enercon.model.parameter.wec.Parameter;
 import com.enercon.model.summaryreport.Year;
 
 public class MonthWecParameterVoEvaluator <Key extends Month, Value extends IWecParameterVo> extends MonthEvaluator<Key, Value> {
@@ -30,12 +30,12 @@ public class MonthWecParameterVoEvaluator <Key extends Month, Value extends IWec
 
 	@Override
 	public Value getWorker1() throws SQLException, ParseException {
-		return new WecDataDao().getWecParameterVo(getWecIds(), getMonth(), getYear(), parameters);
+		return WecParameterDataDao.getInstance().getTotal(getWecIds(), getMonth(), getYear(), parameters);
 	}
 
 	@Override
 	public Value getWorker2() throws SQLException, ParseException {
-		return new WecDataDao().getWecParameterVo(getWecIds(), getFromDate(), getToDate(), parameters);
+		return WecParameterDataDao.getInstance().getTotal(getWecIds(), getFromDate(), getToDate(), parameters);
 	}
 	
 }

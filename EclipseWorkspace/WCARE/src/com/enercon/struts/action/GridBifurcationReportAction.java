@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -20,7 +21,9 @@ import com.enercon.reports.pojo.GridBifurcationReportVo;
 import com.enercon.struts.form.GridBifurcationReportForm;
 
 public class GridBifurcationReportAction extends Action{
-
+	
+	 private final static Logger logger = Logger.getLogger(GridBifurcationReportAction.class);
+		
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response){
 		GridBifurcationReportForm reportForm = (GridBifurcationReportForm) form;
 		String oracleDateFormat = "dd-MMM-yyyy";
@@ -45,7 +48,7 @@ public class GridBifurcationReportAction extends Action{
 					    gridBifurcationReportVos.addAll(ReportDao.getWecTotalWecWiseWithWindspeedBetweenDays(Arrays.asList(reportForm.getWecSelected()), key, value)); 
 					}
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(reportForm.getReportTypeSelection().equals("Y")){
@@ -57,7 +60,7 @@ public class GridBifurcationReportAction extends Action{
 					    gridBifurcationReportVos.addAll(ReportDao.getWecTotalWecWiseWithWindspeedBetweenDays(Arrays.asList(reportForm.getWecSelected()), key, value)); 
 					}
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 
@@ -76,7 +79,7 @@ public class GridBifurcationReportAction extends Action{
 					    gridBifurcationReportVos.addAll(ReportDao.getWecTotalWecWiseBetweenDays(Arrays.asList(reportForm.getWecSelected()), key, value)); 
 					}
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(reportForm.getReportTypeSelection().equals("Y")){
@@ -88,7 +91,7 @@ public class GridBifurcationReportAction extends Action{
 					    gridBifurcationReportVos.addAll(ReportDao.getWecTotalWecWiseBetweenDays(Arrays.asList(reportForm.getWecSelected()), key, value)); 
 					}
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 

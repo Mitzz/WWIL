@@ -17,10 +17,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 
-import com.enercon.global.utils.JDBCUtils;
+import com.enercon.connection.WcareConnector;
 
-public class UploadImage extends HttpServlet {
+public class UploadImage extends HttpServlet implements WcareConnector {
+	private final static Logger logger = Logger.getLogger(UploadImage.class);
     @Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
@@ -32,8 +34,8 @@ public class UploadImage extends HttpServlet {
             // Apache Commons-Fileupload library classes
             DiskFileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload sfu  = new ServletFileUpload(factory);
-            JDBCUtils conmanager = new JDBCUtils();
-    	    Connection conn = conmanager.getConnection();
+            //JDBCUtils conmanager = new JDBCUtils();
+    		Connection conn = wcareConnector.getConnectionFromPool();
 
             if (! ServletFileUpload.isMultipartContent(request)) {
               //  System.out.println("sorry. No file uploaded");
@@ -114,7 +116,7 @@ public class UploadImage extends HttpServlet {
 	        	}
 	        	catch (Exception e) {
 		            //logger.equals("ENERCON: SecurityServlet: doPost: Exception: " + e.toString());
-		            e.printStackTrace();
+	        		 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		        }
 	        }
      	} 

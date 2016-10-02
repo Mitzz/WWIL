@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 public enum Year {
 	
-	Y2005(2005),Y2006(2006), Y2007(2007), Y2008(2008), Y2009(2009), Y2010(2010), Y2011(2011), Y2012(2012), Y2013(2013), Y2014(2014), Y2015(2015);
+	Y2005(2005),Y2006(2006), Y2007(2007), Y2008(2008), Y2009(2009), Y2010(2010), Y2011(2011), Y2012(2012), Y2013(2013), Y2014(2014), Y2015(2015), Y2016(2016);
 	private final static Logger logger = Logger.getLogger(Year.class);
 	
 	private int value;
@@ -31,6 +31,7 @@ public enum Year {
 			case 2013 : return Year.Y2013;
 			case 2014 : return Year.Y2014;	
 			case 2015 : return Year.Y2015;
+			case 2016 : return Year.Y2016;
 			default   : logger.error("Year '" + year + "' is not defined.");throw new IllegalArgumentException("Year '" + year + "' is not defined.");
 		}
 		

@@ -25,6 +25,7 @@ response.setContentType( "application/pdf" );
 
 String file = request.getParameter("File");
 String rdate = request.getParameter("rd");
+//System.out.println("rdare: " + rdate);
 request.setCharacterEncoding("utf-8");
 if (file == null || file.equals(""))
 	file = "Daily Generation for " + rdate + ".pdf";
@@ -53,6 +54,12 @@ String siteid = request.getParameter("siteid");
 
 //System.out.println(rdate);
 String type = request.getParameter("type");
+
+//System.out.println("id: " + custid);
+//System.out.println("stateid: " + stateid);
+//System.out.println("siteid: " + siteid);
+
+
 int monthReceived = 0;
 int yearReceived = 0;
 int fiscalYear = 0;

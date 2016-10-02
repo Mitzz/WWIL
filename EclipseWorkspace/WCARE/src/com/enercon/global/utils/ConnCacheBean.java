@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import oracle.jdbc.pool.OracleConnectionCacheManager;
 import oracle.jdbc.pool.OracleDataSource;
 
@@ -26,7 +28,7 @@ import oracle.jdbc.pool.OracleDataSource;
 /* Java Utility Classes */
 
 public class ConnCacheBean {
-
+	private final static Logger logger = Logger.getLogger(ConnCacheBean.class);
     /* The name used to identify the cache uniquely */
     private static final String CACHE_NAME = "ConCacheEnercon";
 
@@ -82,7 +84,7 @@ public class ConnCacheBean {
         try {
             return connMgr.getNumberOfActiveConnections(CACHE_NAME);
         } catch (SQLException sqlEx) {
-            sqlEx.printStackTrace();
+        	logger.error("\nClass: " + sqlEx.getClass() + "\nMessage: " + sqlEx.getMessage() + "\n", sqlEx);
             throw new Exception("SQL Error while getting the no of active " + 
                                 " connections");
         }
@@ -192,10 +194,10 @@ public class ConnCacheBean {
             ods.setConnectionCacheName(CACHE_NAME);
 
         } catch (SQLException sqlEx) { /* Catch SQL Errors */
-            sqlEx.printStackTrace();
+        	logger.error("\nClass: " + sqlEx.getClass() + "\nMessage: " + sqlEx.getMessage() + "\n", sqlEx);
             throw new Exception("SQL Errors = " + sqlEx.toString());
         } catch (Exception ex) { /* Catch Generic Errors */
-            ex.printStackTrace();
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
             throw new Exception("Generic Errors = " + ex.toString());
         }
     }
@@ -301,7 +303,7 @@ public class ConnCacheBean {
             ods.setPassword(servlet.getDatabaseProperty("password"));
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
         }
     }
 

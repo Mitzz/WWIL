@@ -123,12 +123,9 @@ function showAppDetails(dataXml)
 	   	 	}   	 	
 		}
 		str += "</table>"
+		console.log(str);
 		divdetails.innerHTML = str;
 }
-
-
-
-
 
 function SentMessage(msgid)
 {

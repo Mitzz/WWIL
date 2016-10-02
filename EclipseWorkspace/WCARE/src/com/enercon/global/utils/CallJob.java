@@ -24,6 +24,7 @@ public class CallJob implements Job {
 	}
 	catch(Exception e)
 	{
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		logger.debug("Scheduler exception", e);
 	}
 	  
@@ -34,7 +35,7 @@ public class CallJob implements Job {
 					new CallSchedulerForSendingMail().sendIPPGroupMail("24/07/2014");
 //					new CallSchedulerForSendingMail().sendMail("24/07/2014"); 
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 		}).start();*/

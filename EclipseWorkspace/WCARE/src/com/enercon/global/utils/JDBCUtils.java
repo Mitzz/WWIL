@@ -20,7 +20,7 @@ import com.enercon.global.controller.InitServlet;
 public class JDBCUtils {
     /** Log4j
      */
-    private static Logger log = Logger.getLogger(JDBCUtils.class);
+    private static Logger logger = Logger.getLogger(JDBCUtils.class);
 
     /** Logical connection to an Oracle database.
      */
@@ -82,9 +82,8 @@ public class JDBCUtils {
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("System Exception (JDBC Error) : " + 
-                               e.getMessage());
-            log.error("System Exception (JDBC Error) : " + e.getMessage(), e);
+            
+            logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
         }
        
         return conn;
@@ -105,7 +104,7 @@ public class JDBCUtils {
                 conn = null;
                 //System.out.println("ABC" + conn.isClosed());
             } catch (SQLException e) {
-                logSQLError(e);
+            	logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
             }
         }
     }
@@ -118,10 +117,10 @@ public class JDBCUtils {
      */
     public static void logSQLError(SQLException e) throws SystemException {
         while (e != null) {
-            log.error("\nSQL Exception:");
-            log.error(e.getMessage());
-            log.error("ANSI-92 SQL State: " + e.getSQLState());
-            log.error("Vendor Error Code: " + e.getErrorCode());
+            logger.error("\nSQL Exception:");
+            logger.error(e.getMessage());
+            logger.error("ANSI-92 SQL State: " + e.getSQLState());
+            logger.error("Vendor Error Code: " + e.getErrorCode());
             e = e.getNextException();
         }
         throw new SystemException();

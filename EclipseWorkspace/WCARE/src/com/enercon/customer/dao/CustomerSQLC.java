@@ -35,11 +35,8 @@ public class CustomerSQLC
 	public static final String GET_STANDARD_MESSAGE =
     	"SELECT S_STANDARD_MESSAGE_ID,S_MESSAGE_HEAD,S_MESSAGE_DESCRIPTION FROM TBL_STANDARD_MESSAGE";
 	
-	
 	public static final String SELECT_TOTAL_WEC =
 		"select count(*) as cnt from tbl_wec_master  where  S_EB_ID=? AND S_STATUS=1";
-
-	
 	
 	public static final String SELECT_TOTAL_WEC_ACTUAL =
 		"select count(*) as cnt from VW_WEC_DATA where  S_EB_ID=? AND D_READING_DATE=?";
@@ -1566,6 +1563,6 @@ public class CustomerSQLC
 			"SELECT  S_WEC_ID, NVL(SUM(N_ACTUAL_VALUE),'0') AS A_VAL FROM TBL_WEC_READING WHERE S_MP_ID='0808000022' AND D_READING_DATE BETWEEN ? AND ? " +
 			" AND S_WEC_ID=? GROUP BY S_WEC_ID";
 	 
-	 public static String CHECK_WEC_SCADA_CONNECTIVITY = 
+	 public static String CHECK_WEC_STATUS_SCADA_CONNECTIVITY = 
 			 "Select s_status,s_scada_flag From Tbl_Wec_Master Where S_Wec_id = ?";
 }

@@ -6,18 +6,18 @@ import java.text.ParseException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utility.MethodClass;
 import com.enercon.model.ireda.IredaProject;
 import com.enercon.struts.form.IredaFiscalYearWecWiseBasedOnStateReportForm;
 
 public class IredaFiscalYearWecWiseBasedOnStateReportAction extends Action {
-	
+	private final static Logger logger = Logger.getLogger(IredaFiscalYearWecWiseBasedOnStateReportAction.class);
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
@@ -31,14 +31,11 @@ public class IredaFiscalYearWecWiseBasedOnStateReportAction extends Action {
 					DateUtility.getFirstDateOfFiscalYear(formVo.getFiscalYear(), "dd-MMM-yyyy"), 
 					DateUtility.getLastDateOfFiscalYear(formVo.getFiscalYear(), "dd-MMM-yyyy"));
 		} catch (SQLException e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (ParseException e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		request.setAttribute("ireda", iredaProject);
 		request.setAttribute("fiscalYear", formVo.getFiscalYear() + "-" + (formVo.getFiscalYear() + 1));

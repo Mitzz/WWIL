@@ -1,34 +1,39 @@
 package com.enercon.scada.dao;
 
-import com.enercon.admin.dao.AdminSQLC;
-import com.enercon.global.utils.Diff;
-import com.enercon.global.utils.DynaBean;
-import com.enercon.global.utils.JDBCUtils;
-
-import com.enercon.scada.dao.ScadaSQLC;
-import com.enercon.global.utils.CodeGenerate;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import java.util.*;
 import org.apache.log4j.Logger;
 
-public class ScadaDao {
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
+import com.enercon.global.utils.DynaBean;
+
+public class ScadaDao implements WcareConnector {
 
     private static Logger logger = Logger.getLogger(ScadaDao.class);
 
     public ScadaDao() {
     	
+    }  
+    
+    private static class SingletonHelper{
+        private static final ScadaDao INSTANCE = new ScadaDao();
+    }   
+    public static ScadaDao getInstance(){
+        return SingletonHelper.INSTANCE;
     }
     
     public String uploadScadaData(String UserId,DynaBean dynaBean) throws Exception{
 		String msg="";
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 	    Connection conn = null;
 	    PreparedStatement prepStmt = null;
 	    CallableStatement cs = null;
@@ -37,7 +42,7 @@ public class ScadaDao {
 	    String sqlQuery = "";
 	    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 	    try{
-	    	conn = conmanager.getConnection();
+	    	conn = wcareConnector.getConnectionFromPool();
 	    	
 	    	String locationNo = dynaBean.getProperty("scadaLocationNo").toString();
 	    	String plantNo = dynaBean.getProperty("scadaPlantNo").toString();
@@ -69,37 +74,19 @@ public class ScadaDao {
             msg = "<font class='sucessmsgtext'>Data Uploaded for Location - '"+locationNo+"' Successfully!</font>";				
 			
 		}catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();			
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);	
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-		try {
-			if (cs != null)
-				cs.close();
-			if (conn != null) {
-				conn.close();
-            	conn = null;
-            	
-                conmanager.closeConnection();conmanager = null;
-			}
-		} catch (Exception e) {
-			cs = null;
-			
-			if (conn != null) {
-				conn.close();
-            	conn = null;
-            	
-                conmanager.closeConnection();conmanager = null;
-			}
-		}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt, ps, cs), Arrays.asList(rs), conn);
 	}
 	return msg;
 	}
     
     public String getScadaAjaxDetails(String item,String action,String UserId) throws Exception{
     	StringBuffer xml = new StringBuffer();
-    	JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+    	//JDBCUtils conmanager = new JDBCUtils();
+        Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement ps = null;
         PreparedStatement ps1 = null;
         PreparedStatement ps2 = null;
@@ -134,38 +121,11 @@ public class ScadaDao {
         	}
         	
         }catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (ps != null) ps.close();
-                if (ps1 != null) ps1.close();
-                if (ps2 != null) ps2.close();
-                if (rs != null) rs.close();
-                if (rs1 != null) rs1.close();
-                if (rs2 != null) rs2.close();
-                if (conn != null) 
-                {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                ps = null;
-                ps1 = null;
-                ps2 = null;
-                rs = null;
-                rs1 = null;
-                rs2 = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(Arrays.asList(ps,ps1,ps2) , Arrays.asList(rs,rs1,rs2) , conn);
         }
         return xml.toString();
     }
@@ -180,5 +140,109 @@ public class ScadaDao {
 
 		return s;
 	}
+    
+    public void mergeWindSpeed(String date) throws SQLException{
+    	Connection conn = null;
+		String sqlQuery = "";
+		PreparedStatement prepStmt = null;
+		CallableStatement cs = null;
+		ResultSet rs = null;
+		
+		List<String> wecIds = new ArrayList<String>();
+		
+		try{
+			conn = wcareConnector.getConnectionFromPool();
+			
+			sqlQuery =  "SELECT wsd.d_date,wm.S_WEC_ID " +
+						"FROM SCADADW.TBL_WSD_INSERTUPDATE_DETAIL wsd," +
+						"     SCADADW.TBL_PLANT_MASTER pm," +
+						"     TBL_WEC_MASTER wm " +
+						"WHERE wsd.S_LOCATION_NO = pm.S_LOCATION_NO " +
+						"AND pm.S_SERIAL_NO = wm.S_TECHNICAL_NO " +
+						"AND pm.S_WEC_NAME = wm.S_WECSHORT_DESCR " +
+						"AND wm.s_scada_flag = '1' " +
+						"AND wsd.T_UPDATE_TIME >= To_TIMESTAMP('"+date+" 00:00:00','dd-MON-yyyy HH24:MI:SS') " +
+						"AND wsd.T_UPDATE_TIME <= To_TIMESTAMP('"+date+" 23:59:59','dd-MON-yyyy HH24:MI:SS') " +
+						"ORDER BY wsd.D_date ";
+         
+			prepStmt = conn.prepareStatement(sqlQuery);
+		    //prepStmt.setObject(1, date);
+			rs = prepStmt.executeQuery();
+			String wecId = null;
+			while(rs.next()){
+				wecId = rs.getString("S_WEC_ID");
+				wecIds.add(rs.getString("S_WEC_ID"));
+				logger.debug("In Progress: " + wecId);
+				cs = conn.prepareCall("{call reading_summary.populate_WS_DATE_WEC(?,?)}");
+				cs.setObject(1, rs.getDate("D_Date"));
+				cs.setObject(2, wecId);
+				cs.executeUpdate();
+	            cs.close();
+				
+			}
+			logger.debug(wecIds);
+			logger.debug("count :: " + wecIds.size());
+			
+		}finally {
+			DaoUtility.releaseResources(Arrays.asList(prepStmt, cs), Arrays.asList(rs), conn);
+	    }
+    
+    }
+    
+    public void mergeWindSpeedDate(String date) throws SQLException{
+    	Connection conn = null;
+		String sqlQuery = "";
+		PreparedStatement prepStmt = null;
+		CallableStatement cs = null;
+		ResultSet rs = null;
+		
+		List<String> wecIds = new ArrayList<String>();
+		
+		try{
+			conn = wcareConnector.getConnectionFromPool();
+			
+			sqlQuery =  "SELECT wsd.d_date,wm.S_WEC_ID " +
+						"FROM SCADADW.TBL_WSD_INSERTUPDATE_DETAIL wsd," +
+						"     SCADADW.TBL_PLANT_MASTER pm," +
+						"     TBL_WEC_MASTER wm " +
+						"WHERE wsd.S_LOCATION_NO = pm.S_LOCATION_NO " +
+						"AND pm.S_SERIAL_NO = wm.S_TECHNICAL_NO " +
+						"AND pm.S_WEC_NAME = wm.S_WECSHORT_DESCR " +
+						"AND wm.s_scada_flag = '1' " +
+						"AND D_DATE= ? " +						
+						"ORDER BY wsd.D_date ";
+         
+			prepStmt = conn.prepareStatement(sqlQuery);
+		    prepStmt.setObject(1, date);
+			rs = prepStmt.executeQuery();
+			String wecId = null;
+			while(rs.next()){
+				wecId = rs.getString("S_WEC_ID");
+				wecIds.add(rs.getString("S_WEC_ID"));
+				logger.debug("In Progress: " + wecId);
+				cs = conn.prepareCall("{call reading_summary.populate_WS_DATE_WEC(?,?)}");
+				cs.setObject(1, rs.getDate("D_Date"));
+				cs.setObject(2, wecId);
+				cs.executeUpdate();
+	            cs.close();
+				
+			}
+			logger.debug(wecIds);
+			logger.debug("count :: " + wecIds.size());
+			
+		}finally {
+			DaoUtility.releaseResources(Arrays.asList(prepStmt, cs), Arrays.asList(rs), conn);
+	    }
+    
+    }
+    
+    public static void main(String args[]) throws Exception{
+    	
+    	ScadaDao dao = null;
+    	dao = new ScadaDao();
+    	 
+    	dao.mergeWindSpeedDate("04-FEB-2016");
+    	
+    }
     
 }

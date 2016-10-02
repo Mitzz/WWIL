@@ -122,7 +122,7 @@ for (int i = 0; i < tranList_1.size(); i++) {
 	/*Machine Tranferred*/
 	if(vector_12.size() == 5){
 		//strXML += "<tr class=TableSummaryRow><td class=TableCell1>" + vector_12.get(0) + "</td><td style='text-align:center;' colspan = '6'>Site Data Not Available</td></tr>";
-		System.out.println("----------------Transfer");
+		//System.out.println("----------------Transfer");
 		continue;
 	}
 	list_1_counter++;

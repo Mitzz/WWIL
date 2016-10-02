@@ -24,7 +24,7 @@ public class CallJobToXml implements Job {
 	catch(Exception e)
 	{
 		logger.debug("Scheduler exception", e);
-		e.printStackTrace();
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 	}
     
   }

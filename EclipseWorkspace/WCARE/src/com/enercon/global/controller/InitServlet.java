@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 
 
 public class InitServlet extends HttpServlet {
-
+   
 	private static final long serialVersionUID = 1L;
 	private static final String CONTENT_TYPE = "text/html; charset=windows-1252";
     private static Properties props = new Properties();
@@ -45,6 +45,7 @@ public class InitServlet extends HttpServlet {
             //configureDatabase();
             //configureSAP();
         } catch (Exception e) {
+        	logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
             throw new ServletException(e.getMessage(), e);
         }
     }
@@ -97,7 +98,7 @@ public class InitServlet extends HttpServlet {
             }
 
         } catch (Exception ex) {
-            logger.error("Error in initializing system properties");
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
             throw ex;
         }
     }
@@ -124,7 +125,7 @@ public class InitServlet extends HttpServlet {
             }
 
         } catch (Exception ex) {
-            logger.error("Error in initializing Database properties");
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
             throw ex;
         }
     }
@@ -151,7 +152,7 @@ public class InitServlet extends HttpServlet {
             }
 
         } catch (Exception ex) {
-            logger.error("Error in initializing SAP properties");
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
             throw ex;
         }
     }
@@ -167,7 +168,7 @@ public class InitServlet extends HttpServlet {
         try {
             value = (String)props.get(key);
         } catch (Exception ex) {
-            logger.error("Error in getting system property values");
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
             throw ex;
         }
         return value;
@@ -186,8 +187,7 @@ public class InitServlet extends HttpServlet {
         	
             value = rb.getString(key);
         } catch (Exception ex) {
-            logger.error("Error in getting database property values");
-            ex.printStackTrace();
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
         }
         return value;
     }
@@ -204,8 +204,7 @@ public class InitServlet extends HttpServlet {
         	rb = ResourceBundle.getBundle("SAPConfig");
         	value = rb.getString(key);
         } catch (Exception ex) {
-            logger.error("Error in getting SAP property values");
-            ex.printStackTrace();
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
         }
         return value;
     }    

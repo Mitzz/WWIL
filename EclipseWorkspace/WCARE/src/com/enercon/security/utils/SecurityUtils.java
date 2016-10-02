@@ -20,9 +20,9 @@ public class SecurityUtils {
  	        	SecurityDao secDAO = new SecurityDao();
  	           String email = secDAO.getCustinf(userid);
  	            return email;
- 	        	} catch (Exception exp) {
- 	            logger.error("Error  ");
- 	            throw exp;
+ 	        	} catch (Exception e) {
+ 	        		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+ 	            throw e;
  	        }
  	    }
     
@@ -33,9 +33,9 @@ public class SecurityUtils {
   	        	SecurityDao secDAO = new SecurityDao();
   	            String msg = secDAO.getPwd(userid,email);
   	            return msg;
-  	        	} catch (Exception exp) {
-  	            logger.error("Error  ");
-  	            throw exp;
+  	        	} catch (Exception e) {
+  	        		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+  	            throw e;
   	        }
   	    }
     public String sentMsg(String emailid,String userid,String pwd) throws Exception {
@@ -45,9 +45,9 @@ public class SecurityUtils {
    	        	SecurityDao secDAO = new SecurityDao();
    	            String msg = secDAO.sentMsg(emailid,userid,pwd);
    	            return msg;
-   	        	} catch (Exception exp) {
-   	            logger.error("Error  ");
-   	            throw exp;
+   	        	} catch (Exception e) {
+   	        		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+   	            throw e;
    	        }
    	    }
     public String getCustFeedback(String userid) throws Exception {
@@ -57,9 +57,9 @@ public class SecurityUtils {
   	        	SecurityDao secDAO = new SecurityDao();
   	           String email = secDAO.getCustfeedback(userid);
   	            return email;
-  	        	} catch (Exception exp) {
-  	            logger.error("Error  ");
-  	            throw exp;
+  	        	} catch (Exception e) {
+  	        		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+  	            throw e;
   	        }
   	    }
     public boolean isPasswordChange(String userid) throws Exception {
@@ -70,7 +70,7 @@ public class SecurityUtils {
   	           boolean isPasswordChange = secDAO.isPasswordChange(userid);
   	            return isPasswordChange;
   	        	} catch (Exception exp) {
-  	            logger.error("Error  ");
+  	        		logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
   	            throw exp;
   	        }
   	    }
@@ -126,7 +126,7 @@ public class SecurityUtils {
             List transList = secDAO.getAllTransactions(roleID);
             return transList;
         } catch (Exception exp) {
-            logger.error("Error in  getting transactions by " + roleID);
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
             throw exp;
         }
     }
@@ -148,7 +148,7 @@ public class SecurityUtils {
             List transList = secDAO.getAllcustomer(roleID);
             return transList;
         } catch (Exception exp) {
-            logger.error("Error in  getting transactions by " + roleID);
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
             throw exp;
         }
     }
@@ -158,9 +158,9 @@ public class SecurityUtils {
             SecurityDao secDAO = new SecurityDao();
             String newsList = secDAO.getNewsList();
             return newsList;
-        } catch (Exception exp) {
-            logger.error("Error in  getting transactions for News ");
-            throw exp;
+        } catch (Exception e) {
+        	logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+            throw e;
         }
     }
     
@@ -176,9 +176,9 @@ public class SecurityUtils {
 
 
             return loginRoleHistoryId;
-        } catch (Exception exp) {
-            logger.error("Error Inserting Role History" + exp);
-            throw exp;
+        } catch (Exception e) {
+        	logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+            throw e;
         }
 
     }

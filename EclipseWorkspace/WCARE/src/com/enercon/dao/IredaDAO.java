@@ -9,11 +9,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.connection.WcareConnector;
-import com.enercon.global.utility.MethodClass;
 
 public class IredaDAO implements WcareConnector{
-	
+	 private final static Logger logger = Logger.getLogger(IredaDAO.class);
 	private final static String GET_STATE_ID_WITH_NAME = 
 			"Select cmd.S_state_id, cmd.S_state_name " + 
 			"from tbl_project proj, tbl_wec_project_mapping mapper, customer_meta_data cmd " + 
@@ -86,20 +87,8 @@ public class IredaDAO implements WcareConnector{
 				}
 			}
 			finally {
-				try {
-					if (conn != null) {
-						wcareConnector.returnConnectionToPool(conn);
-					}
-					if (prepStmt != null) {
-						prepStmt.close();
-					}
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (Exception e) {
-					MethodClass.displayMethodClassName();
-					e.printStackTrace();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
+
 			}
 			return result;
 		}
@@ -133,20 +122,8 @@ public class IredaDAO implements WcareConnector{
 				}
 			}
 			finally {
-				try {
-					if (conn != null) {
-						wcareConnector.returnConnectionToPool(conn);
-					}
-					if (prepStmt != null) {
-						prepStmt.close();
-					}
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (Exception e) {
-					MethodClass.displayMethodClassName();
-					e.printStackTrace();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
+
 			}
 			return result;
 		}

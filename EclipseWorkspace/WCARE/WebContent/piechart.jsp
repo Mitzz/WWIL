@@ -12,7 +12,9 @@
 <%@ page  import="org.jfree.data.category.*" %>
 <%@ page  import="org.jfree.data.general.*" %>
 <%@ page  import="com.enercon.global.utils.SendMail"%>
-
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%! private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
 <%
             final double[][] data = new double[][]{
 				{3049},
@@ -76,6 +78,7 @@
                 final File file1 = new File("D:/mychart.jpg");
                 ChartUtilities.saveChartAsJPEG(file1, chart, 400, 300, info);
             } catch (Exception e) {
+            	logger.error("piechart:" +  "\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
                 out.println(e);
             }
 %>
@@ -101,7 +104,7 @@
 		
 		//Stringmsg=<iframe name='calendar' id='calendar' src='http://172.18.17.155:7001/ECARE/PieUploadGraph.jsp?pdata="+2000+"&updata="+800+"&bdata="+200+"' height='300' width='350'></iframe>"; 
         SendMail sm = new SendMail();
-        sm.sendMail("vivek.chaudhary@windworldindia.com","WindWorldCare@windworldindia.com","Generation Data Upload Status For The Date - ",msg);   
+        sm.sendMail("mithul.bhansali@windworldindia.com","WindWorldCare@windworldindia.com","Generation Data Upload Status For The Date - ",msg);   
 		 
        %>
     </body>

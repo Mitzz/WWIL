@@ -61,7 +61,7 @@ SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 java.util.Date ffd = format.parse(rdate);
 java.util.Date afd = format.parse(adate);
 long diff = (ffd.getTime() - afd.getTime()) / (24 * 60 * 60 * 1000);
-System.out.println("Diff : " + diff);
+//System.out.println("Diff : " + diff);
 if (type.equals("DM")) {
 	type = "M";
 }

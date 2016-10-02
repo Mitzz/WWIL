@@ -12,10 +12,6 @@ public abstract class AjaxDataRetriverImp implements AjaxDataRetriver{
 		this.ajaxRequestParameterNames = ajaxRequestParameterNames;
 	}
 
-	/*public void setAjaxRequestString(String requestString) {
-		this.ajaxRequestString = requestString;
-	}*/
-
 	public List<String> getAjaxRequestParameterNames() {
 		return ajaxRequestParameterNames;
 	}

@@ -1,5 +1,6 @@
 package com.enercon.global.utility;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -8,15 +9,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.Seconds;
+import org.joda.time.YearMonth;
 
 import com.enercon.Time24HoursValidator;
 import com.enercon.model.summaryreport.FiscalYear;
@@ -24,15 +30,82 @@ import com.enercon.model.summaryreport.Month;
 import com.enercon.model.summaryreport.Year;
 
 public class DateUtility {
+	private final static Logger logger = Logger.getLogger(DateUtility.class);
+	
 	private static final String oracleDateFormat = "dd-MMM-yyyy";
 	
 	public static void main(String[] args) throws Exception {
 		
-		String fromDate = "31-JAN-2012";
-		String toDate = "23-FEB-2011";
+		String fromDate = "29-APR-2015";
+		String toDate = "08-MAR-2016";
 		
-		System.out.println(getPeriodFiscalYearWise(fromDate, toDate, oracleDateFormat, getFYDiff(fromDate, toDate)));
-
+		DateTime from = getJoda(fromDate);
+		logger.debug(from.getMonthOfYear());
+		logger.debug(from.getYear());
+		logger.debug(from.getDayOfMonth() - from.dayOfMonth().withMaximumValue().getDayOfMonth());
+		logger.debug(DateUtility.getTodaysDateInGivenFormat("dd-MMM-yyyy H:m a"));
+//		int daysDifferenceInclusive = DateUtility.getDaysDifferenceInclusive(DateUtility.getTodaysDateInGivenFormat("dd-MMM-yyyy"), toDate);
+//				
+//		logger.debug(daysDifferenceInclusive);
+		
+//		int fromDateMonth = Integer.parseInt(DateUtility.convertDateFormats(fromDate, "dd-MMM-yyyy", "MM"));
+//		int fromDateYear = Integer.parseInt(DateUtility.convertDateFormats(fromDate, "dd-MMM-yyyy", "yyyy"));
+//		
+//		int toDateMonth = Integer.parseInt(DateUtility.convertDateFormats(toDate, "dd-MMM-yyyy", "MM"));
+//		int toDateYear = Integer.parseInt(DateUtility.convertDateFormats(toDate, "dd-MMM-yyyy", "yyyy"));
+//		Set<YearMonth> wecDatesNotAvailable = DateUtility.getYearMonth(fromDate, toDate);
+//		
+//		for(YearMonth yearMonth: wecDatesNotAvailable){
+//			logger.debug(String.format("%s", yearMonth));
+//			int year = yearMonth.getYear();
+//			int month = yearMonth.getMonthOfYear();
+//			int parseInt = -1;
+//			if(year == fromDateYear && month == fromDateMonth){
+//				parseInt = getDaysDifferenceInclusive(fromDate, DateUtility.getLastDateOfMonth(fromDate, "dd-MMM-yyyy"));
+//			} else if (year == toDateYear && month == toDateMonth){
+//				parseInt = getDaysDifferenceInclusive(DateUtility.getFirstDateOfMonth(toDate, "dd-MMM-yyyy"), toDate);
+//			} else {
+//				parseInt = Integer.parseInt(DateUtility.convertDateFormats(DateUtility.getLastDateOfTheMonthBasedOnMonthYear(yearMonth.getMonthOfYear(), yearMonth.getYear(), "dd-MMM-yyyy"), "dd-MMM-yyyy", "dd"));
+//			}
+//			
+//			logger.debug("No of Days: " + parseInt);
+//		}
+		
+		
+//		logger.debug(DateUtility.convertDateFormats(DateUtility.getFirstDateOfMonth(fromDate), "dd-MMM-yyyy", "dd/MM/yyyy"));
+//
+//		logger.debug(getDateRange(fromDate, toDate));
+//		String previousFrom = DateUtility.getBackwardDateInStringWRTDays(fromDate, "dd-MMM-yyyy", -1);
+//		logger.debug(previousFrom);
+		
+//		Set<org.joda.time.YearMonth> yearMonth = new HashSet<org.joda.time.YearMonth>();
+//
+//		org.joda.time.YearMonth obj1 = new org.joda.time.YearMonth(2016, 2);
+//		org.joda.time.YearMonth obj2 = new org.joda.time.YearMonth(1, 12);
+//		org.joda.time.YearMonth obj3 = new org.joda.time.YearMonth(2016, 2);
+//		logger.debug(obj1.monthOfYear().getAsText());
+//		logger.debug(obj1.monthOfYear().getAsShortText());
+//		logger.debug(obj1);
+//		yearMonth.add(obj1);
+//		yearMonth.add(obj2);
+//		yearMonth.add(obj3);
+//		
+//		logger.debug(yearMonth.size());
+		
+		
+//		for(; !fromDate.equalsIgnoreCase(toDate); toDate = getPreviousDateFromGivenDateInString(toDate)){
+//			System.out.println(fromDate + ":" + toDate);
+//		}
+		
+		
+		
+//		System.out.println(getPeriodFiscalYearWise(fromDate, toDate, oracleDateFormat, getFYDiff(fromDate, toDate)));
+		
+//		fromDate = "22/01/2016";
+		
+//		System.out.println(DateUtility.compareGivenDateWithTodayInTermsOfDays(fromDate));
+//		System.out.println(getBackwardDateInStringWRTDays("22/01/2016", "dd/MM/yyyy", 1));
+		
 //		System.out.println(getFirstDateOfMonth(Month.FEB, Year.Y2014));
 //		System.out.println(getLastDateOfMonth(Month.FEB, Year.Y2014));
 		;
@@ -120,10 +193,27 @@ public class DateUtility {
 //		}
 	}
 
+	public static List<String> getDateRange(String fromDate, String toDate) {
+		List<String> dates = new ArrayList<String>();
+		
+		while(!fromDate.equalsIgnoreCase(toDate)){
+			dates.add(fromDate.toUpperCase());
+			fromDate = getOffsetDateInStringWRTDays(fromDate, "dd-MMM-yyyy", 1);
+		}
+		dates.add(toDate.toUpperCase());
+		return dates;
+		
+	}
+
 	public static String getDateRange(Integer startOffset,Integer endOffset) throws Exception {
 		String format = "[yyyy,MM,dd]";
 		String today = getTodaysDateInGivenFormat(format);
 		return "[" + getOffsetDateInStringWRTDays(today,format, startOffset) + "," + getOffsetDateInStringWRTDays(today,format, endOffset) + "]";
+	}
+	
+	public static int getDaysDifferenceInclusive(String fromDate, String toDate) throws ParseException{
+		Days days = Days.daysBetween(getJoda(fromDate, oracleDateFormat), getJoda(toDate, oracleDateFormat));
+		return days.getDays() + 1;
 	}
 	
 	public static String getOffsetDateInStringWRTDays(String dateString,
@@ -143,7 +233,7 @@ public class DateUtility {
 
 			return result;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return result;
 	}
@@ -293,11 +383,6 @@ public class DateUtility {
 		return day;
 	}
 
-	/**
-	 * 
-	 * @param format
-	 * @return Todays Date in a Given String format
-	 */
 	public static String getTodaysDateInGivenFormat(String format) {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -315,7 +400,7 @@ public class DateUtility {
 			cal.add(Calendar.DATE, -1);
 			return dateFormat.format(cal.getTime());
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return null;
 	}
@@ -355,9 +440,14 @@ public class DateUtility {
 			result = dateFormat.format(previousDate);
 			return result;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return result;
+
+	}
+	
+	public static String getPreviousDateFromGivenDateInString(String givenDate) {
+		return getPreviousDateFromGivenDateInString(givenDate, oracleDateFormat);
 
 	}
 
@@ -378,7 +468,7 @@ public class DateUtility {
 
 			return result;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return result;
 	}
@@ -405,7 +495,7 @@ public class DateUtility {
 
 			return result;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return result;
 	}
@@ -433,7 +523,7 @@ public class DateUtility {
 			return strDate;
 
 		} catch (ParseException pe) {
-			System.out.println("Parse Exception : " + pe);
+			logger.error("\nClass: " + pe.getClass() + "\nMessage: " + pe.getMessage() + "\n", pe);
 		}
 		return null;
 	}
@@ -449,7 +539,7 @@ public class DateUtility {
 			date = formatter.parse(testDate);
 			return date;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return null;
 	}
@@ -464,7 +554,7 @@ public class DateUtility {
 			sqlDate = new java.sql.Date(javaDate.getTime());
 			return sqlDate;
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return sqlDate;
 	}
@@ -478,7 +568,7 @@ public class DateUtility {
 			reportDate = formatter.format(utilDate);
 			return reportDate;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return null;
 	}
@@ -497,7 +587,7 @@ public class DateUtility {
 			reportDate = formatter.format(sqlDate);
 			return reportDate;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return null;
 	}
@@ -525,7 +615,7 @@ public class DateUtility {
 			cal.setTime(date);
 			return cal.get(Calendar.MONTH) + 1;
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return cal.get(Calendar.MONTH);
 	}
@@ -546,7 +636,7 @@ public class DateUtility {
 			cal.setTime(date);
 			return getMonth(cal.get(Calendar.MONTH) + 1);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return getMonth(cal.get(Calendar.MONTH) + 1);
 	}
@@ -560,7 +650,7 @@ public class DateUtility {
 			//System.out.println("-----MOnth:" + cal.get(Calendar.YEAR));
 			return cal.get(Calendar.YEAR);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return cal.get(Calendar.YEAR);
 	}
@@ -605,8 +695,12 @@ public class DateUtility {
 		DateTime today = new DateTime(new Date());
 		DateTime givenDate =  new DateTime(stringDateFormatToUtilDate(date, dateFormat));
 		return Days.daysBetween(today, givenDate).getDays();
-
 	}
+	
+	public static int compareGivenDateWithTodayInTermsOfDays(String date){
+		return compareGivenDateWithTodayInTermsOfDays(date, oracleDateFormat);
+	}
+	
 	public static String getLastDateOfYear(int year, String format) throws ParseException{
 		return getJoda("31-DEC-" + year, oracleDateFormat).toString(format);
 	}
@@ -773,7 +867,7 @@ public class DateUtility {
 
 		return diff;
 	}
-
+	
 	public static Map<Year, ArrayList<Month>> getPeriod(String fromDate, String toDate) throws ParseException {
 		Map<Year, ArrayList<Month>> r = new TreeMap<Year, ArrayList<Month>>();
 		ArrayList<Month> mmm = new ArrayList<Month>();
@@ -805,6 +899,7 @@ public class DateUtility {
 	}
 	
 	public static int getYearDifference(String fromDate, String toDate) throws ParseException {
+		
 		return getYear(toDate, oracleDateFormat) - getYear(fromDate, oracleDateFormat);
 	}
 
@@ -856,10 +951,36 @@ public class DateUtility {
 	public static boolean isLastDateOfTheFiscalYear(String toDate) throws ParseException {
 		return getLastDateOfFiscalYear(getFiscalYear(toDate, oracleDateFormat)).equalsIgnoreCase(toDate);
 	}
+
+	public static Set<YearMonth> getYearMonth(String fromDate, String toDate) {
+		Set<YearMonth> yearMonths = new TreeSet<YearMonth>(); 
+		
+		int fromMonth = Integer.parseInt(DateUtility.convertDateFormats(fromDate, oracleDateFormat, "MM"));
+		int fromYear = Integer.parseInt(DateUtility.convertDateFormats(fromDate, oracleDateFormat, "yyyy"));
+		
+		int toMonth = Integer.parseInt(DateUtility.convertDateFormats(toDate, oracleDateFormat, "MM"));
+		int toYear = Integer.parseInt(DateUtility.convertDateFormats(toDate, oracleDateFormat, "yyyy"));
+		
+		while(!(fromMonth == toMonth && fromYear == toYear)){
+			yearMonths.add(new YearMonth(fromYear, fromMonth));
+			
+			fromDate = getOffsetDateInStringWRTDays(fromDate, oracleDateFormat, 29);
+			fromMonth = Integer.parseInt(DateUtility.convertDateFormats(fromDate, oracleDateFormat, "MM"));
+			fromYear = Integer.parseInt(DateUtility.convertDateFormats(fromDate, oracleDateFormat, "yyyy"));
+		}
+		yearMonths.add(new YearMonth(toYear, toMonth));
+		return yearMonths;
+	}
+	
+	public static java.sql.Timestamp getCurrentTimestampInSQL(){
+		Calendar c = Calendar.getInstance();
+		java.sql.Timestamp currentTime = new Timestamp(c.getTimeInMillis());
+		return currentTime;
+	}
 }
 
 class JodaDateDifferentExample {
-
+	private final static Logger logger = Logger.getLogger(JodaDateDifferentExample.class);   
 	public static void main(String[] args) {
 
 		//demo();
@@ -871,6 +992,7 @@ class JodaDateDifferentExample {
 			String dateFormat = "dd/MM/yyyy";
 			getPeriodMonthWise(fromDate, toDate, dateFormat, getMonthDifferenceBetweenTwoDates(fromDate, toDate, dateFormat));
 		} catch (ParseException e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 
 	}
@@ -978,9 +1100,11 @@ class JodaDateDifferentExample {
 			System.out.print(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}// TODO Auto-generated method stub
 
 	}
+	
+	
 
 }

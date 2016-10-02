@@ -7,14 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utility.DebuggerUtility;
-import com.enercon.global.utility.MethodClass;
 import com.enercon.global.utils.GlobalUtils;
 import com.enercon.sqlQuery.AllQueries;
 
 public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,WcareConnector{
-	
+	private final static Logger logger = Logger.getLogger(CustomerMetaInfo.class);
 	/**
 	 * No Addition
 	 * @param customerId
@@ -35,31 +37,20 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			sqlQuery = getWECIdsBasedOnCustomerIdQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, customerId);
+			DaoUtility.displayQueryWithParameter(8, sqlQuery, customerId);
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
+				DaoUtility.getRowCount(8, rs);
 				wecIds.add(rs.getString("S_WEC_ID"));	
 			}
 			return WECMetaInfo.getManyWECTotalForOneDayMeta(wecIds, readingDate);
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}
@@ -86,10 +77,12 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 					"Group By S_CUSTOMER_NAME,S_Customer_Id, S_State_Name, S_Site_Name, S_Site_Id  " +
 					"order by S_CUSTOMER_NAME,S_SITE_NAME " ;
 			prepStmt = conn.prepareStatement(sqlQuery);
+			DaoUtility.displayQueryWithParameter(67, sqlQuery, customerIds,siteIds);
 			rs = prepStmt.executeQuery();
 			String[] columnNames = GlobalUtils.getColumnNames(rs);
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(67, rs);
 				for (String columnName : columnNames) {
 					columnData.add(rs.getString(columnName));
 				}
@@ -99,24 +92,11 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			return recordData;
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return recordData;
 	
@@ -124,8 +104,8 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 	
 	public static List<String> getCustomerMetaInfoBasedOnWECId(String wecId){
 		
-		Connection conn = null;
-		
+		logger.debug("enter");
+		Connection conn = null;		
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
@@ -135,11 +115,12 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			conn = wcareConnector.getConnectionFromPool();
 			prepStmt = conn.prepareStatement(getCustomerMetaInfoBasedOnWECId);
 			prepStmt.setObject(1, wecId);
-			
+			DaoUtility.displayQueryWithParameter(39, getCustomerMetaInfoBasedOnWECId, wecId);
 			rs = prepStmt.executeQuery();
 			String[] columnNames = GlobalUtils.getColumnNames(rs);
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(39, rs);
 				for (String columnName : columnNames) {
 					tranList.add(rs.getString(columnName));
 				}
@@ -147,30 +128,16 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			return tranList;
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	return tranList;
 }
 	
 	public static List<Object> getCustomerInfoBasedOnSiteIdWECType(String siteId, String wecType) {
-		
+		logger.debug("enter");
 		Connection conn = null;
 		
 		PreparedStatement prepStmt = null;
@@ -185,8 +152,10 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			prepStmt.setObject(1, siteId);
 			prepStmt.setObject(2, wecType);
 			//DatabaseUtility.getSQLQueryResultInHTMLFile(getCustomerInfoBasedonSiteIdWECTypeQuery, (++queryCount) + "_1_" + MethodClass.getMethodName(),siteId, wecType);
+			DaoUtility.displayQueryWithParameter(47,getCustomerInfoBasedonSiteIdWECTypeQuery , siteId, wecType);
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
+				DaoUtility.getRowCount(47, rs);
 				Vector<Object> v = new Vector<Object>();
 				
 				v.add(rs.getObject("S_CUSTOMER_NAME"));
@@ -202,32 +171,20 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			
 			return tranList;
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+		catch (Exception e) {
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 		return null;
 	}
 	
 	public static List<String> getCustomerMetaInfoBasedOnEbId(String ebId) {
 		
-		Connection conn = null;
-		
+		logger.debug("enter");
+		Connection conn = null;		
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
@@ -237,11 +194,12 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			conn = wcareConnector.getConnectionFromPool();
 			prepStmt = conn.prepareStatement(getCustomerMetaInfoBasedOnEbId);
 			prepStmt.setObject(1, ebId);
-			
+			DaoUtility.displayQueryWithParameter(41, getCustomerMetaInfoBasedOnEbId, ebId);
 			rs = prepStmt.executeQuery();
 			String[] columnNames = GlobalUtils.getColumnNames(rs);
 			
 			if (rs.next()) {
+				DaoUtility.getRowCount(41, rs);
 				for (String columnName : columnNames) {
 					tranList.add(rs.getString(columnName));
 				}
@@ -249,30 +207,17 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			return tranList;
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			  DaoUtility.releaseResources(prepStmt, rs, conn);
+
 		}
 	return tranList;
 	}
 	
 	public static ArrayList<ArrayList<String>> getCustomerMetaInfoBasedOnWECTypeStateIdWithLoadCapacity(String wecType, String stateId) {
-		
+		logger.debug("enter");
 		Connection conn = null;
 		ArrayList<ArrayList<String>> customersMetaInfo = new ArrayList<ArrayList<String>>();
 		PreparedStatement prepStmt = null;
@@ -285,17 +230,20 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			if(wecType.equalsIgnoreCase("ALL")){
 				prepStmt = conn.prepareStatement(getCustomerMetaInfoBasedOnStateIdWithLoadCapacityQuery);
 				prepStmt.setObject(1, stateId);
+				DaoUtility.displayQueryWithParameter(42, getCustomerMetaInfoBasedOnStateIdWithLoadCapacityQuery, stateId);
 			}
 			else{
 				prepStmt = conn.prepareStatement(getCustomerMetaInfoBasedOnWECTypeStateIdWithLoadCapacityQuery);
 				prepStmt.setObject(1, wecType);
 				prepStmt.setObject(2, stateId);
+				DaoUtility.displayQueryWithParameter(42, getCustomerMetaInfoBasedOnWECTypeStateIdWithLoadCapacityQuery, wecType,stateId);
 			}
 			
 			rs = prepStmt.executeQuery();
 			String[] columnNames = GlobalUtils.getColumnNames(rs);
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(42, rs);
 				for (String columnName : columnNames) {
 					tranList.add(rs.getString(columnName));
 				}
@@ -305,30 +253,17 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			return customersMetaInfo;
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			 DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	return customersMetaInfo;
 	}
 	
 	public static ArrayList<ArrayList<String>> getCustomerMetaInfoBasedOnWECTypeWithLoadCapacity(String wecType) {
-		
+		logger.debug("enter");
 		Connection conn = null;
 		ArrayList<ArrayList<String>> customersMetaInfo = new ArrayList<ArrayList<String>>();
 		PreparedStatement prepStmt = null;
@@ -340,11 +275,12 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			conn = wcareConnector.getConnectionFromPool();
 			prepStmt = conn.prepareStatement(getCustomerMetaInfoBasedOnWECTypeWithLoadCapacityQuery);
 			prepStmt.setObject(1, wecType);
-			
+			DaoUtility.displayQueryWithParameter(30, getCustomerMetaInfoBasedOnWECTypeWithLoadCapacityQuery, wecType);
 			rs = prepStmt.executeQuery();
 			String[] columnNames = GlobalUtils.getColumnNames(rs);
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(30, rs);
 				for (String columnName : columnNames) {
 					tranList.add(rs.getString(columnName));
 				}
@@ -354,24 +290,10 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			return customersMetaInfo;
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	return customersMetaInfo;
 	}
@@ -405,24 +327,12 @@ public class CustomerMetaInfo extends DebuggerUtility implements AllQueries,Wcar
 			
 			return EBMetaInfo.getManyEBTotalForOneday(ebIds, readingDate);
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	}

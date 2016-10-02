@@ -1,6 +1,6 @@
 package com.enercon.model.report;
 
-import com.enercon.model.summaryreport.Parameter;
+import com.enercon.model.parameter.wec.Parameter;
 
 public interface ParameterVo {
 

@@ -20,6 +20,16 @@
 
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ajax.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/debug.js"></script>
+
+<script type="text/javascript" src="<%=request.getContextPath()%>/scripts/mscript/lib/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/mySelectFunction.js"></script>
+
+<script type="text/javascript">
+		$(document).ready(function(){
+			
+			$.fn.charactersCheck();
+		});
+</script>
 <%
 /* if (session.getAttribute("loginID") == null)
 {
@@ -132,9 +142,8 @@ function showRoleMaster(dataXml)
 <table align="center" border="0" cellpadding="0" cellspacing="0" width="700">
 	<tr width="100%">
 		<td width="100%" align="center">
-		<html:messages id="msg" name="SuccessfullyCreated" message="true" bundle="stdmessage">
-			<bean:write name="msg" />
-		</html:messages>
+		
+		
 		<html:form action="/StdMessageN.do?method=createStandardMessage">
 
 			<table align="center" border="0" cellpadding="0" cellspacing="0" width="400">
@@ -161,7 +170,7 @@ function showRoleMaster(dataXml)
 														<td width="180px"><bean:message key="label.stdmessage.messageHead" bundle="stdmessage"/></td>
 														<td class="bgcolor" width="180px">
 															<!-- <input type="text" id="MsgHeadtxt" name="MsgHeadtxt" size="25" value="" class="BoxBorder" maxlength="30" /> -->
-															<html:text property="messageHead" size="50" styleClass="BoxBorder" maxlength="30" ></html:text>
+															<html:text property="messageHead" size="25" styleClass="BoxBorder check-character-length" maxlength="20" ></html:text>
 														</td>
 													</tr>
 													<logic:messagesPresent message="false" property="messageHead" >
@@ -174,7 +183,7 @@ function showRoleMaster(dataXml)
 													<tr class="bgcolor"> 
 														<td><bean:message key="label.stdmessage.messageDescription" bundle="stdmessage" /></td>
 														<td class="bgcolor">
-															<html:textarea rows="3" cols="39" property="messageDescription" styleClass="BoxBorder" ></html:textarea>
+															<html:textarea rows="3" cols="39" property="messageDescription" styleClass="BoxBorder check-character-length"></html:textarea>
 														</td>
 													</tr>
 													<logic:messagesPresent message="false" property="messageDescription">
@@ -183,7 +192,25 @@ function showRoleMaster(dataXml)
 															<html:errors property="messageDescription"/>
 														</td>
 													</tr>
-													</logic:messagesPresent>		
+													</logic:messagesPresent>
+													<logic:messagesPresent property="SuccessfullyCreated" message="true">
+													<tr class="bgcolor">
+														<td colspan="2" class="sucessmsgtext">
+														<html:messages id="msg" name="SuccessfullyCreated" message="true" bundle="stdmessage">
+															<bean:write name="msg" />
+														</html:messages>
+														</td>
+													</tr>
+													</logic:messagesPresent>
+													<logic:messagesPresent property="NotCreated" message="true">
+													<tr class="bgcolor">
+														<td colspan="2" class="errormsgtext">
+														<html:messages id="msg" name="NotCreated" message="true" bundle="stdmessage">
+															<bean:write name="msg" />
+														</html:messages>
+														</td>
+													</tr>
+													</logic:messagesPresent>
 												</tbody>
 											</table>
 										</td>
@@ -202,7 +229,8 @@ function showRoleMaster(dataXml)
 									<tr>
 										<td class="btn" width="100">
 				<%-- <input type="hidden" id="MsgIdtxt" name="MsgIdtxt" value="<%=ri %>" /> --%>	
-											<input name="Submit" type="submit" class="btnform" value="Submit"/>
+											<!-- <input name="Submit" type="submit" class="btnform" value="Submit"/> -->
+											<html:submit value="Submit" styleClass="btnform"></html:submit>
 										</td>
 										<td width="1"><html:img src="resources/images/pixel.gif" border="0" height="18" width="1" /></td>
 										<td class="btn" width="100"><input name="Reset" value="Cancel" class="btnform" type="reset"></td>
@@ -222,7 +250,7 @@ function showRoleMaster(dataXml)
 			<table border="0" cellpadding="0" cellspacing="0" width="400">
 				<tbody>
 					<tr>
-						<td >
+						<td>
 							
 							<div id="msgdetails">
 					

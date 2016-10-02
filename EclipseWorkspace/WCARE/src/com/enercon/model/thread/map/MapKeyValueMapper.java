@@ -30,9 +30,9 @@ public class MapKeyValueMapper<Key, Value> {
 		
 		try {
 			factory.awaitTermination(1, TimeUnit.DAYS);
-		} catch (InterruptedException e1) {
-			logger.error(e1.getMessage());
-			e1.printStackTrace();
+		} catch (InterruptedException e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			
 			
 		}
 		
@@ -44,11 +44,11 @@ public class MapKeyValueMapper<Key, Value> {
 			try {
 				allWorkerResult.put(key, result.get());
 			} catch (InterruptedException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+				
 			} catch (ExecutionException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+				
 			}
 		}
 		return allWorkerResult;

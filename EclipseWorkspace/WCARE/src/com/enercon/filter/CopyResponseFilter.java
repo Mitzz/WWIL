@@ -16,7 +16,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +32,7 @@ public class CopyResponseFilter implements Filter {
     	
     	String url = new String(httpServletRequest.getRequestURL());
     	
-    	filterUrlLogging(url);
+    	filterUrlLogging("Incoming", url, httpServletRequest);
 //    	HttpSession session = httpServletRequest.getSession(false);
 //    	if(session == null) logger.debug("Session is null");
 //    	else logger.debug("Session is not null");
@@ -44,11 +43,14 @@ public class CopyResponseFilter implements Filter {
 //        if(session == null) logger.debug("Session is null");
 //    	else logger.debug("Session is not null");
        
-    	filterUrlLogging(url);
+    	filterUrlLogging("Outgoing", url,httpServletRequest);
     }
     
-    private void filterUrlLogging(String url){
-    	if(!(url.endsWith(".css") || url.endsWith(".js") || url.endsWith(".jpg") || url.endsWith(".gif") || url.endsWith(".GIF"))) logger.info(url);
+    private void filterUrlLogging(String status, String url, HttpServletRequest request){
+    	url = url.toUpperCase();
+    	if(!(url.endsWith(".CSS") || url.endsWith(".JS") || url.endsWith(".JPG") || url.endsWith(".GIF"))) {
+    		logger.info(request.getSession() == null ? "Snull" : request.getSession().getAttribute("Tracker") + "->" +url + "(" + status + ")");
+    	}
     }
     
 //    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {

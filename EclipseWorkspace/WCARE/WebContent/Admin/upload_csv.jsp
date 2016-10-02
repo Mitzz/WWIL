@@ -4,10 +4,17 @@
 <LINK href="<%=request.getContextPath()%>/resources/css/Report.css" type=text/css rel=stylesheet>
 </head>
 <%@page import="com.enercon.admin.dao.AdminDao"%>
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%@page import="com.enercon.connection.WcareConnector"%>
+<%@page import="com.enercon.dao.DaoUtility" %>
+<%@page import="java.util.Arrays" %>
+<%! private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
 <html>
 <%  
-    JDBCUtils conmanager = new JDBCUtils();
-    Connection conn = conmanager.getConnection();
+    /* JDBCUtils conmanager = new JDBCUtils(); */
+   Connection conn = null;
+    conn = WcareConnector.wcareConnector.getConnectionFromPool();
 	String contentType = request.getContentType();
 	if ((contentType != null) && (contentType.indexOf("multipart/form-data") >= 0)) {
  	DataInputStream in = new DataInputStream(request.getInputStream());
@@ -622,20 +629,6 @@
 		                }
 			           	}
 					}
-					
-			
-			
-			
-			
-			
-		
-			
-			
-			
-			
-			
-			
-			
 			
 			value = contents.toString();
 			//System.out.println("Value:"+value);
@@ -667,41 +660,17 @@
 		          <tr class=TableSummaryRow><td  vAlign=middle class=TableCell11 align=left width=20%>
 		           Rejected Remarks with line no: </td><td  vAlign=middle class=TableCell align=left width=80%> 	<% out.println(rcdLine); %> 
 		          </td></tr>
-		          
-		          
 		          </table>
 		   <% 
 			
            }
         catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("Admin/Upload_csv:" + "\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (pst != null)
-                    pst.close();
-                if (ps != null)
-                    ps.close();
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                prepStmt = null;
-                ps = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(Arrays.asList(ps,psUpdate,prepStmt) , Arrays.asList(rs) , conn);
+            
         }
     	
  } 

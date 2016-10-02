@@ -2,19 +2,16 @@ package com.enercon.admin.machineGridAutomation;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import org.apache.log4j.Logger;
 
+import com.enercon.connection.WcareConnector;
 import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.JDBCUtilsTest;
-import com.enercon.global.utility.MethodClass;
-import com.enercon.global.utils.GetColumnNames;
-import com.enercon.global.utils.GlobalUtils;
 
-public class MachineGridAvailabilityRetriever {
+public class MachineGridAvailabilityRetriever implements WcareConnector{
 
 	private static Logger logger = Logger.getLogger(MachineGridAvailabilityRetriever.class);
 	public static void getMGA() {
@@ -145,8 +142,7 @@ public class MachineGridAvailabilityRetriever {
 			//return null;
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -161,8 +157,7 @@ public class MachineGridAvailabilityRetriever {
 				}
 			}
 			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}

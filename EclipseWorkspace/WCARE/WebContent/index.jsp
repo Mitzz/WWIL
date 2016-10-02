@@ -1,3 +1,116 @@
+<%-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<%@page import="org.apache.log4j.Logger"%>
+<%
+	response.setHeader("Cache-Control", "no-cache"); //Forces caches to obtain a new copy of the page from the origin server
+	response.setHeader("Cache-Control", "no-store"); //Directs caches not to store the page under any circumstance
+	response.setDateHeader("Expires", 0); //prevents caching at the proxy server
+	response.setHeader("Pragma", "no-cache"); //HTTP 1.0 backward compatibility
+%>
+
+<%@ page contentType="text/html;charset=windows-1252"%>
+
+<%@ page import="com.enercon.admin.util.AdminUtil"%>
+<%!
+private final static Logger logger = Logger.getLogger("index.jsp");
+
+%>
+<html>
+<head>
+<title>WCARE (Customer Portal)@Wind World</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/validateForm.js"></script>
+<script type='text/javascript' src='<%=request.getContextPath()%>/resources/js/leftmenu.js'></script>
+<script type="text/javascript" src='<%=request.getContextPath()%>/resources/js/scroll.js'></script>
+<script type="text/javascript">  
+  
+
+function popUp(URL) {
+	day = new Date();
+	id = day.getTime();
+	eval("page" + id + " = window.open(URL, '" + id + "', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300,left = 262,top = 234');");
+}
+function popUp1(URL) {
+	day = new Date();
+	id = day.getTime();
+	eval("page" + id + " = window.open(URL, '" + id + "', 'toolbar=1,scrollbars=1,location=0,statusbar=0,menubar=1,resizable=1,width=800,height=500,left = 262,top = 234');");
+}
+ 
+function gotoSave() 
+{
+     var blnSave=false;
+     blnSave = validateForm('Login ID',document.forms[0].sLoginID.value,'M','',
+                            'Password',document.forms[0].sPassword.value,'M',''                            
+                            );
+      if ( blnSave == true ) {
+         return true;
+      } else {
+         return false;
+      }
+	}
+</script>
+
+<%
+	try{
+	String ERROR_MSG = "";
+	//System.out.println(session);
+	if (session != null) {
+		
+		if (session.getAttribute("valid") == null) {
+		} else {
+			if (session.getAttribute("valid").equals("false")) {
+		if (session.getAttribute("ERROR_MSG") == null) {
+			ERROR_MSG = "Invalid Username/Password. Try Again.";
+		} else {
+			ERROR_MSG = session.getAttribute("ERROR_MSG")
+			.toString();
+		}
+		session.setAttribute("valid", "true");
+			}
+		}
+	} else {
+		ERROR_MSG = "Session has been TIMED OUT";
+	}
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+	/* This code is put for test purpose, do not remove */
+	// System.out.println("Client IP Addr: " + request.getRemoteAddr());
+	// System.out.println("Client IP Host: " + request.getRemoteHost());
+	/* End of Test Code  */
+%>
+
+<link href="resources/css/form.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!-- 
+
+.style6 {color: #800000; font-weight: bold;font-size: 12px }
+.style61 {color: #000066; font-weight: bold;font-size: 12px }
+.style7 {color: #800000; font-size: 12px}
+.style10 {
+	color: #FF0000;
+	font-size: 18px
+}
+.style12 {color: #008000;font-size: 12px}
+.style14 {color: #008000; font-weight: bold; font-size: 12px}
+.style01 {color: #800000; font-size: 12px}
+.style16 {color: #800000; }
+.style17 {color: #008000}
+.style18 {font-size: 18px}
+.style19 {color: #800000; font-weight: bold;} 
+.style180 {font-size: 14px}
+.style160 {color: #FFFFFF;font-weight: bold;}
+
+-->
+</style>
+</HEAD>
+<body>
+<h1 style="font-size: 30px; color: black; background-color: white;">System is under maintenance. Please try after sometime.</h1>
+</BODY>
+
+</html> --%>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <%@page import="org.apache.log4j.Logger"%>
 <%
@@ -58,7 +171,7 @@ function gotoSave()
 <%
 	try{
 	String ERROR_MSG = "";
-	System.out.println(session);
+	//System.out.println(session);
 	if (session != null) {
 		
 		if (session.getAttribute("valid") == null) {
@@ -325,3 +438,4 @@ function gotoSave()
 </BODY>
 
 </html>
+

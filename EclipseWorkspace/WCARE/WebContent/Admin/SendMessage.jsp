@@ -330,7 +330,7 @@ function createlistSite()
 {   
    var selected = new Array();
    var mySelect = document.getElementById("StateSelList");
-   console.log("mySelect:::" + mySelect);
+   
   // alert(mySelect.length);
    var z = 0;
    var transactions = "";

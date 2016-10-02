@@ -2,6 +2,9 @@ package com.enercon.global.utils;
 
 //import developerworks.ajax.store.Cart;
 import javax.servlet.http.*;
+
+import org.apache.log4j.Logger;
+
 import com.enercon.admin.dao.*;
 import com.enercon.security.dao.*;
 import com.enercon.scada.dao.*;
@@ -12,6 +15,8 @@ import com.enercon.reports.dao.ReportDao;
 import com.enercon.customer.dao.CustomerDao;
 
 public class AjaxUtils extends HttpServlet {
+	
+	private final static Logger logger = Logger.getLogger(AjaxUtils.class);
 
   /**
    * Updates Cart, and outputs XML representation of contents
@@ -66,7 +71,7 @@ public void doPost(HttpServletRequest req, HttpServletResponse res) throws java.
     		}
     		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
     }
     

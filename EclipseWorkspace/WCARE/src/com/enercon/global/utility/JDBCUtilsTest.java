@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 public class JDBCUtilsTest {
+	private final static Logger logger = Logger.getLogger(JDBCUtilsTest.class);
 	private Connection testingConnection;
 	private Connection scadaConnection;
 	private Connection wcareConnection;
@@ -58,10 +61,10 @@ public class JDBCUtilsTest {
 	        wcareConnection = DriverManager.getConnection(url, username, password);
 	        
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 	

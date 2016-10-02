@@ -20,8 +20,6 @@ public class TimeFormatter extends SimpleTagSupport{
 		return minutes;
 	}
 
-
-
 	public void setMinutes(long minutes) {
 		this.minutes = minutes;
 	}

@@ -15,8 +15,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/screen.css" type="text/css">
 <link rel="stylesheet" href="<%=request.getContextPath()%>/resources/css/MYCSS.css" type="text/css">
-
 <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ajax.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/scripts/mscript/lib/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/mySelectFunction.js"></script>
 
 <%
 if (session.getAttribute("loginID") == null)
@@ -40,11 +41,15 @@ if(dynabean != null){
 response.setHeader("Pragma","no-cache");
 response.getOutputStream().flush();
 response.getOutputStream().close();
+System.out.println(getClass().getCanonicalName());
 //String rolename = AdminUtil.fillMaster("TBL_ROLE_MASTER",ex);
 %>
+
 <script type="text/javascript">
+
 function findApplication() 
 {
+	
 		
 	 var req = newXMLHttpRequest();
      var ApplicationId = "";
@@ -124,8 +129,14 @@ function showRoleMaster(dataXml)
 }
 
 </script>
+<script type="text/javascript">
+		$(document).ready(function(){
+			
+			$.fn.charactersCheck();
+		});
+</script>
 </head>
-<body onLoad="findApplication()">
+<body>
 <div align="center">
 <table align="center" border="0" cellpadding="0" cellspacing="0" width="700">
 <tr width="100%">
@@ -147,8 +158,8 @@ function showRoleMaster(dataXml)
 		<table border="0" cellpadding="2" cellspacing="1" width="100%">
 		<tbody>						
 		<tr class="bgcolor"> 
-			<td id="t_street_address" width="180px">&nbsp;Message&nbsp;Head:</td>
-			<td class="bgcolor" width="180px"><input type="text" id="MsgHeadtxt" name="MsgHeadtxt" size="25" value="<%=rn%>" class="BoxBorder" maxlength="30" /></td>
+			<td id="t_street_address" width="180px" >&nbsp;Message&nbsp;Head:</td>
+			<td class="bgcolor" width="180px"><input type="text" id="MsgHeadtxt" name="MsgHeadtxt" size="25" value="<%=rn%>" class="BoxBorder check-character-length" data-maxlength="10" maxlength="30" /></td>
 		</tr>
 		<tr class="bgcolor"> 
 			<td id="t_street_address">&nbsp;Message Description:</td>

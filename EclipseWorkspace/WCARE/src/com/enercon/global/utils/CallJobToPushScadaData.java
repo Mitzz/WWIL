@@ -12,9 +12,11 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 
 import com.enercon.admin.dao.AdminDao;
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utility.DateUtility;
 
-public class CallJobToPushScadaData implements Job {
+public class CallJobToPushScadaData implements Job ,WcareConnector {
 
 	private static Logger logger = Logger.getLogger(CallJobToPushScadaData.class);
 
@@ -25,6 +27,7 @@ public class CallJobToPushScadaData implements Job {
 		try {
 			callScadaScheduler.pushScadaDataToECARE();
 		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			logger.debug("Scheduler exception", e);
 		}
 		
@@ -70,14 +73,14 @@ public class CallJobToPushScadaData implements Job {
 	private List<String> getNotInsertedDataWecId(String dateValue) throws Exception {
 
 		List<String> wecIds = new ArrayList<String>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"select S_wec_id " + 
 					"from tbl_wec_master " + 
@@ -99,20 +102,7 @@ public class CallJobToPushScadaData implements Job {
 			return wecIds;
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		
 			

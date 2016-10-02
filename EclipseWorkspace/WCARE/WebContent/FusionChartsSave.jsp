@@ -3,6 +3,9 @@
 <%@ page import="java.awt.Graphics"%>
 <%@ page import="java.awt.image.BufferedImage"%>
 <%@ page import="javax.imageio.ImageIO"%>
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%! private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
 <%
 	//Decoded data from charts.
 	String data="";
@@ -21,6 +24,7 @@
 		height = Integer.parseInt(request.getParameter("height"));	
 	}
 	catch(Exception e){
+		logger.error("FusionChartSave:" +  "\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		//If the width and height have not been given, we cannot create the image.
 		out.print("Image width/height not provided.");
 		out.close();
@@ -113,6 +117,7 @@
 		os.close();
 		
 	}catch(Exception e){
+		logger.error("FusionChartSave:" +  "\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		//IF the image data is mal-formatted.
 		out.print("Image data is not in proper format.");
 		out.close();

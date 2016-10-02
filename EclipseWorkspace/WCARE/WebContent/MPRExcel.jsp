@@ -69,6 +69,7 @@
 		<TR>
 			<%
 			if(!wecid.equals("ALL")){%>
+				<%-- One Particular Wec is selected --%>
 				<td align="center" colspan="2"> 
 					<!-- System.out.println("Particular WEC"); -->
 					<input  align="right" type="button" value="Export To Excel" onClick=location.href="Change/WecIDMPRChange.jsp?wectype=<%=wec%>&fdate=<%=fdate%>&tdate=<%=tdate%>&ebid=<%=ebid%>&wecid=<%=wecid%>">
@@ -76,14 +77,18 @@
 				</td>
 			
 			<% }else if(wecid.equals("ALL") && !ebid.equals("ALL")){%>
+			<%-- One Particular Eb is selected with all Wec is selected --%>
 				<!-- System.out.println("Particular EB"); -->
 				<td align="center" colspan="2"> <input  align="right" type="button" value="Export To Excel" onClick=location.href="Change/EbIdMPRChange.jsp?wectype=<%=wec%>&fdate=<%=fdate%>&tdate=<%=tdate%>&ebid=<%=ebid%>&wecid=<%=wecid%>"></td>
 					
 			<% }else if(state.equals("ALL")){%>
+				<%-- Only Wec Type Select --%>
 				<!-- System.out.println("All State"); -->
 				<td align="center" colspan="2"> <input  align="right" type="button" value="Export To Excel" onClick=location.href="Change/WecTypeMPRChange.jsp?wectype=<%=wec%>&fdate=<%=fdate%>&tdate=<%=tdate%>"></td>
 					
 			<% }else if(siteid.equals("ALL")){%>
+				<%-- Only State Select --%>
+				<%-- State and WecType --%>
 				<td align="center" colspan="2">
 					 <!-- System.out.println("All Site"); -->
 					 <input  align="right" type="button" value="Export To Excel" onClick=location.href="Change/StateMPRChange.jsp?stateid=<%=state%>&wectype=<%=wec%>&fdate=<%=fdate%>&tdate=<%=tdate%>&sname=<%=sname%>&ebid=<%=ebid%>&wecid=<%=wecid%>">
@@ -91,6 +96,8 @@
 				</td>
 			<%} else{%>
 				<!-- System.out.println(); -->
+				<%-- Site and State Select --%>
+				<%-- Site ,State and Wec Type Select --%>
 				<td align="center" colspan="2"> 
 					<input  align="right" type="button" value="Export To Excel" onClick=location.href="SiteMPR.jsp?stateid=<%=state%>&wectype=<%=wec%>&fdate=<%=fdate%>&tdate=<%=tdate%>&sname=<%=sname%>&siteid=<%=siteid%>&ebid=<%=ebid%>&wecid=<%=wecid%>">
 					

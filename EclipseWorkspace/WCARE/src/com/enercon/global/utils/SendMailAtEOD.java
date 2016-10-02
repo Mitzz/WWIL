@@ -3,6 +3,7 @@ package com.enercon.global.utils;
 import com.enercon.global.controller.InitServlet;
 import com.enercon.global.utils.SendMail;
 import com.enercon.customer.util.CustomerUtil;
+import com.enercon.dao.DaoUtility;
 import com.enercon.admin.dao.*;
 
 import java.lang.reflect.Array;
@@ -13,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import java.io.*;
+
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -20,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 
 public class SendMailAtEOD extends TimerTask {
+	private final static Logger logger = Logger.getLogger(SendMailAtEOD.class);
 	public final Connection conn;
 
 	public SendMailAtEOD(Connection con) {
@@ -593,27 +597,9 @@ public class SendMailAtEOD extends TimerTask {
 			}
 
 		} catch (Exception e) {
-			e.getMessage();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (ps0 != null)
-					ps0.close();
-				if (ps1 != null)
-					ps1.close();
-				if (rs0 != null)
-					rs0.close();
-				if (rs1 != null)
-					rs1.close();
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (Exception e) {
-				ps0 = null;
-				ps1 = null;
-				rs0 = null;
-				ps1 = null;
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,ps,ps0,ps1) , Arrays.asList(rs,rs0,rs1) , conn);
 		}
 	}
 }

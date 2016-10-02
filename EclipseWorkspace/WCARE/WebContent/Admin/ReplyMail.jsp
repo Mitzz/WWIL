@@ -4,14 +4,18 @@
 <%@ page import="com.enercon.customer.util.CustomerUtil" %>
 
 <%@ page import="com.enercon.global.utils.*"%>
-
+<%@page import="com.enercon.connection.WcareConnector"%>
+<%@page import="com.enercon.dao.DaoUtility" %>
+<%@page import="java.util.ArrayList" %>
+<%@page import="java.util.Arrays" %>
 <html>
 <%  
-    JDBCUtils conmanager = new JDBCUtils();
-    Connection conn = conmanager.getConnection();
+    /*  JDBCUtils conmanager = new JDBCUtils();  */
+     Connection conn = null;
+    conn = WcareConnector.wcareConnector.getConnectionFromPool();
 	String contentType = request.getContentType();
 	String Remarks="Message Not Sent Due To some Problem";
-	ResultSet rs = null;
+	PreparedStatement psUpdate=null;	
 	boolean flag=false;  
 	String Status =request.getParameter("Status");
 	String msgHead = request.getParameter("MsgHeadtxt");
@@ -21,7 +25,7 @@
 	String userid = session.getAttribute("loginID").toString();
 	
 	String msgEmail = request.getParameter("msgemail");
-	
+try{
 	CustomerUtil cd=new CustomerUtil(); 
 	String fromemail = "manoj.tiwari@windworldindia.com"; 
 	
@@ -41,7 +45,7 @@
     	Remarks="Message Sent Sucessfully";
     }
 			
-    PreparedStatement psUpdate=null;	
+    
    // String msgid = CodeGenerate.NewCodeGenerate("TBL_CUSTOMER_QUERY");
     psUpdate=conn.prepareStatement("UPDATE TBL_CUSTOMER_QUERY SET S_MESSAGE_REPLYDESC=?,S_REPLIED_BY=?,S_STATUS=?,D_REPLIED_DATE=sysdate WHERE S_CUSTOMER_QUERY_ID=?");
     psUpdate.setObject(1,msgdesc);
@@ -51,10 +55,13 @@
 	
 	psUpdate.executeUpdate();
     psUpdate.close();
-    conn.close();
-	conn = null;
-	conmanager.closeConnection();
-	conmanager = null;
+   // conn.close();
+	//conn = null;
+	}finally{
+		DaoUtility.releaseResources(psUpdate, conn);
+	}
+	/* conmanager.closeConnection();
+	conmanager = null; */
     
     
     %>   

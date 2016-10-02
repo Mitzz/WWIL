@@ -4,11 +4,13 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.ajax.AjaxDao;
 import com.enercon.ajax.interfaces.AjaxVo;
 
 public class IredaVoListRetrieverBasedOnFiscalYear extends AjaxDataRetriverImp {
-
+	private final static Logger logger = Logger.getLogger(IredaVoListRetrieverBasedOnFiscalYear.class);
 	public IredaVoListRetrieverBasedOnFiscalYear(List<String> ajaxRequestParameterNames) {
 		super(ajaxRequestParameterNames);
 	}
@@ -21,9 +23,9 @@ public class IredaVoListRetrieverBasedOnFiscalYear extends AjaxDataRetriverImp {
 			
 			return AjaxDao.getIredaVoListRetrieverBasedOnFiscalYearWithThreading(projectNos, fiscalYear);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return null;
 	}

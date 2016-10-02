@@ -10,16 +10,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.enercon.Time24HoursValidator;
 import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utility.MethodClass;
 import com.enercon.struts.exception.GridBifurcationException;
 
 public class WcareDao implements WcareConnector{
-
+	private final static Logger logger = Logger.getLogger(WcareDao.class);
 	public void validateData(ArrayList<ArrayList<String>> excelData) throws GridBifurcationException, ParseException, SQLException, Exception {
 
 		checkSize(excelData);
@@ -27,8 +28,18 @@ public class WcareDao implements WcareConnector{
 		//checkDataAlreadyPresent(excelData);
 	}
 	
+	public static void main(String[] args) {
+		for(int year: getFiscalYear()){
+			System.out.println(year);
+		}
+		
+		for(int year: getFinancialYears()){
+			System.out.println(year);
+		}
+	}
+	
 	public static List<Integer> getFiscalYear(){
-		int startingFiscalYear=2012;
+		int startingFiscalYear=2013;
 		List<Integer> fiscalYears=new ArrayList<Integer>();
         Date dt=new Date();	
         Calendar cal = Calendar.getInstance();
@@ -44,7 +55,7 @@ public class WcareDao implements WcareConnector{
 
 
 	public static List<Integer> getFinancialYears(){
-		int startingFinancialcalYear=2012;
+		int startingFinancialcalYear=2013;
 		List<Integer> financialYears=new ArrayList<Integer>();
         Date dt=new Date();	
         Calendar cal = Calendar.getInstance();
@@ -234,21 +245,7 @@ public class WcareDao implements WcareConnector{
 			
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -277,6 +274,11 @@ public class WcareDao implements WcareConnector{
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
+		logger.debug("Mpid:" +  mpId);
+		logger.debug("Actual Value:" + actualValue);
+		logger.debug("eb:" + ebId);
+		logger.debug("WEC ID : " + wecId);
+		logger.debug("Cus:" + customerID );
 		/*System.out.println("Remark:" + remark);
 		System.out.println("Mpid:" +  mpId);
 		System.out.println("Val:" + actualValue);
@@ -293,7 +295,7 @@ public class WcareDao implements WcareConnector{
 						"        Using (Select ? As D_Reading_Date,? As S_Mp_Id, ? As S_Wec_Id From Dual) S " + 
 						"        On (T.S_Wec_Id = S.S_Wec_Id And T.D_Reading_Date = S.D_Reading_Date And T.S_Mp_Id = S.S_Mp_Id) " + 
 						"        When Matched Then  " + 
-						"          Update Set N_Value = ?, S_Last_Modified_By = ? , D_Last_Modified_Date = To_Date(Sysdate),  " + 
+						"          Update Set N_Value = ?, S_Last_Modified_By = ? , D_Last_Modified_Date = localtimestamp,  " + 
 						"                    N_Actual_Value = ? , S_Remarks = ?, N_publish = ? " + 
 						"        When Not Matched Then " + 
 						"        Insert(S_Reading_Id, D_Reading_Date, S_Mp_Id, S_Wec_Id, S_Eb_Id, S_Customer_Id, N_Value,  " + 
@@ -333,30 +335,101 @@ public class WcareDao implements WcareConnector{
 			prepStmt.setObject(19, publishStatus);
 			prepStmt.setObject(20, (remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark);
 			//System.out.println("00000000:::" + ((remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark));
-			
+			DaoUtility.displayQueryWithParameter(sqlQuery, dateValue, mpId, wecId, cumulativeValue, loginId, Double.parseDouble(actualValue), 
+					(remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark, publishStatus, dateValue, mpId, wecId, ebId, customerID, Double.parseDouble(cumulativeValue),
+							loginId, loginId, Double.parseDouble(actualValue), readType, publishStatus, (remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark);
 			prepStmt.executeUpdate();
 			
 			prepStmt.close();
 			
+//			conn.commit();
+			
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
+	
+//	public void insertRecordIntoWECReading(String dateValue, String wecId,
+//			String readType, String remark, String cumulativeValue,
+//			String actualValue, String mpId, String loginId, int publishStatus) throws SQLException ,Exception{
+//
+//		/*System.out.println("Remark:" + remark);
+//		System.out.println("Mpid:" +  mpId);
+//		System.out.println("Val:" + actualValue);
+//		System.out.println("Loginid:" + loginId);*/
+//		/*System.out.println("Cus:" + customerID );
+//		System.out.println("eb:" + ebId);*/
+//		
+//		if("0.0".equals(cumulativeValue) || "0".equals(cumulativeValue) || "".equals(cumulativeValue)){
+//			if(!(mpId.equals("1401000006") || mpId.equals("1401000005") || mpId.equals("1401000004")|| mpId.equals("1401000003")|| mpId.equals("1401000002")|| mpId.equals("1401000001"))){
+//				return;
+//			}
+//		}
+//		
+//		Connection conn = null;
+//		
+//		String customerID = getCustomerIDFromWECId(wecId);
+//		String ebId = getEbIdFromWECId(wecId);
+//		String sqlQuery = "";
+//		PreparedStatement prepStmt = null;
+//		ResultSet rs = null;
+//		
+//		logger.debug("Mpid:" +  mpId);
+//		logger.debug("Actual Value:" + actualValue);
+//		logger.debug("eb:" + ebId);
+//		logger.debug("WEC ID : " + wecId);
+//		logger.debug("Cus:" + customerID );
+//		/*System.out.println("Remark:" + remark);
+//		System.out.println("Mpid:" +  mpId);
+//		System.out.println("Val:" + actualValue);
+//		System.out.println("Loginid:" + loginId);
+//		System.out.println("Cus:" + customerID );
+//		System.out.println("eb:" + ebId);
+//		System.out.println("WEC ID : " + wecId);*/
+////		String customerID = null;
+//		try{
+//			conn = wcareConnector.getConnectionFromPool();
+//			
+//			sqlQuery = 	"        Insert into tbl_wec_reading(S_Reading_Id, D_Reading_Date, S_Mp_Id, S_Wec_Id, S_Eb_Id, S_Customer_Id, N_Value,  " + 
+//						"              S_Created_By, D_Created_Date, S_Last_Modified_By, D_Last_Modified_Date, N_Actual_Value,  " + 
+//						"              S_Reading_Type, N_Publish, S_Remarks, N_Publish_Fact)  " + 
+//						"        Values (Scadadw.WEC_SCADA_READING_ID.Nextval ,?, ?, ?, ?, ?, ?, " + 
+//						"                ?, localtimestamp, ?, localtimestamp, ?, " + 
+//						"                ?, ?, ?, 0) " ; 
+//
+//			prepStmt = conn.prepareStatement(sqlQuery);
+//			
+//			//Insert Data
+//			prepStmt.setObject(1, dateValue);
+//			prepStmt.setObject(2, mpId);
+//			prepStmt.setObject(3, wecId);
+//			prepStmt.setObject(4, ebId);
+//			prepStmt.setObject(5, customerID);
+//			prepStmt.setDouble(6, Double.parseDouble(cumulativeValue));
+//			
+//			prepStmt.setObject(7, loginId);
+//			prepStmt.setObject(8, loginId);
+//			prepStmt.setDouble(9, Double.parseDouble(actualValue));
+//			
+//			prepStmt.setObject(10, readType);
+//			prepStmt.setObject(11, publishStatus);
+//			prepStmt.setObject(12, (remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark);
+//			//System.out.println("00000000:::" + ((remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark));
+//			/*DaoUtility.displayQueryWithParameter(sqlQuery, dateValue, mpId, wecId, cumulativeValue, loginId, Double.parseDouble(actualValue), 
+//					(remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark, publishStatus, dateValue, mpId, wecId, ebId, customerID, Double.parseDouble(cumulativeValue),
+//							loginId, loginId, Double.parseDouble(actualValue), readType, publishStatus, (remark == null  || remark.equalsIgnoreCase("NIL")) ? null : remark);*/
+//			prepStmt.executeUpdate();
+//			
+//			prepStmt.close();
+//			
+////			conn.commit();
+//			
+//		}
+//		finally{
+//			DaoUtility.releaseResources(prepStmt, rs, conn);
+//		}
+//	}
 	
 	private int getPublishStatus(String wecId, String dateValue) throws SQLException {
 		int publishStatus = 0;
@@ -386,13 +459,7 @@ public class WcareDao implements WcareConnector{
 			}
 		}
 		finally{
-			try{
-				if(connection != null) wcareConnector.returnConnectionToPool(connection);
-				if(stmt != null) stmt.close();
-				if(rs != null) rs.close();
-			} catch(Exception e){
-				MethodClass.displayMethodClassName();e.printStackTrace();
-			}
+			DaoUtility.releaseResources(stmt, rs, connection);
 		}
 		return publishStatus;
 	}
@@ -421,20 +488,7 @@ public class WcareDao implements WcareConnector{
 			return ebId;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -462,20 +516,7 @@ public class WcareDao implements WcareConnector{
 			return customerId;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 
@@ -641,21 +682,7 @@ public class WcareDao implements WcareConnector{
 			return wecID;
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -682,20 +709,7 @@ public class WcareDao implements WcareConnector{
 			return scadaStatus;
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -737,20 +751,7 @@ public class WcareDao implements WcareConnector{
 			return generationOperatingHour;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 

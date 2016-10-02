@@ -4,10 +4,10 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Set;
 
-import com.enercon.dao.WecDataDao;
-import com.enercon.model.report.IWecParameterVo;
+import com.enercon.dao.WecParameterDataDao;
+import com.enercon.model.parameter.wec.IWecParameterVo;
 import com.enercon.model.summaryreport.FiscalYear;
-import com.enercon.model.summaryreport.Parameter;
+import com.enercon.model.parameter.wec.Parameter;
 
 public class FiscalYearWecParameterVoEvaluator<Key extends FiscalYear, Value extends IWecParameterVo> implements MapValueEvaluatorWorker<Key, Value>{
 
@@ -46,10 +46,10 @@ public class FiscalYearWecParameterVoEvaluator<Key extends FiscalYear, Value ext
 	}
 	
 	public Value getWorker1() throws SQLException, ParseException{
-		return new WecDataDao().getWecParameterVo(wecIds, fiscalYear, parameters);
+		return WecParameterDataDao.getInstance().getTotal(wecIds, fiscalYear, parameters);
 	}
 	public Value getWorker2() throws SQLException, ParseException{
-		return new WecDataDao().getWecParameterVo(getWecIds(), getFromDate(), getToDate(), parameters);
+		return WecParameterDataDao.getInstance().getTotal(getWecIds(), getFromDate(), getToDate(), parameters);
 	}
 
 	public Set<String> getWecIds() {

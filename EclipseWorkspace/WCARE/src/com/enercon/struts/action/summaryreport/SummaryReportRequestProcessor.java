@@ -44,7 +44,7 @@ public class SummaryReportRequestProcessor extends Action {
 		request.setAttribute("CustomerMasterSelectVo", customerSelectVo);
 		request.setAttribute("WECTypeMasterSelectVo", wecTypeSelectVo);
 		request.setAttribute("StateMasterSelectVo", stateSelectVo);
-		
+
 		return mapping.findForward("success");
 
 	}

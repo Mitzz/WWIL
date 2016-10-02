@@ -372,6 +372,7 @@ public class ExcelValidation extends ActionForm {
 			 }
 		 }
 		 if(dynaBean.getProperty("Exceltxt") != null){
+			 
 			 if(dynaBean.getProperty("Exceltxt").toString().length() <= 0){
 				 ActionMessage err=new ActionMessage("excel.required");
 				 errors.add(ActionErrors.GLOBAL_MESSAGE,err);
@@ -394,7 +395,7 @@ public class ExcelValidation extends ActionForm {
 			 try {
 				 fromdate = format.parse(fd);
 			 } catch (ParseException e) {
-				 //e.printStackTrace();
+				 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			 }
 			 if(dynaBean.getProperty("FromDatetxt").toString().length() <= 0){
 				 ActionMessage err=new ActionMessage("fromdate.required");
@@ -406,7 +407,7 @@ public class ExcelValidation extends ActionForm {
 			 try {
 				 fromdate = format.parse(fd);
 			 } catch (ParseException e) {
-				 //e.printStackTrace();
+				 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			 }
 			 if(dynaBean.getProperty("ToDatetxt").toString().length() <= 0){
 				 ActionMessage err=new ActionMessage("todate.required");

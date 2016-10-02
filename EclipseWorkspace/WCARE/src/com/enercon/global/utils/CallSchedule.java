@@ -11,6 +11,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import com.enercon.admin.job.InsertPESData;
 import com.enercon.admin.job.IppGroupReport;
+import com.enercon.admin.job.WindSpeedUploadJob;
 
 public class CallSchedule {
 	// private static Logger logger = Logger.getLogger(CallSchedule.class);
@@ -134,7 +135,8 @@ public class CallSchedule {
 		startTime = cal.getTime();
 		SimpleTrigger job_trig1 = new SimpleTrigger("mytriggernew",
 				Scheduler.DEFAULT_GROUP, startTime, null,
-				SimpleTrigger.REPEAT_INDEFINITELY, 1L * 60L * 60L * 1000L);
+//				SimpleTrigger.REPEAT_INDEFINITELY, 1L * 60L * 60L * 1000L);
+				SimpleTrigger.REPEAT_INDEFINITELY, 24L * 60L * 60L * 1000L);
 
 		sched.scheduleJob(jd1, job_trig1);
 
@@ -152,6 +154,19 @@ public class CallSchedule {
 		 * 
 		 * sched.scheduleJob(jd2, job_trig2);
 		 */
+		
+		JobDetail windSpeedJob = new JobDetail("windspeed", Scheduler.DEFAULT_GROUP, WindSpeedUploadJob.class);
+		cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		startTime = cal.getTime();
+		SimpleTrigger windSpeedTrigger = new SimpleTrigger("windspeedtrigger", Scheduler.DEFAULT_GROUP, startTime,
+				                    null, SimpleTrigger.REPEAT_INDEFINITELY, 24L * 60L * 60L * 1000L);
+       
+		sched.scheduleJob(windSpeedJob, windSpeedTrigger);
 
 	}
 

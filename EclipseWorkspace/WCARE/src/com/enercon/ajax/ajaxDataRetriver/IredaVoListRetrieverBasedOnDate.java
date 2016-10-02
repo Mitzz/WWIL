@@ -3,12 +3,14 @@ package com.enercon.ajax.ajaxDataRetriver;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.ajax.AjaxDao;
 import com.enercon.ajax.interfaces.AjaxVo;
 import com.enercon.global.utility.DateUtility;
 
 public class IredaVoListRetrieverBasedOnDate extends AjaxDataRetriverImp {
-
+	private final static Logger logger = Logger.getLogger(IredaVoListRetrieverBasedOnDate.class);
 	public IredaVoListRetrieverBasedOnDate(List<String> ajaxRequestParameterNames) {
 		super(ajaxRequestParameterNames);
 	}
@@ -21,7 +23,7 @@ public class IredaVoListRetrieverBasedOnDate extends AjaxDataRetriverImp {
 		try {
 			return AjaxDao.getIredaVoListRetrieverBasedOnDate(projectNos, date);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return null;
 	}

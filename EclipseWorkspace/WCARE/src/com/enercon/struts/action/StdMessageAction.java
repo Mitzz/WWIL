@@ -1,5 +1,7 @@
 package com.enercon.struts.action;
 
+import java.sql.SQLException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,7 +15,6 @@ import org.apache.struts.actions.DispatchAction;
 
 import com.enercon.model.master.StandardMessageMasterVo;
 import com.enercon.service.StdMessageService;
-import com.enercon.struts.form.StdMessageForm;
 
 public class StdMessageAction extends DispatchAction{
 
@@ -21,19 +22,30 @@ public class StdMessageAction extends DispatchAction{
 	
 	public ActionForward createStandardMessage(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+			{
 		logger.debug("Enter");
 		logger.debug(form);
-		StdMessageForm f = (StdMessageForm) form;
-		StandardMessageMasterVo vo = new StandardMessageMasterVo();
+		StandardMessageMasterVo vo = (StandardMessageMasterVo) form;
+		 
+		String loginId = request.getSession().getAttribute("loginID").toString();
+		
+		vo.setCreatedBy(loginId);
+		vo.setModifiedBy(loginId);
 		
 		StdMessageService service = StdMessageService.getInstance();
 		ActionMessages messages = new ActionMessages();
-		boolean isCreated = service.create(vo);
-		logger.debug("isCreated: " + isCreated);
-		if(isCreated){
-			messages.add("SuccessfullyCreated", new ActionMessage("success.stdmessage.created"));
-			f.reset();
+		
+		try{
+			boolean isCreated = service.create(vo);
+			logger.debug("isCreated: " + isCreated);
+			if(isCreated){
+				messages.add("SuccessfullyCreated", new ActionMessage("success.stdmessage.created"));
+			}
+			vo.reset(mapping, request);
+		} catch (SQLException  e) {
+			messages.add("NotCreated", new ActionMessage("err.stdmessage.created"));
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n");
+			
 		}
 		saveMessages(request, messages);
 		return mapping.findForward("success");

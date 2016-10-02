@@ -5,9 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 
 public class SelectVoQueryManager implements QuerySelector{
+	
+	 private final static Logger logger = Logger.getLogger(SelectVoQueryManager.class);
+	
 	private static Map<String, String> selectVoQueryResolver = new HashMap<String, String>();
 	
 	static{
@@ -28,7 +32,7 @@ public class SelectVoQueryManager implements QuerySelector{
 			inputStream.close();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 

@@ -7,12 +7,14 @@ import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.connection.WcareConnector;
-import com.enercon.global.utility.MethodClass;
+import com.enercon.dao.DaoUtility;
 import com.enercon.sqlQuery.AllQueries;
 
 public class FindingQueryDao implements WcareConnector, AllQueries {
-
+	private final static Logger logger = Logger.getLogger(FindingQueryDao.class);
 	public static Set<String> getActiveWecIdsBasedOnOneEbId(String ebId)
 			throws SQLException {
 
@@ -29,26 +31,15 @@ public class FindingQueryDao implements WcareConnector, AllQueries {
 			stmt = connection.prepareStatement(query);
 
 			stmt.setString(1, ebId);
+			DaoUtility.displayQueryWithParameter(12, query, ebId);
+			
 			rs = stmt.executeQuery();
-
 			while (rs.next()) {
+				DaoUtility.getRowCount(12, rs);
 				wecIds.add(rs.getString("S_wec_id"));
 			}
 		} finally {
-			try {
-				if (connection != null) {
-					wcareConnector.returnConnectionToPool(connection);
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			 DaoUtility.releaseResources(stmt, rs, connection);
 
 		}
 		return wecIds;

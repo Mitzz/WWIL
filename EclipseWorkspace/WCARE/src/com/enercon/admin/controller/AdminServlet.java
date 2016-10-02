@@ -1,10 +1,5 @@
 package com.enercon.admin.controller;
 
-/*  Author : Shailendra A Tiwari
- *  Company: Enercon India Limited
- *  Date : 21 May 2007
- * */
-
 import java.io.IOException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -59,7 +54,7 @@ public class AdminServlet extends HttpServlet {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+        	logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
         }
     }
 

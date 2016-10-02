@@ -7,19 +7,22 @@ import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.connection.WcareConnector;
 import com.enercon.global.utils.GlobalUtils;
+import com.enercon.struts.dao.SelectVoDao;
 
 public class Rporting implements WcareConnector{
-
+	 private final static Logger logger = Logger.getLogger(Rporting.class);
 	public static void main(String[] args) {
 		System.out.println("Successful");
 		try {
 			new Rporting().getWecId("07-JAN-2015");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 	
@@ -156,8 +159,7 @@ public class Rporting implements WcareConnector{
 					rs.close();
 				}
 			} catch (Exception e) {
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}

@@ -19,10 +19,10 @@ public class LoginHistoryVo extends MasterVo {
 		this.logoutDateTime = builder.logoutDateTime;
 		this.ipAddress = builder.ipAddress;
 		this.host = builder.host;
-		this.createdBy = builder.createdBy;
-		this.createdAt = builder.createdAt;
-		this.modifiedBy = builder.modifiedBy;
-		this.modifiedAt = builder.modifiedAt;
+		setCreatedBy(builder.getCreatedBy());
+		setCreatedAt(builder.getCreatedAt());
+		setModifiedBy(builder.getModifiedBy());
+		setModifiedAt(builder.getModifiedAt());
 
 	}
 

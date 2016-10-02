@@ -9,12 +9,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.model.missingScadaData.MissingScadaDataReportVo;
 
-/**
- * Servlet implementation class MissingScadaDataAction
- */
 public class MissingScadaDataAction extends HttpServlet {
+	private static final Logger logger = Logger.getLogger(MissingScadaDataAction.class);
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -35,17 +35,22 @@ public class MissingScadaDataAction extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		logger.debug("kjdfs");
 		String date = request.getParameter("date");
+		logger.debug("kjdfs");
 		MissingScadaDataReportVo dataReport = new MissingScadaDataReportVo(date);
-		
+		logger.debug("kjdfs");
 		try {
+			logger.debug("kjdfs");
 			dataReport.populateData();
+			logger.debug("kjdfs");
 			request.setAttribute("date", date);
 			request.setAttribute("missingScadaReport", dataReport);
 			RequestDispatcher rd = request.getRequestDispatcher("/MissingScadaData.jsp");
 			rd.include(request, response);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n");
+			
 		}
 		
 	}

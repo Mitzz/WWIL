@@ -1,6 +1,5 @@
 package com.enercon.model.master;
 
-import java.util.List;
 
 public class WecMasterVo implements Comparable<WecMasterVo> {
 
@@ -130,7 +129,6 @@ public class WecMasterVo implements Comparable<WecMasterVo> {
 		customer.addWec(this);
 		this.customer = customer;
 	}
-
 	
 }
 

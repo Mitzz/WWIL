@@ -1,4 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="com.enercon.model.master.TransactionMasterVo"%>
 <% 
     response.setHeader("Cache-Control","no-cache"); //Forces caches to obtain a new copy of the page from the origin server
     response.setHeader("Cache-Control","no-store"); //Directs caches not to store the page under any circumstance
@@ -9,6 +12,7 @@
 
 <%@ page import="java.util.*" %>
 <%@ page import="com.enercon.admin.dao.AdminDao"%>
+<%! private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
 
 <html>
 <head>
@@ -46,6 +50,7 @@
 -->
 </style>
 <%
+
 if (session.getAttribute("loginID") == null)
       {
             response.sendRedirect(request.getContextPath());
@@ -238,14 +243,6 @@ windowPositionArray[3] = [50,500]; // X and Y position of first window
 	</tr>
 	<tr>
 		<td width="20%" height="704" align="left" valign="top">
-		<%
-		List tranList1 = new ArrayList(); 
-	 	tranList1 = (List)session.getAttribute("custtypee"); 
-		List tranList = new ArrayList();
-		/*  Getting the Transaction of the User from the Session. */
-		tranList = (List)session.getAttribute("transactionList");    
-		%>
-			
 		<%	
 		AdminDao od = new AdminDao(); 		
 		String count = od.getAllloginhistory(); 
@@ -387,96 +384,99 @@ windowPositionArray[3] = [50,500]; // X and Y position of first window
 			
 			var tmenuItems = [
 			<%
-		String sU1 = "";			
-		for (int u1=0; u1 <tranList.size(); u1++){
-			Vector vU1 = new Vector();
-		    vU1 = (Vector)tranList.get(u1);
-		    String sNext1 = (String)vU1.get(3);
-		    if (sU1.equals(sNext1.toString())){
+		String sU1 = "";
+		List<TransactionMasterVo> transactions = (List<TransactionMasterVo>) session.getAttribute("transactions");
+		TransactionMasterVo vU1 = null;
+		TransactionMasterVo vU2 = null;
+		TransactionMasterVo vU3 = null;
+		TransactionMasterVo vU4 = null;
+		logger.debug(transactions);
+		for (int u1=0; u1 <transactions.size(); u1++){
+			//Vector vU1 = new Vector();
+		    vU1 = transactions.get(u1);
+		    String sNext1 = vU1.get(3);
+		    if (sU1.equals(sNext1)){
 			}
 		    else{
-				sU1 = (String)vU1.get(3);						
+				sU1 = vU1.get(3);						
 			%>
-				["<%=sU1%>","", "resources/ess.files/<%=(String)vU1.get(8)%>", "resources/ess.files/<%=(String)vU1.get(9)%>", "resources/ess.files/<%=(String)vU1.get(10)%>", "Click to expand/collapse Administrators Options", "", "0", "0", "", ],				
+				["<%=sU1%>","", "resources/ess.files/<%=vU1.get(8)%>", "resources/ess.files/<%=vU1.get(9)%>", "resources/ess.files/<%=vU1.get(10)%>", "Click to expand/collapse Administrators Options", "", "0", "0", "", ],				
 						
 			<%
 				String sU2 = "";
 				int i2 = 0;
-				for (int u2=0;u2<tranList.size();u2++){
-					Vector vU2 = new Vector();
+				for (int u2=0;u2<transactions.size();u2++){
 					String sURL = "";
 					String sName = "";
 					String sAlt = "";	  
 					String sFrame = "";
-					vU2 = (Vector)tranList.get(u2);
-					if (sU1.equals((String)vU2.get(3))){		        				
-						String sNext2 = (String)vU2.get(4);
-			    		String Head1 = vU2.get(3) == null ? "" : vU2.get(3).toString();
-			    		if (sNext2 == null  && Head1.equals(sU1.toString())){
-							sURL = (String)vU2.get(2);
-			    			sName = (String)vU2.get(1);	        		
-			    			sAlt = (String)vU2.get(6);
-			    			sFrame = (String)vU2.get(7);
+					vU2 = transactions.get(u2);
+					if (sU1.equals(vU2.get(3))){		        				
+						String sNext2 = vU2.get(4);
+			    		String Head1 = vU2.get(3) == null ? "" : vU2.get(3);
+			    		if (sNext2 == null  && Head1.equals(sU1)){
+							sURL = vU2.get(2);
+			    			sName = vU2.get(1);	        		
+			    			sAlt = vU2.get(6);
+			    			sFrame = vU2.get(7);
 			%>  
-			    					["|<%=sName%>","<%=sURL%>", "resources/ess.files/<%=(String)vU2.get(17)%>", "resources/ess.files/<%=(String)vU2.get(18)%>", "resources/ess.files/<%=(String)vU2.get(19)%>", "<%=sAlt%>", "<%=sFrame %>", "", "", "", ],
+			    					["|<%=sName%>","<%=sURL%>", "resources/ess.files/<%=vU2.get(17)%>", "resources/ess.files/<%=vU2.get(18)%>", "resources/ess.files/<%=vU2.get(19)%>", "<%=sAlt%>", "<%=sFrame %>", "", "", "", ],
 			<%
 						}
 						else if (sNext2 != null){
-							if(sU2.equals(sNext2.toString())){								
+							if(sU2.equals(sNext2)){								
 							}
-							else if(Head1.equals(sU1.toString())){
-								sU2 = (String)vU2.get(4);
+							else if(Head1.equals(sU1)){
+								sU2 = vU2.get(4);
 			%>
-										["|<%=sU2%>","", "resources/ess.files/<%=(String)vU2.get(11)%>", "resources/ess.files/<%=(String)vU2.get(12)%>", "resources/ess.files/<%=(String)vU2.get(13)%>", "", "", "", "", "", ],
+										["|<%=sU2%>","", "resources/ess.files/<%=vU2.get(11)%>", "resources/ess.files/<%=vU2.get(12)%>", "resources/ess.files/<%=vU2.get(13)%>", "", "", "", "", "", ],
          	<%
 								String sU3 = "";
 								int i3 = 0;
-								for (int u3=0;u3<tranList.size();u3++){
-									Vector vU3 = new Vector();
+								for (int u3=0;u3<transactions.size();u3++){
 									String sURL3 = "";
 									String sName3 = "";
 									String sAlt3 = "";
 									String sFrame3 = "";
-									vU3 = (Vector)tranList.get(u3);
-									if (sU2.equals((String)vU3.get(4))){		        				
-										String sNext3 = (String)vU3.get(5);
-										Head1 = vU3.get(3) == null ? "" : vU3.get(3).toString();								    				
-										String Head2 = vU3.get(4) == null ? "" : vU3.get(4).toString();
-										if (sNext3 == null && Head1.equals(sU1.toString()) && Head2.equals(sU2.toString())){
-											sURL3 = (String)vU3.get(2);
-											sName3 = (String)vU3.get(1);
-											sAlt3 = (String)vU3.get(6);
-											sFrame3 = (String)vU3.get(7);
+									vU3 = transactions.get(u3);
+									if (sU2.equals(vU3.get(4))){		        				
+										String sNext3 = vU3.get(5);
+										Head1 = vU3.get(3) == null ? "" : vU3.get(3);								    				
+										String Head2 = vU3.get(4) == null ? "" : vU3.get(4);
+										if (sNext3 == null && Head1.equals(sU1) && Head2.equals(sU2)){
+											sURL3 = vU3.get(2);
+											sName3 = vU3.get(1);
+											sAlt3 = vU3.get(6);
+											sFrame3 = vU3.get(7);
 			%> 
-								    					["||<%=sName3%>","<%=sURL3%>", "resources/ess.files/<%=(String)vU3.get(17)%>", "resources/ess.files/<%=(String)vU3.get(18)%>", "resources/ess.files/<%=(String)vU3.get(19)%>", "<%=sAlt3%>", "<%=sFrame3 %>", "", "", "", ],								    					 					     						
+								    					["||<%=sName3%>","<%=sURL3%>", "resources/ess.files/<%=vU3.get(17)%>", "resources/ess.files/<%=vU3.get(18)%>", "resources/ess.files/<%=vU3.get(19)%>", "<%=sAlt3%>", "<%=sFrame3 %>", "", "", "", ],								    					 					     						
 			<%
 										}
 										else if (sNext3 != null){
-											if(sU3.equals(sNext3.toString())){													
+											if(sU3.equals(sNext3)){													
 											}
-											else if (Head1.equals(sU1.toString()) && Head2.equals(sU2.toString())){
-												sU3 = (String)vU3.get(5);	
+											else if (Head1.equals(sU1) && Head2.equals(sU2)){
+												sU3 = vU3.get(5);	
 			%>
-															["||<%=sU3%>","", "resources/ess.files/<%=(String)vU3.get(14)%>", "resources/ess.files/<%=(String)vU3.get(15)%>", "resources/ess.files/<%=(String)vU3.get(16)%>", "", "", "", "", "", ],
+															["||<%=sU3%>","", "resources/ess.files/<%=vU3.get(14)%>", "resources/ess.files/<%=vU3.get(15)%>", "resources/ess.files/<%=vU3.get(16)%>", "", "", "", "", "", ],
 			<%
 												//String sU4 = "";
-												for (int u4=0;u4<tranList.size();u4++){
-													Vector vU4 = new Vector();
+												for (int u4=0;u4<transactions.size();u4++){
 													String sURL4 = "";
 													String sName4 = "";
 													String sAlt4 = "";
 													String sFrame4 = "";													   				
-													vU4 = (Vector)tranList.get(u4);
-													Head1 = vU4.get(3) == null ? "" : vU4.get(3).toString();								    				
-													Head2 = vU4.get(4) == null ? "" : vU4.get(4).toString();
-													if (sU3.equals((String)vU4.get(5)) && Head1.equals(sU1.toString()) && Head2.equals(sU2.toString())){		        				
+													vU4 = transactions.get(u4);
+													Head1 = vU4.get(3) == null ? "" : vU4.get(3);								    				
+													Head2 = vU4.get(4) == null ? "" : vU4.get(4);
+													if (sU3.equals(vU4.get(5)) && Head1.equals(sU1) && Head2.equals(sU2)){		        				
 														//String sNext4 = (String)vU3.get(5);											    				
-														sURL4 = (String)vU4.get(2);
-														sName4 = (String)vU4.get(1);	        		
-														sAlt4 = (String)vU4.get(6);
-														sFrame4 = (String)vU4.get(7);
+														sURL4 = vU4.get(2);
+														sName4 = vU4.get(1);	        		
+														sAlt4 = vU4.get(6);
+														sFrame4 = vU4.get(7);
 			%>  
-												    					["|||<%=sName4%>","<%=sURL4%>", "resources/ess.files/<%=(String)vU4.get(17)%>", "resources/ess.files/<%=(String)vU4.get(18)%>","resources/ess.files/<%=(String)vU4.get(19)%>", "<%=sAlt4%>", "<%=sFrame4 %>", "", "", "", ],
+												    					["|||<%=sName4%>","<%=sURL4%>", "resources/ess.files/<%=vU4.get(17)%>", "resources/ess.files/<%=vU4.get(18)%>","resources/ess.files/<%=vU4.get(19)%>", "<%=sAlt4%>", "<%=sFrame4 %>", "", "", "", ],
 			<%																
 													}
 												}
@@ -492,11 +492,11 @@ windowPositionArray[3] = [50,500]; // X and Y position of first window
 		}    		
 			%>			    			        
 			];
-			/* console.log(tmenuItems);
-			for(var i = 0; i < tmenuItems.length; i++){
+			//console.dir(tmenuItems);
+			/* for(var i = 0; i < tmenuItems.length; i++){
 				
 				var menuItems = tmenuItems[i];
-				console.log(menuItems);
+				console.dir(menuItems);
 				for(var j = 0; j < menuItems.length; j++){
 					console.log(menuItems[j]);
 				}
@@ -636,8 +636,48 @@ windowPositionArray[3] = [50,500]; // X and Y position of first window
  <%}else{%>
 			<tr>
 				<td>						
-					<IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="DisplayCustomerBoard.jsp">
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="DisplayCustomerBoard.jsp"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="jsppages/SendMessageN.jsp?msgid=1504000015"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="jsppages/DGRReportN.jsp?Type=D"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="DGRReport.jsp?Type=D"> -->
 					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src=""> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="dgrWec.do?date=24/02/2016&customerId=1000000064&siteId=1000000142&stateId=1000000079"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="dgrWec.do?date=19/02/2016&customerId=0905000002&siteId=1204000001&stateId=1000000067"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="Change/CustomerReportChangeByDayN.jsp?stateid=1000000079&siteid=1000000142&id=1000000064&rd=09/02/2016"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="mprWecType.do?wecType=E-53&fromDate=01/01/2016&toDate=31/01/2016"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="StateGenerationReportN.jsp"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="monthDateWise.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="monthMachineWise.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="yearWecWise.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="yearSiteWise.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="areaMaster.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="siteMaster.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="customerMaster.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="transferEb.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="cMaster.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="customerLogin.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="federMaster.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="wecMaster.do"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="transferWec.do"> -->
+					
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/test"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/stateMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/areaMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/customerMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/ebMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/ebMFactor"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/federMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/federMFactor"> -->
+					<IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/feederMaster">
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/measuringPoint"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/remarkMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/siteMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/siteRemark"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/substationMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/wecMaster"> -->
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/wecTypeMaster"> -->
+					
+					<!-- <IFRAME name="myframe" id="myframe" frameborder="0" TITLE="Wind World (India) Ltd" width="100%" height="1000"  src="spring/byDay"> -->
 						Alternate content for non-supporting browsers
 					</IFRAME>
 				</td>

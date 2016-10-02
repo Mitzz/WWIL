@@ -2,34 +2,264 @@ package com.enercon.global.utility;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.log4j.Logger;
 
 import com.enercon.dao.SummaryDao;
-import com.enercon.dao.master.WecMasterDao;
-import com.enercon.model.DataVoService;
-import com.enercon.model.WecLocationData;
-import com.enercon.model.report.IWecParameterVo;
-import com.enercon.model.summaryreport.Parameter;
-import com.enercon.model.summaryreport.ParameterEvaluator;
-import com.enercon.reports.pojo.GenerationReport;
+import com.enercon.dao.WecParameterDataDao;
+import com.enercon.model.dgr.EbDgr;
+import com.enercon.model.graph.Graph;
+import com.enercon.model.graph.ICustomerMasterVo;
+import com.enercon.model.graph.IEbMasterVo;
+import com.enercon.model.graph.ISiteMasterVo;
+import com.enercon.model.graph.IStateMasterVo;
+import com.enercon.model.graph.IWecMasterVo;
+import com.enercon.model.parameter.eb.EbParameter;
+import com.enercon.model.parameter.wec.IWecParameterVo;
+import com.enercon.model.parameter.wec.Parameter;
+import com.enercon.model.parameter.wec.WecParameterVo;
+import com.enercon.model.summaryreport.WecParameterEvaluator;
+import com.enercon.service.CustomerMasterService;
+import com.enercon.service.SiteMasterService;
+import com.enercon.service.StateMasterService;
+import com.enercon.service.WecMasterService;
+import com.enercon.service.master.EbMasterService;
+import com.enercon.service.master.FederMasterService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 public class Testing{
+	private final static Logger logger = Logger.getLogger(Testing.class);
 	
 	public static void main(String[] args) throws Exception{
+		List<IStateMasterVo> states = StateMasterService.getInstance().getAll();
+		SiteMasterService.getInstance().populate(FederMasterService.getInstance().getAll());
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		SimpleBeanPropertyFilter stateFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","id", "areas");
+		SimpleBeanPropertyFilter areaFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","id", "sites");
+		SimpleBeanPropertyFilter siteFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","id", "ebs", "feders");
+		SimpleBeanPropertyFilter ebFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","id", "wecs", "description", "workingStatus");
+		SimpleBeanPropertyFilter federFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","id", "description");
+		SimpleBeanPropertyFilter wecFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","id", "customer", "status");
+		SimpleBeanPropertyFilter customerFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","id");
 		
+		SimpleFilterProvider propertyFilter = new SimpleFilterProvider();
+		propertyFilter.addFilter("stateMasterVo", stateFilter);
+		propertyFilter.addFilter("areaMasterVo", areaFilter);
+		propertyFilter.addFilter("siteMasterVo", siteFilter);
+		propertyFilter.addFilter("ebMasterVo", ebFilter);
+		propertyFilter.addFilter("wecMasterVo", wecFilter);
+		propertyFilter.addFilter("customerMasterVo", customerFilter);
+		propertyFilter.addFilter("federMasterVo", federFilter);
+		
+	    FilterProvider filters = propertyFilter;
+	    
+		// Converting List of Java Object to List of Javascript Object
+		String statesJson = mapper.writer(filters).writeValueAsString(states);
+		logger.debug(statesJson);
+	}
+	
+	private static void dgr(String customerId, String stateId, String siteId, String reportDate) {
+//		customerId = "1000000064";
+//		stateId = "1000000038";
+//		siteId = "1000000142";
+//		reportDate = "21/02/2016";
+		
+//		customerId = "1000000064";
+//		stateId = "1000000038";
+//		siteId = "1000000142";
+//		reportDate = "18/02/2015";
+		
+		Set<Parameter> parameters = new HashSet<Parameter>();
+		parameters.add(Parameter.GENERATION);
+		parameters.add(Parameter.OPERATING_HOUR);
+		parameters.add(Parameter.LULL_HOUR);
+		parameters.add(Parameter.CF);
+		parameters.add(Parameter.GA);
+		parameters.add(Parameter.MA);
+		parameters.add(Parameter.REMARK);
+		parameters.add(Parameter.OMNP);
+		parameters.add(Parameter.E1F);
+		parameters.add(Parameter.E2F);
+		parameters.add(Parameter.E3F);
+		parameters.add(Parameter.E1S);
+		parameters.add(Parameter.E2S);
+		parameters.add(Parameter.E3S);
+		parameters.add(Parameter.FM);
+		parameters.add(Parameter.EB_LOAD);
+		parameters.add(Parameter.MF);
+		parameters.add(Parameter.MS);
+		parameters.add(Parameter.GIF);
+		parameters.add(Parameter.GIS);
+		
+		Set<EbParameter> ebParameters = new HashSet<EbParameter>();
+		ebParameters.add(EbParameter.KWHEXPORT);
+		ebParameters.add(EbParameter.KWHIMPORT);
+		ebParameters.add(EbParameter.REMARK);
+		
+		CustomerMasterService customerService = CustomerMasterService.getInstance();
+		SiteMasterService siteService = SiteMasterService.getInstance();
+		EbMasterService ebService = EbMasterService.getInstance();
+		WecParameterDataDao dao = WecParameterDataDao.getInstance();
+		
+		reportDate = DateUtility.convertDateFormats(reportDate, "dd/MM/yyyy", "dd-MMM-yyyy");
+		ICustomerMasterVo customer = customerService.get(customerId);
+		ISiteMasterVo site = siteService.get(siteId);
+		List<IEbMasterVo> ebs = ebService.getWecActive(customer, site);
+
+		logger.debug("Active Eb Size: " + ebs.size());
+		
+		for(IEbMasterVo eb: ebs){
+//			logger.debug("Active Eb: " + eb.getName());
+			EbDgr ebDgr = null;
+			try {
+//				ebDgr = new EbDgr(reportDate, customer, eb, parameters, ebParameters).populateWecParameterData().populateTotal();
+				ebDgr = new EbDgr(reportDate, customer, eb).populateTotal().populateDetails();
+				
+				Map<IWecMasterVo, IWecParameterVo> wecData = ebDgr.getWecsData();
+				
+				for (IWecMasterVo wec: wecData.keySet()) {
+					IWecParameterVo p = wecData.get(wec);
+					boolean isLullHourDash = true;
+					if(isLullHourDash)
+						logger.debug(String.format("Wec: %s, %s", wec.getName(), p));	
+				}
+			} catch (Exception e) {
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			}
+			
+			
+			logger.debug(ebDgr);
+		}
+		logger.debug("Done");
 	}
 
-	
+	private static void changebydaydgr() throws ParseException {
+		java.util.Date nextdate = null;
+		String rdate = "11/02/2016";
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	   	int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+	   	java.util.Date date = dateFormat.parse(rdate);
+	   	/* String prevdate = dateFormat.format(date.getTime() - MILLIS_IN_DAY);
+	   	 String nextDate = dateFormat.format(date.getTime() + MILLIS_IN_DAY); */
 
-	private static void testingForGenerationReport() throws SQLException, ParseException {
+	   	String prevdate = "";
+	   	String nextDate = "";
+
+	   	prevdate = DateUtility.getBackwardDateInStringWRTDays(rdate,"dd/MM/yyyy", -1);
+	   	nextDate = DateUtility.getBackwardDateInStringWRTDays(rdate,"dd/MM/yyyy", 1);
+	   	nextdate = DateUtility.stringDateFormatToUtilDate(nextDate,"dd/MM/yyyy");
+		
+	   	logger.debug(String.format("prevdate: %s, nextDate: %s, nextdate: %s", prevdate, nextDate, nextdate));
+	   	
+	   	logger.debug("-------------");
+	   	String requestDateInStringFormat = DateUtility.convertDateFormats(rdate, "dd/MM/yyyy", "dd-MMM-yyyy");
+		String adate = "01/04/3009";
+		
+		/*Request Date*/
+		//java.util.Date ffd = format.parse(rdate);
+		java.util.Date ffd = DateUtility.stringDateFormatToUtilDate(rdate, "dd/MM/yyyy");
+		
+		/*'01/04/3009' Date*/
+		//java.util.Date afd = format.parse(adate);
+		java.util.Date afd = DateUtility.stringDateFormatToUtilDate(adate, "dd/MM/yyyy");
+		
+		/*Getting Request Date Month(January = 0 till December = 11) and adding 1 to it*/
+		int month = ffd.getMonth() + 1;
+		// 		int day = ffd.getDay();
+		//String year = rdate.substring(6);
+		//String syear="";
+		int cyear = 1900 + ffd.getYear()/*2013-1900*/;
+		int nyear = cyear;
+		////System.out.println("Month: " + month);
+		////System.out.println("Year: " + cyear);
+		logger.debug(String.format("ffd.getYear():%s, ffd:%s, afd:%s, month: %s, cyear:%s, nyear:%s",ffd.getYear(), ffd, afd, month, cyear, nyear));
+		if (month >= 4) {
+			nyear = cyear + 1;
+		} else {
+			nyear = cyear;
+			cyear = cyear - 1;
+		}
+		
+		logger.debug(String.format("ffd:%s, afd:%s, month: %s, cyear:%s, nyear:%s", ffd, afd, month, cyear, nyear));
+	   	
+		logger.debug("-------------");
+		
+		java.util.Date todaysDate = new Date();
+		boolean noDate = nextdate.after(todaysDate);
+		
+		logger.debug(noDate);
+	}
+
+	private static void dgr() throws SQLException, ParseException {
+//		String customerId = "1601000002";
+		String customerId = "0905000002";
+		String date = "08-FEB-2016";
+
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(Parameter.GENERATION);
+		parameters.add(Parameter.OPERATING_HOUR);
+		parameters.add(Parameter.LULL_HOUR);
+		parameters.add(Parameter.CF);
+		parameters.add(Parameter.GA);
+		parameters.add(Parameter.MA);
+		
+		ICustomerMasterVo customer = Graph.getInstance().getCustomersM().get(customerId);
+		CustomerDGR customerDGR = new CustomerDGR(customer, date, date, parameters).doState().doTotal();
+		
+		logger.debug(String.format("Customer(%s) '%s' DGR for the date %s: %s", customerDGR.getTrial(), customer.getName(), date, customerDGR.total()));
+		for(StateCustomerDGR stateDGR: customerDGR.statesTotal()){
+			logger.debug(String.format("State %s, Trial %s, Total %s", stateDGR.state().getName(), stateDGR.getTrial(), stateDGR.total()));
+			
+			for(SiteStateCustomerDGR siteDGR: stateDGR.sitesTotal()){
+				logger.debug(String.format("Site %s, Trail %s, Total %s", siteDGR.site().getName(), siteDGR.trial(), siteDGR.total()));
+			}
+		}
+	}
+
+	private static void listOperation() {
+		List<Integer> original = Arrays.asList(12,16,17,19,101);
+		List<Integer> selected = Arrays.asList(16,19,107,108,109);
+		
+		//Intersection: 16, 19
+		//Union: 12, 16, 17, 19, 101, 107, 108, 109
+		System.out.println("Original: " + original);
+		System.out.println("Selected: " + selected);
+		
+		ArrayList<Integer> add1 = new ArrayList<Integer>(selected);
+		add1.removeAll(original);
+		System.out.println("Selected - Original: " + add1);
+		
+		ArrayList<Integer> remove1 = new ArrayList<Integer>(original);
+		remove1.removeAll(selected);
+		System.out.println("Original - Selected: " + remove1);
+		
+		ArrayList<Integer> intersection = new ArrayList<Integer>(original);
+		intersection.removeAll(remove1);
+		System.out.println("Original - (Original - Selected): " + intersection);
+		
+		ArrayList<Integer> union = new ArrayList<Integer>(remove1);
+		union.addAll(add1);
+		union.addAll(intersection);
+		System.out.println("Union: " + union);
+	}
+
+/*	private static void testingForGenerationReport() throws SQLException, ParseException {
 
 		final ApplicationContext ac = new ClassPathXmlApplicationContext("com/enercon/spring/bean/bean-config.xml");
 		StringBuffer htmlMessage = new StringBuffer();
@@ -37,7 +267,7 @@ public class Testing{
 		
 		int srNo = 0;
 		
-		WecMasterDao wecMasterDao = new WecMasterDao();
+		WecMasterDao wecMasterDao = WecMasterDao.getInstance();
 		Set<String> wecIds = wecMasterDao.getWecIdsBasedOnCustomerIds(generationReport.getCustomerIds());
 		String date = "27-SEP-2015";
 		
@@ -221,7 +451,7 @@ public class Testing{
 		
 		System.out.println("-------------------------------------------------");
 		
-		Map<String, Map<WecLocationData, String>> wecLocationData = new WecMasterDao().getActiveWecLocationData();
+		Map<String, Map<WecLocationData, String>> wecLocationData = WecMasterDao.getInstance().getActiveWecLocationData();
 		
 		System.out.println("-------------------------------------------------");
 		Map<String, IWecParameterVo> dailyMALessThan95 = dailyMALessThan95(wecIds, date);
@@ -404,7 +634,7 @@ public class Testing{
 		}
 		
 		return dailyWecParameterVo;
-	}
+	}*/
 
 	private static void testingForComprehensiveReport() throws Exception{
 		String fromDate = null;
@@ -444,7 +674,7 @@ public class Testing{
 		System.out.println("Started");
 		SummaryDao dao = new SummaryDao();
 //		dao.generateParameterWiseExcelView(dao.getSummaryReportVo(partialClpWecIds(), fromDate, toDate));
-		dao.generateYearWiseExcelView(dao.getSummaryReportVo(allClpWecIds(), fromDate, toDate, true));
+		//dao.generateYearWiseExcelView(dao.getSummaryReportVo(allClpWecIds(), fromDate, toDate, true));
 		
 	//	dao.generateYearWiseExcelView(dao.getSummaryReportVo(SummaryReport.allClpWecIds(), fromDate, toDate));}
 	}
@@ -1052,3 +1282,222 @@ class LevelDetection{
 		System.out.println(" 2:" + detection.get(2));
 	}
 }
+
+class CustomerDGR{
+	
+	private static Logger logger = Logger.getLogger(CustomerDGR.class);
+
+	//Input
+	private ICustomerMasterVo customer;
+	private String fromDate;
+	private String toDate;
+	private List<Parameter> parameters;
+	
+	//Output
+	private List<StateCustomerDGR> statesParam = new ArrayList<StateCustomerDGR>();
+	private IWecParameterVo total;
+	private boolean trial;
+	
+	public CustomerDGR(ICustomerMasterVo customer, String fromDate, String toDate, List<Parameter> parameters) {
+		super();
+		this.customer = customer;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+		this.parameters = parameters;
+	}
+
+	public CustomerDGR doState() throws SQLException, ParseException{
+		StateMasterService stateDao = StateMasterService.getInstance();
+		
+		/*for(IStateMasterVo state: stateDao.getAllByCustomer(customer)){
+			statesParam.add(new StateCustomerDGR(state, customer, fromDate, toDate, parameters).doSiteTotal().doTotal());
+		}*/
+		return this;
+	}
+	
+	public CustomerDGR doTotal(){
+		for(StateCustomerDGR stateDetail: statesParam){
+			IWecParameterVo stateTotal = stateDetail.total();
+			if(stateTotal != null){
+				if(total == null) total = new WecParameterVo();
+				total.add(stateTotal);
+			}
+		}
+		return trial();
+	}
+	
+	public List<StateCustomerDGR> statesTotal(){
+		return statesParam;
+	}
+	
+	public IWecParameterVo total(){
+		return total;
+	}
+	
+	public boolean getTrial(){
+		return trial;
+	}
+	
+	public CustomerDGR trial(){
+		for(StateCustomerDGR stateDGR: statesParam){
+			if(stateDGR.getTrial()) {
+				trial = true;
+				return this;
+			}
+		}
+		trial = false;
+		return this;
+	}
+}
+
+class StateCustomerDGR{
+	private static Logger logger = Logger.getLogger(StateCustomerDGR.class);
+	
+	//Input
+	private IStateMasterVo state;
+	private ICustomerMasterVo customer;
+	private String fromDate;
+	private String toDate;
+	private List<Parameter> parameters;
+	
+	//Output
+	private List<SiteStateCustomerDGR> sitesParam = new ArrayList<SiteStateCustomerDGR>();
+	private IWecParameterVo total;
+	private boolean trial;
+	
+	public StateCustomerDGR(IStateMasterVo state, ICustomerMasterVo customer, String fromDate, String toDate, List<Parameter> parameters) {
+		this.state = state;
+		this.customer = customer;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+		this.parameters = parameters;
+	}
+	
+	public StateCustomerDGR doTotal(){
+		for (SiteStateCustomerDGR site : sitesParam) {
+			IWecParameterVo siteTotal = site.total();
+			if(siteTotal != null){
+				if(total == null) total = new WecParameterVo();
+				total.add(siteTotal);
+			}
+			
+		}
+		return this;
+	}
+	
+	public StateCustomerDGR doSiteTotal() throws SQLException, ParseException{
+		SiteMasterService service = SiteMasterService.getInstance();
+		for(ISiteMasterVo site: service.getActive(customer, state)){
+			sitesParam.add(new SiteStateCustomerDGR(site, state, customer, fromDate, toDate, parameters).doTotal());
+		}
+		return trial();
+	}
+
+	public List<SiteStateCustomerDGR> sitesTotal(){
+		return sitesParam;
+	}
+	
+	public IWecParameterVo total(){
+		return total;
+	}
+	
+	public IStateMasterVo state(){
+		return state;
+	}
+	
+	public boolean getTrial(){
+		return trial;
+	}
+	
+	public StateCustomerDGR trial(){
+		for(SiteStateCustomerDGR siteDGR: sitesParam){
+			if(siteDGR.trial()) {
+				trial = true;
+				return this;
+			}
+		}
+		trial = false;
+		return this;
+	}
+}
+
+class SiteStateCustomerDGR{
+	private static Logger logger = Logger.getLogger(SiteStateCustomerDGR.class);
+	
+	//Input
+	private ISiteMasterVo site;
+	private IStateMasterVo state;
+	private ICustomerMasterVo customer;
+	private String fromDate;
+	private String toDate;
+	private List<Parameter> parameters;
+	
+	public SiteStateCustomerDGR(ISiteMasterVo site, IStateMasterVo state, ICustomerMasterVo customer, String fromDate, String toDate, List<Parameter> parameters) {
+		super();
+		this.site = site;
+		this.state = state;
+		this.customer = customer;
+		this.fromDate = fromDate;
+		this.toDate = toDate;
+		this.parameters = parameters;
+	}
+
+	//Output
+	private IWecParameterVo total;
+	private boolean trial;
+	
+	public SiteStateCustomerDGR doTotal() throws SQLException, ParseException{
+		List<IWecMasterVo> wecs = WecMasterService.getInstance().getActive(site, state, customer);
+		WecParameterEvaluator evaluator = WecParameterEvaluator.getInstance();
+		total = evaluator.getTotal(null);
+		trial = WecMasterService.getInstance().isTrial(site, state, customer);
+		return this;
+	}
+	
+	public IWecParameterVo total(){
+		return total;
+	}
+	
+	public ISiteMasterVo site(){
+		return site;
+	}
+	
+	public boolean trial(){
+		return trial;
+	}
+}
+
+class Naval {
+	  
+	public boolean check(List<String> list){
+		
+		for(String wec : list){
+			System.out.println("list w :: " +wec);
+			if(wec.contains("x")) {
+				System.out.println(" w : " + wec);
+				return true;
+			}
+		}	
+		return false;	
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+        List<String> list = new ArrayList<String>();
+        list.add("wec1");
+        list.add("wec2");
+        list.add("we2");
+        list.add("x");
+        list.add("wec4");
+        boolean check;
+        Naval n = new Naval();
+        check = n.check(list);
+        if(check == true){
+        	System.out.println("TRUE");
+        }else{
+        	System.out.println("FALSE");
+        }
+	}
+
+}
+

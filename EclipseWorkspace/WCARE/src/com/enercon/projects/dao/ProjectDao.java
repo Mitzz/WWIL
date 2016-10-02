@@ -1,19 +1,22 @@
 package com.enercon.projects.dao;
 import com.enercon.projects.dao.ProjectDao;
 import com.enercon.projects.dao.ProjectSQLC;
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utils.DynaBean;
 import com.enercon.global.utils.JDBCUtils;
 import com.enercon.global.utils.CodeGenerate;
 import java.sql.*;
 import java.text.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 import java.lang.Integer;
 import org.apache.log4j.Logger;
 import oracle.jdbc.driver.*;
 
-public class ProjectDao 
+public class ProjectDao  implements WcareConnector
 {
 	
 	private static Logger logger = Logger.getLogger(ProjectDao.class);
@@ -21,8 +24,8 @@ public class ProjectDao
     public ProjectDao(){}
     
     public List getprojects() throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-          Connection con = conmanager.getConnection();
+        //JDBCUtils conmanager = new //JDBCUtils();
+          Connection con =  wcareConnector.getConnectionFromPool();
           PreparedStatement prepStmt = null;
           PreparedStatement ps = null;
           ResultSet rs = null;
@@ -48,35 +51,18 @@ public class ProjectDao
                   i++;
               } 
           } catch (SQLException sqlExp) {
-              sqlExp.printStackTrace();
+              logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
               Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
               throw exp;
           } finally {
-              try {
-                  if (prepStmt != null) {
-                      prepStmt.close();
-                  }
-                  if (rs != null)
-                      rs.close();
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              } catch (Exception e) {
-                  prepStmt = null;
-                  rs = null;
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              }
+        	  DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , con);
           }
           return tranList;
       }
     //samir
     public List getprojectsactivity() throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-          Connection con = conmanager.getConnection();
+        //JDBCUtils conmanager = new //JDBCUtils();
+          Connection con =  wcareConnector.getConnectionFromPool();
           PreparedStatement prepStmt = null;
           PreparedStatement ps = null;
           ResultSet rs = null;
@@ -100,35 +86,18 @@ public class ProjectDao
                   i++;
               } 
           } catch (SQLException sqlExp) {
-              sqlExp.printStackTrace();
+              logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
               Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
               throw exp;
           } finally {
-              try {
-                  if (prepStmt != null) {
-                      prepStmt.close();
-                  }
-                  if (rs != null)
-                      rs.close();
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              } catch (Exception e) {
-                  prepStmt = null;
-                  rs = null;
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              }
+        	  DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , con);
           }
           
           return tranList;
       }
     public List getprojectsmaterialtransaction() throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-          Connection con = conmanager.getConnection();
+        //JDBCUtils conmanager = new //JDBCUtils();
+          Connection con =  wcareConnector.getConnectionFromPool();
           PreparedStatement prepStmt = null;
           PreparedStatement ps = null;
           ResultSet rs = null;
@@ -154,34 +123,17 @@ public class ProjectDao
                   i++;
               } 
           } catch (SQLException sqlExp) {
-              sqlExp.printStackTrace();
+              logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
               Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
               throw exp;
           } finally {
-              try {
-                  if (prepStmt != null) {
-                      prepStmt.close();
-                  }
-                  if (rs != null)
-                      rs.close();
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              } catch (Exception e) {
-                  prepStmt = null;
-                  rs = null;
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              }
+        	  DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , con);
           }
           return tranList;
       }
     public List getprojectsactivitytransaction() throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-          Connection con = conmanager.getConnection();
+        //JDBCUtils conmanager = new //JDBCUtils();
+          Connection con =  wcareConnector.getConnectionFromPool();
           PreparedStatement prepStmt = null;
           PreparedStatement ps = null;
           ResultSet rs = null;
@@ -233,28 +185,11 @@ public class ProjectDao
                   i++;
               } 
           } catch (SQLException sqlExp) {
-              sqlExp.printStackTrace();
+              logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
               Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
               throw exp;
           } finally {
-              try {
-                  if (prepStmt != null) {
-                      prepStmt.close();
-                  }
-                  if (rs != null)
-                      rs.close();
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              } catch (Exception e) {
-                  prepStmt = null;
-                  rs = null;
-                  if (con != null) {
-                      conmanager.closeConnection();
-                      con = null;
-                  }
-              }
+        	  DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs,rs1) , con);
           }
           return tranList;
       }
@@ -262,8 +197,8 @@ public class ProjectDao
     
     public String addNewMaterialIn(String UserId,DynaBean dynaBean) throws Exception{
        	String msg="";
-       	JDBCUtils conmanager = new JDBCUtils();
-           Connection conn = conmanager.getConnection();
+       	//JDBCUtils conmanager = new //JDBCUtils();
+           Connection conn =  wcareConnector.getConnectionFromPool();
            PreparedStatement prepStmt = null;
            PreparedStatement ps = null;
            ResultSet rs = null;
@@ -336,34 +271,11 @@ public class ProjectDao
        			rs.close();
        		}				
            }catch (SQLException sqlExp) {
-               sqlExp.printStackTrace();
+               logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
                Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
                throw exp;
            } finally {
-               try {
-                   if (prepStmt != null)
-                       prepStmt.close();
-                   if (ps != null)
-                       ps.close();
-                   if (rs != null)
-                       rs.close();
-                   if (conn != null) {
-                   	conn.close();
-                   	conn = null;
-                   	
-                       conmanager.closeConnection();conmanager = null;
-                   }
-               } catch (Exception e) {
-                   prepStmt = null;
-                   ps = null;
-                   rs = null;
-                   if (conn != null) {
-                   	conn.close();
-                   	conn = null;
-                   	
-                       conmanager.closeConnection();conmanager = null;
-                   }
-               }
+        	   DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
            }
        	return msg;
     } 
@@ -371,8 +283,8 @@ public class ProjectDao
 	
     public String getPRJAjaxDetails(String item,String action,String UserId) throws Exception{
     	StringBuffer xml = new StringBuffer();
-    	JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+    	//JDBCUtils conmanager = new //JDBCUtils();
+        Connection conn =  wcareConnector.getConnectionFromPool();
         PreparedStatement ps = null;
         PreparedStatement ps1 = null;
         PreparedStatement ps2 = null;
@@ -933,38 +845,11 @@ public class ProjectDao
 			    
         	}
         }catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (ps != null) ps.close();
-                if (ps1 != null) ps1.close();
-                if (ps2 != null) ps2.close();
-                if (rs != null) rs.close();
-                if (rs1 != null) rs1.close();
-                if (rs2 != null) rs2.close();
-                if (conn != null) 
-                {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                ps = null;
-                ps1 = null;
-                ps2 = null;
-                rs = null;
-                rs1 = null;
-                rs2 = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	 DaoUtility.releaseResources(Arrays.asList(ps,ps1,ps2) , Arrays.asList(rs,rs1,rs2) , conn);
         }
         return xml.toString();
     }
@@ -1015,6 +900,7 @@ public class ProjectDao
       }
       catch (Exception e)
       {
+    	  logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
         //System.out.println("Error: fetchALL: exception");
         //System.out.println(e.getMessage());
       }

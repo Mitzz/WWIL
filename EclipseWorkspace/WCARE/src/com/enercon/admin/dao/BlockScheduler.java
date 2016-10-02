@@ -9,11 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.global.utils.DynaBean;
 import com.enercon.global.utils.GlobalUtils;
 
 public class BlockScheduler extends HttpServlet{
-	
+	private final static Logger logger = Logger.getLogger(BlockScheduler.class);
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
@@ -44,7 +46,7 @@ public class BlockScheduler extends HttpServlet{
 				session.setAttribute("msgBlockScheduler", "<font class='sucessmsgtext'>"+msg+"!</font>");
 			forward("/Admin/BlockScheduler.jsp", request, response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}	
 		
 	}

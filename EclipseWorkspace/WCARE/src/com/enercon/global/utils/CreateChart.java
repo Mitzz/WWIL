@@ -1,11 +1,17 @@
 package com.enercon.global.utils;
-import java.io.*;
-import org.jfree.chart.*;
-import org.jfree.chart.entity.*;
-import org.jfree.data.general.*;
+import java.io.File;
+
+import org.apache.log4j.Logger;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.entity.StandardEntityCollection;
+import org.jfree.data.general.DefaultPieDataset;
+
 import com.enercon.global.controller.InitServlet;
 public class CreateChart {
-	
+	 private final static Logger logger = Logger.getLogger(CreateChart.class);
 	
 	public void CreateChart(double a,double b,double c,double d,String chartname)
 	{    InitServlet servlet = new InitServlet();
@@ -48,7 +54,7 @@ public class CreateChart {
              ChartUtilities.saveChartAsJPEG(file1, chart, 600, 400, info);
          } catch (Exception e) {
            //  System.out.println(e);
-             e.getStackTrace();
+        	 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
          }
        
 	}

@@ -1,9 +1,8 @@
 package com.enercon.admin.metainfo;
 
 import com.enercon.connection.WcareConnector;
-import com.enercon.global.utility.MethodClass;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utils.GlobalUtils;
-import com.enercon.global.utils.JDBCUtils;
 import com.enercon.sqlQuery.AllQueries;
 
 import java.sql.Connection;
@@ -11,11 +10,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 public class StateMetaInfo implements AllQueries,WcareConnector{
+	 private final static Logger logger = Logger.getLogger(StateMetaInfo.class);
 	private static Connection connection = null; 
 	
 	public static Connection getConnection() {
@@ -49,20 +52,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			}
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return stateName;
 	}
@@ -75,15 +65,16 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 	 */
 	public static ArrayList<ArrayList<Object>> getStateWiseTotalForOneDayBasedOnCustomerIdMeta(
 			String customerId, String readingDate) {
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
-		String stateIdStateNameBasedOnCustomerIdQuery = "";
-		PreparedStatement stateIdStateNameBasedOnCustomerIdPrepStmt = null;
-		ResultSet stateIdStateNameBasedOnCustomerIdResultSet = null;
 		
-		String wecIdBasedOnStateIdCustomerIdQuery = "";
-		PreparedStatement wecIdBasedOnStateIdCustomerIdPrepStmt = null;
-		ResultSet wecIdBasedOnStateIdCustomerIdResultSet = null;
+		String query1 = "";
+		PreparedStatement ps1 = null;
+		ResultSet rs1 = null;
+		
+		String query2 = "";
+		PreparedStatement ps2 = null;
+		ResultSet rs2 = null;
 		
 		ArrayList<ArrayList<Object>> stateWiseInfo = new ArrayList<ArrayList<Object>>();
 		ArrayList<Object> stateInfo = new ArrayList<Object>();
@@ -93,23 +84,25 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 		List<Object> wecIdsTotalInfo = new ArrayList<Object>();
 		
 		try{
-			conn = conmanager.getConnection();
-			stateIdStateNameBasedOnCustomerIdQuery = getStateIdStateNameBasedOnCustomerIdQuery;
-			stateIdStateNameBasedOnCustomerIdPrepStmt = conn.prepareStatement(stateIdStateNameBasedOnCustomerIdQuery);
-			stateIdStateNameBasedOnCustomerIdPrepStmt.setObject(1, customerId);	
-			stateIdStateNameBasedOnCustomerIdResultSet = stateIdStateNameBasedOnCustomerIdPrepStmt.executeQuery();
+			conn = wcareConnector.getConnectionFromPool();
+			query1 = getStateIdStateNameBasedOnCustomerIdQuery;
+			ps1 = conn.prepareStatement(query1);
+			ps1.setObject(1, customerId);
+			DaoUtility.displayQueryWithParameter(1, getStateIdStateNameBasedOnCustomerIdQuery, customerId);
+			rs1 = ps1.executeQuery();
 			
-			while (stateIdStateNameBasedOnCustomerIdResultSet.next()) {
+			while (rs1.next()) {
+				DaoUtility.getRowCount(1, rs1);
+				query2 = getWECIdsBasedOnStateIdCustomerIdQuery;
+				ps2 = conn.prepareStatement(query2);
+				ps2.setObject(1, rs1.getObject("S_STATE_ID"));
+				ps2.setObject(2, customerId);
+				DaoUtility.displayQueryWithParameter(2 , getWECIdsBasedOnStateIdCustomerIdQuery, rs1.getObject("S_STATE_ID"), customerId);
+				rs2 = ps2.executeQuery();
 				
-				wecIdBasedOnStateIdCustomerIdQuery = getWECIdsBasedOnStateIdCustomerIdQuery;
-				wecIdBasedOnStateIdCustomerIdPrepStmt = conn.prepareStatement(wecIdBasedOnStateIdCustomerIdQuery);
-				wecIdBasedOnStateIdCustomerIdPrepStmt.setObject(1, stateIdStateNameBasedOnCustomerIdResultSet.getObject("S_STATE_ID"));
-				wecIdBasedOnStateIdCustomerIdPrepStmt.setObject(2, customerId);
-				
-				wecIdBasedOnStateIdCustomerIdResultSet = wecIdBasedOnStateIdCustomerIdPrepStmt.executeQuery();
-				
-				while(wecIdBasedOnStateIdCustomerIdResultSet.next()){
-					wecIdsStateWiseCustomerWise.add(wecIdBasedOnStateIdCustomerIdResultSet.getString("S_WEC_ID"));
+				while(rs2.next()){
+					DaoUtility.getRowCount(2, rs2);
+					wecIdsStateWiseCustomerWise.add(rs2.getString("S_WEC_ID"));
 				}
 				
 				wecIdsTotalInfo = WECMetaInfo.getManyWECTotalForOneDayMeta(wecIdsStateWiseCustomerWise, readingDate);
@@ -118,8 +111,8 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 					stateInfo.add(object);
 				}
 				stateInfo.add(customerId);
-				stateInfo.add(stateIdStateNameBasedOnCustomerIdResultSet.getString("S_STATE_NAME"));
-				stateInfo.add(stateIdStateNameBasedOnCustomerIdResultSet.getString("S_STATE_ID"));
+				stateInfo.add(rs1.getString("S_STATE_NAME"));
+				stateInfo.add(rs1.getString("S_STATE_ID"));
 				
 				stateWiseInfo.add(stateInfo);
 				
@@ -129,24 +122,11 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			}
 			return stateWiseInfo;
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;
-				}
-				if(stateIdStateNameBasedOnCustomerIdPrepStmt != null){
-					stateIdStateNameBasedOnCustomerIdPrepStmt.close();
-				}
-				if(stateIdStateNameBasedOnCustomerIdResultSet != null){
-					stateIdStateNameBasedOnCustomerIdResultSet.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(Arrays.asList(ps1,ps2) , Arrays.asList(rs1,rs2) , conn);
 		}
 		return stateWiseInfo;
 	}
@@ -161,7 +141,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 	 */
 	public static ArrayList<ArrayList<Object>> getStateWiseTotalForOneDayBasedOnCustomerId(String customerId, String readingDate){
 		Connection conn = null;
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		
 		PreparedStatement stateIdStateNameBasedOnCustomerIdPrepStmt = null;
 		ResultSet stateIdStateNameBasedOnCustomerIdResultSet = null;
@@ -177,7 +157,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 		List<Object> ebIdsTotalInfo = new ArrayList<Object>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			stateIdStateNameBasedOnCustomerIdPrepStmt = conn.prepareStatement(getStateIdStateNameBasedOnCustomerIdQuery);
 			stateIdStateNameBasedOnCustomerIdPrepStmt.setObject(1, customerId);	
 			stateIdStateNameBasedOnCustomerIdResultSet = stateIdStateNameBasedOnCustomerIdPrepStmt.executeQuery();
@@ -216,31 +196,16 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			return stateWiseInfo;
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;
-				}
-				if(stateIdStateNameBasedOnCustomerIdPrepStmt != null){
-					stateIdStateNameBasedOnCustomerIdPrepStmt.close();
-				}
-				if(stateIdStateNameBasedOnCustomerIdResultSet != null){
-					stateIdStateNameBasedOnCustomerIdResultSet.close();
-				}
-			}
-			catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(Arrays.asList(stateIdStateNameBasedOnCustomerIdPrepStmt,EBIdBasedOnStateIdCustomerIdPrepStmt) , Arrays.asList(stateIdStateNameBasedOnCustomerIdResultSet,EBIdBasedOnStateIdCustomerIdResultSet) , conn);
 		}
 		return stateWiseInfo;
 	}
 	
 	public static ArrayList<ArrayList<Object>> getStateWiseTotalForOneMonthBasedOnCustomerId(String customerId, int month, int year){
-		JDBCUtils conmanager = new JDBCUtils();
+	//	JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		
 		//String stateIdStateNameBasedOnCustomerIdQuery = "";
@@ -259,7 +224,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 		List<Object> ebIdsTotalInfo = new ArrayList<Object>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			//stateIdStateNameBasedOnCustomerIdQuery = ;
 			stateIdStateNameBasedOnCustomerIdPrepStmt = conn.prepareStatement(getStateIdStateNameBasedOnCustomerIdQuery);
 			stateIdStateNameBasedOnCustomerIdPrepStmt.setObject(1, customerId);	
@@ -298,24 +263,11 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			}
 			return stateWiseInfo;
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;
-				}
-				if(stateIdStateNameBasedOnCustomerIdPrepStmt != null){
-					stateIdStateNameBasedOnCustomerIdPrepStmt.close();
-				}
-				if(stateIdStateNameBasedOnCustomerIdResultSet != null){
-					stateIdStateNameBasedOnCustomerIdResultSet.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				MethodClass.displayMethodClassName();
-			}
+			DaoUtility.releaseResources(Arrays.asList(stateIdStateNameBasedOnCustomerIdPrepStmt,EBIdBasedOnStateIdCustomerIdPrepStmt) , Arrays.asList(stateIdStateNameBasedOnCustomerIdResultSet,EBIdBasedOnStateIdCustomerIdResultSet) , conn);
 		}
 		return stateWiseInfo;
 	}
@@ -328,7 +280,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 	 * @return
 	 */
 	public static ArrayList<ArrayList<Object>> getStateWiseTotalForOneMonthBasedOnCustomerIdMeta(String customerId, int month, int year){
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		
 		//String stateIdStateNameBasedOnCustomerIdQuery = "";
@@ -347,7 +299,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 		List<Object> wecIdsTotalInfo = new ArrayList<Object>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			//stateIdStateNameBasedOnCustomerIdQuery = ;
 			stateIdStateNameBasedOnCustomerIdPrepStmt = conn.prepareStatement(getStateIdStateNameBasedOnCustomerIdQuery);
 			stateIdStateNameBasedOnCustomerIdPrepStmt.setObject(1, customerId);	
@@ -384,31 +336,17 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			return stateWiseInfo;
 		}
 		catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;
-				}
-				if(stateIdStateNameBasedOnCustomerIdPrepStmt != null){
-					stateIdStateNameBasedOnCustomerIdPrepStmt.close();
-				}
-				if(stateIdStateNameBasedOnCustomerIdResultSet != null){
-					stateIdStateNameBasedOnCustomerIdResultSet.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				MethodClass.displayMethodClassName();
-			}
+			DaoUtility.releaseResources(Arrays.asList(stateIdStateNameBasedOnCustomerIdPrepStmt,wecIdBasedOnStateIdCustomerIdPrepStmt) , Arrays.asList(stateIdStateNameBasedOnCustomerIdResultSet,wecIdBasedOnStateIdCustomerIdResultSet) , conn);
 		}
 		return stateWiseInfo;
 	}
 
 	public static ArrayList<ArrayList<Object>> getStateWiseTotalForOneFiscalYearBasedOnCustomerId(String customerId, int fiscalYear){
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String stateIdStateNameBasedOnCustomerIdQuery = "";
 		PreparedStatement stateIdStateNameBasedOnCustomerIdPrepStmt = null;
@@ -426,7 +364,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 		List<Object> ebIdsTotalInfo = new ArrayList<Object>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			stateIdStateNameBasedOnCustomerIdQuery = getStateIdStateNameBasedOnCustomerIdQuery;
 			stateIdStateNameBasedOnCustomerIdPrepStmt = conn.prepareStatement(stateIdStateNameBasedOnCustomerIdQuery);
 			stateIdStateNameBasedOnCustomerIdPrepStmt.setObject(1, customerId);	
@@ -462,30 +400,17 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			}
 			return stateWiseInfo;
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println("StateWise Exception");
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;
-				}
-				if(stateIdStateNameBasedOnCustomerIdPrepStmt != null){
-					stateIdStateNameBasedOnCustomerIdPrepStmt.close();
-				}
-				if(stateIdStateNameBasedOnCustomerIdResultSet != null){
-					stateIdStateNameBasedOnCustomerIdResultSet.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(Arrays.asList(stateIdStateNameBasedOnCustomerIdPrepStmt,EBIdBasedOnStateIdCustomerIdPrepStmt) , Arrays.asList(stateIdStateNameBasedOnCustomerIdResultSet,EBIdBasedOnStateIdCustomerIdResultSet) , conn);
 		}
 		return stateWiseInfo;
 	}
 	
 	public static ArrayList<ArrayList<Object>> getStateWiseTotalForBetweenDaysBasedOnCustomerId(String customerId, String fromReadingDate, String toReadingDate){
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String stateIdStateNameBasedOnCustomerIdQuery = "";
 		PreparedStatement stateIdStateNameBasedOnCustomerIdPrepStmt = null;
@@ -503,7 +428,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 		List<Object> ebIdsTotalInfo = new ArrayList<Object>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			stateIdStateNameBasedOnCustomerIdQuery = getStateIdStateNameBasedOnCustomerIdQuery;
 			stateIdStateNameBasedOnCustomerIdPrepStmt = conn.prepareStatement(stateIdStateNameBasedOnCustomerIdQuery);
 			stateIdStateNameBasedOnCustomerIdPrepStmt.setObject(1, customerId);	
@@ -539,30 +464,17 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			}
 			return stateWiseInfo;
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println("StateWise Exception");
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;
-				}
-				if(stateIdStateNameBasedOnCustomerIdPrepStmt != null){
-					stateIdStateNameBasedOnCustomerIdPrepStmt.close();
-				}
-				if(stateIdStateNameBasedOnCustomerIdResultSet != null){
-					stateIdStateNameBasedOnCustomerIdResultSet.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(Arrays.asList(stateIdStateNameBasedOnCustomerIdPrepStmt,EBIdBasedOnStateIdCustomerIdPrepStmt) , Arrays.asList(stateIdStateNameBasedOnCustomerIdResultSet,EBIdBasedOnStateIdCustomerIdResultSet) , conn);
 		}
 		return stateWiseInfo;
 	}
 	
 	public static List<String> getStateNameStateIdBasedOnWECId(String wecId){
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement stateIdStateNameBasedOnCustomerIdPrepStmt = null;
 		ResultSet stateIdStateNameBasedOnCustomerIdResultSet = null;
@@ -570,7 +482,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 		List<String> stateIdStateName = new ArrayList<String>();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			stateIdStateNameBasedOnCustomerIdPrepStmt = conn.prepareStatement(getStateIdStateNameBasedOnWECIdQuery);
 			stateIdStateNameBasedOnCustomerIdPrepStmt.setString(1, wecId);	
 			stateIdStateNameBasedOnCustomerIdResultSet = stateIdStateNameBasedOnCustomerIdPrepStmt.executeQuery();
@@ -582,24 +494,11 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			return stateIdStateName;
 		}
 		
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println("StateWise Exception");
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;
-				}
-				if(stateIdStateNameBasedOnCustomerIdPrepStmt != null){
-					stateIdStateNameBasedOnCustomerIdPrepStmt.close();
-				}
-				if(stateIdStateNameBasedOnCustomerIdResultSet != null){
-					stateIdStateNameBasedOnCustomerIdResultSet.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(Arrays.asList(stateIdStateNameBasedOnCustomerIdPrepStmt) , Arrays.asList(stateIdStateNameBasedOnCustomerIdResultSet) , conn);
 		}
 		return stateIdStateName;
 	}
@@ -627,20 +526,7 @@ public class StateMetaInfo implements AllQueries,WcareConnector{
 			return stateIds;
 		}
 		finally{
-			try{
-				if(preparedStatement != null){
-					preparedStatement.close();
-				}
-				if(resultSet != null){
-					resultSet.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(preparedStatement,resultSet, connection);
 		}
 		
 	}

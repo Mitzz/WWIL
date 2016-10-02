@@ -8,15 +8,19 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enercon.global.utility.DatabaseUtility;
+import org.apache.log4j.Logger;
+
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utility.MethodClass;
 import com.enercon.global.utils.GlobalUtils;
-import com.enercon.global.utils.JDBCUtils;
 import com.enercon.sqlQuery.AllQueries;
 
 
-public class EBMetaInfo implements AllQueries{
+public class EBMetaInfo implements AllQueries ,WcareConnector{
+	
+	private final static Logger logger = Logger.getLogger(EBMetaInfo.class);
+	
 	private static boolean debug = false;
 	private static boolean methodClassName = false;
 	private static int queryCount = 0;
@@ -106,14 +110,14 @@ public class EBMetaInfo implements AllQueries{
 		ArrayList<Object> wecInfo = new ArrayList<Object>();
 		ArrayList<ArrayList<Object>> ebInfo = new ArrayList<ArrayList<Object>>();
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBWECWiseInfoForOneDayQuery;
 			/*if(debug){
 				DatabaseUtility.getSQLQueryResultInHTMLFile(sqlQuery, (++queryCount) + "_1_" + MethodClass.getMethodName(),ebId,readingDate);
@@ -121,8 +125,10 @@ public class EBMetaInfo implements AllQueries{
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
 			prepStmt.setString(2, readingDate);
+			DaoUtility.displayQueryWithParameter(14, sqlQuery, ebId, readingDate);
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
+				DaoUtility.getRowCount(14, rs);
 				S_WEC_ID	=	 rs.getString("S_WEC_ID");
 				S_WECSHORT_DESCR	=	 rs.getString("S_WECSHORT_DESCR");
 				S_EB_ID	=	 rs.getString("S_EB_ID");
@@ -186,23 +192,11 @@ public class EBMetaInfo implements AllQueries{
 			}
 //			System.out.println("wecIII" + ebInfo);
 			return ebInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			//System.out.println(e.getMessage());
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebInfo;
 
@@ -216,7 +210,7 @@ public class EBMetaInfo implements AllQueries{
 	 */
 	public static List<Object> getOneEBTotalForOneDay(String ebId, String readingDate) {
 		ArrayList<Object> ebTotalInfo = new ArrayList<Object>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -228,15 +222,17 @@ public class EBMetaInfo implements AllQueries{
 		S_EB_ID = ebId;
 		
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBTotalForOneDayQuery;
 			
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
 			prepStmt.setString(2, readingDate);
+			DaoUtility.displayQueryWithParameter(19, sqlQuery, ebId, readingDate);
 			rs = prepStmt.executeQuery();
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(19, rs);
 				recordCount = new BigDecimal(rs.getString("total_wec")).intValue();
 				GENERATION = new BigDecimal(rs.getString("generation")).longValue();
 				OPERATINGHRS = new BigDecimal(rs.getString("operatinghrs")).longValue()/60;
@@ -286,22 +282,12 @@ public class EBMetaInfo implements AllQueries{
 			ebTotalInfo.add(recordCount);
 			
 			return ebTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
+
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}
@@ -314,8 +300,9 @@ public class EBMetaInfo implements AllQueries{
 	 * @return
 	 */
 	public static ArrayList<ArrayList<Object>> getOneEBWECWiseTotalForBetweenDays(String ebId, String fromReadingDate, String toReadingDate){
-	
-		JDBCUtils conmanager = new JDBCUtils();
+		
+	    logger.debug("enter");
+		
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -323,12 +310,14 @@ public class EBMetaInfo implements AllQueries{
 		
 		ArrayList<ArrayList<Object>> wecTotalInfo = new ArrayList<ArrayList<Object>>();	
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = getWECIdsBasedOnEbIdQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, ebId);
+			DaoUtility.displayQueryWithParameter(40, sqlQuery, ebId,fromReadingDate,toReadingDate);
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
+				DaoUtility.getRowCount(40, rs);
 				List<Object> wecInfo = WECMetaInfo.getOneWECTotalForBetweenDays(rs.getString("S_WEC_ID"), fromReadingDate, toReadingDate);
 				wecTotalInfo.add((ArrayList<Object>) wecInfo);
 				wecInfo = new ArrayList<Object>();
@@ -336,23 +325,10 @@ public class EBMetaInfo implements AllQueries{
 			return wecTotalInfo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+          logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -372,7 +348,7 @@ public class EBMetaInfo implements AllQueries{
 	public static List<Object> getOneEBTotalForOneMonth(String ebId, int month, int year) {
 		ArrayList<Object> ebTotalInfo = new ArrayList<Object>();
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -381,7 +357,7 @@ public class EBMetaInfo implements AllQueries{
 		int recordCount = 0;
 		
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBTotalForOneMonthQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
@@ -442,22 +418,11 @@ public class EBMetaInfo implements AllQueries{
 			ebTotalInfo.add(DateUtility.getMonthForInt(month) + "-" + year);
 	
 			return ebTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}
@@ -465,7 +430,7 @@ public class EBMetaInfo implements AllQueries{
 	public static List<Object> getOneEBTotalForOneMonthButLessThanCurrentReadingDate(String ebId, String readingDate, int month, int year) {
 		ArrayList<Object> ebTotalInfo = new ArrayList<Object>();
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -474,7 +439,7 @@ public class EBMetaInfo implements AllQueries{
 		int recordCount = 0;
 		
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBTotalForOneMonthButLessThanCurrentReadingDateQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
@@ -536,22 +501,11 @@ public class EBMetaInfo implements AllQueries{
 			ebTotalInfo.add(DateUtility.getMonthForInt(month) + "-" + year);
 	
 			return ebTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}
@@ -559,7 +513,7 @@ public class EBMetaInfo implements AllQueries{
 	public static List<Object> getOneEBTotalForOneFiscalYear(String ebId,  int fiscalYear) {
 		ArrayList<Object> ebTotalInfo = new ArrayList<Object>();
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -568,7 +522,7 @@ public class EBMetaInfo implements AllQueries{
 		int recordCount = 0;
 		
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBTotalForOneFiscalYearQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
@@ -629,22 +583,11 @@ public class EBMetaInfo implements AllQueries{
 			ebTotalInfo.add("Fiscal Year:" + fiscalYear + "-" + fiscalYear + 1);
 	
 			return ebTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}
@@ -659,7 +602,7 @@ public class EBMetaInfo implements AllQueries{
 	public static List<Object> getOneEBTotalForBetweenDays(String ebId, String fromReadingDate, String toReadingDate) {
 		ArrayList<Object> ebTotalInfo = new ArrayList<Object>();
 		
-		JDBCUtils conmanager = new JDBCUtils();
+	//	JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -668,7 +611,7 @@ public class EBMetaInfo implements AllQueries{
 		int recordCount = 0;
 		
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBTotalForBetweenDaysQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
@@ -728,22 +671,11 @@ public class EBMetaInfo implements AllQueries{
 			ebTotalInfo.add(recordCount);
 			
 			return ebTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}
@@ -752,14 +684,14 @@ public class EBMetaInfo implements AllQueries{
 		ArrayList<String> wecIds = new ArrayList<String>();
 		ArrayList<ArrayList<Object>> ebInfo = new ArrayList<ArrayList<Object>>();
 		
-		JDBCUtils conmanager = new JDBCUtils();
+	//	JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			prepStmt = conn.prepareStatement(getWECIdsBasedOnEbIdQuery);
 			prepStmt.setString(1, ebId);
 			rs = prepStmt.executeQuery();
@@ -771,23 +703,10 @@ public class EBMetaInfo implements AllQueries{
 
 			return ebInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			//System.out.println(e.getMessage());
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;    
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebInfo;
 
@@ -806,14 +725,14 @@ public class EBMetaInfo implements AllQueries{
 		ArrayList<Object> wecInfo = new ArrayList<Object>();
 		ArrayList<ArrayList<Object>> ebInfo = new ArrayList<ArrayList<Object>>();
 	
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 	
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBWECWiseInfoForOneMonthQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
@@ -882,23 +801,11 @@ public class EBMetaInfo implements AllQueries{
 			}
 	
 			return ebInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			//System.out.println(e.getMessage());
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebInfo;
 	
@@ -908,14 +815,14 @@ public class EBMetaInfo implements AllQueries{
 		ArrayList<Object> wecInfo = new ArrayList<Object>();
 		ArrayList<ArrayList<Object>> ebInfo = new ArrayList<ArrayList<Object>>();
 	
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		ArrayList<String> wecIdsBasedOnOneEbId = new ArrayList<String>();
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = getWECIdsBasedOnEbIdQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
@@ -926,23 +833,11 @@ public class EBMetaInfo implements AllQueries{
 			}
 	
 			return ebInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			//System.out.println(e.getMessage());
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebInfo;
 	
@@ -959,14 +854,14 @@ public class EBMetaInfo implements AllQueries{
 		ArrayList<Object> wecInfo = new ArrayList<Object>();
 		ArrayList<ArrayList<Object>> ebInfo = new ArrayList<ArrayList<Object>>();
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = oneEBWECWiseInfoForBetweenDaysQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, ebId);
@@ -1035,23 +930,11 @@ public class EBMetaInfo implements AllQueries{
 			}
 
 			return ebInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			//System.out.println(e.getMessage());
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebInfo;
 
@@ -1066,7 +949,7 @@ public class EBMetaInfo implements AllQueries{
 	 */
 	public static ArrayList<ArrayList<Object>> getOneEBWECWiseTotalForOneMonth(String ebId, int month, int year){
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -1074,7 +957,7 @@ public class EBMetaInfo implements AllQueries{
 		
 		ArrayList<ArrayList<Object>> wecTotalInfo = new ArrayList<ArrayList<Object>>();	
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = getWECIdsBasedOnEbIdQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, ebId);
@@ -1088,23 +971,11 @@ public class EBMetaInfo implements AllQueries{
 			return wecTotalInfo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 
@@ -1112,7 +983,7 @@ public class EBMetaInfo implements AllQueries{
 	
 	public static ArrayList<ArrayList<Object>> getOneEBWECWiseTotalForOneFiscalYear(String ebId, int fiscalYear){
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -1120,7 +991,7 @@ public class EBMetaInfo implements AllQueries{
 		
 		ArrayList<ArrayList<Object>> wecTotalInfo = new ArrayList<ArrayList<Object>>();	
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = getWECIdsBasedOnEbIdQuery;
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setObject(1, ebId);
@@ -1133,23 +1004,11 @@ public class EBMetaInfo implements AllQueries{
 			return wecTotalInfo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 
@@ -1180,7 +1039,7 @@ public class EBMetaInfo implements AllQueries{
 		}
 		ebIdsInString.append(")");
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = connection;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -1191,7 +1050,7 @@ public class EBMetaInfo implements AllQueries{
 		initialiseToZero();
 		
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select count(S_wec_ID) As Total_WEC,Sum(Generation) As Generation,Sum(Operatinghrs) As Operatinghrs, " +
 					"sum(Lullhrs) as Lullhrs, sum(Mavial) as Mavial,sum(Gavial) as Gavial, sum(CFActor) as CFActor, " +
@@ -1265,23 +1124,10 @@ public class EBMetaInfo implements AllQueries{
 			
 			return ebTotalInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if(conn != null){
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}
@@ -1297,7 +1143,7 @@ public class EBMetaInfo implements AllQueries{
 	public static List<Object> getManyEBTotalForOneMonth(ArrayList<String> ebIds, int month, int year) {
 		ArrayList<Object> ebTotalInfo = new ArrayList<Object>();
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -1318,7 +1164,7 @@ public class EBMetaInfo implements AllQueries{
 		int recordCount = 0;
 		
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select Count(S_Wec_Id) As Total_Wec,Sum(Generation) As Generation,Sum(Operatinghrs) As Operatinghrs, " +
 						"sum(Lullhrs) as Lullhrs, sum(Mavial) as Mavial,sum(Gavial) as Gavial, sum(CFActor) as CFActor, " +
 						"sum(Giavial) as Giavial, sum(Miavial) as Miavial, sum(Machinefault) as Machinefault, sum(Machinesd) as Machinesd, " +
@@ -1390,23 +1236,11 @@ public class EBMetaInfo implements AllQueries{
 			ebTotalInfo.add(DateUtility.getMonthForInt(month) + "-" + year);
 	
 			return ebTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println("EBMetaInfo Exception");
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}
@@ -1427,7 +1261,7 @@ public class EBMetaInfo implements AllQueries{
 		}
 		ebIdsInString.append(")");
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -1439,7 +1273,7 @@ public class EBMetaInfo implements AllQueries{
 		
 	
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select count(S_wec_ID) As Total_WEC,Sum(Generation) As Generation,Sum(Operatinghrs) As Operatinghrs, " +
 					"sum(Lullhrs) as Lullhrs, sum(Mavial) as Mavial,sum(Gavial) as Gavial, sum(CFActor) as CFActor, " +
@@ -1512,23 +1346,11 @@ public class EBMetaInfo implements AllQueries{
 			ebTotalInfo.add(fiscalYear);
 			
 			return ebTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println(e);
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;
 	}
@@ -1556,7 +1378,7 @@ public class EBMetaInfo implements AllQueries{
 		}
 		ebIdsInString.append(")");
 		
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -1568,7 +1390,7 @@ public class EBMetaInfo implements AllQueries{
 		
 
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select count(S_wec_ID) As Total_WEC,Sum(Generation) As Generation,Sum(Operatinghrs) As Operatinghrs, " +
 					"sum(Lullhrs) as Lullhrs, sum(Mavial) as Mavial,sum(Gavial) as Gavial, sum(CFActor) as CFActor, " +
@@ -1638,23 +1460,10 @@ public class EBMetaInfo implements AllQueries{
 			
 			return ebTotalInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
 		} finally {
-			try {
-				if (conn != null) {
-					conn.close();conmanager.closeConnection();conmanager = null;  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ebTotalInfo;		
 	}

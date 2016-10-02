@@ -1,6 +1,14 @@
 package com.enercon.model.master;
 
-public class StandardMessageMasterVo extends MasterVo{
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts.action.ActionMapping;
+
+import com.enercon.struts.form.CommonFormVo;
+
+public class StandardMessageMasterVo extends CommonFormVo{
+	
+	private static final long serialVersionUID = -3178501915088264137L;
 	
 	private String id;
 	private String messageHead;
@@ -11,10 +19,10 @@ public class StandardMessageMasterVo extends MasterVo{
 		this.id = builder.id;
 		this.messageHead = builder.messageHead;
 		this.messageDescription = builder.messageDescription;
-		this.createdBy = builder.createdBy;
-		this.createdAt = builder.createdAt;
-		this.modifiedBy = builder.modifiedBy;
-		this.modifiedAt = builder.modifiedAt;
+		setCreatedBy(builder.getCreatedBy());
+		setCreatedAt(builder.getCreatedAt());
+		setModifiedBy(builder.getModifiedBy());
+		setModifiedAt(builder.getModifiedAt());
 	}
 	
 	
@@ -96,6 +104,15 @@ public class StandardMessageMasterVo extends MasterVo{
 			return vo;
 		}
 	 
+	}
+
+
+	@Override
+	public void reset(ActionMapping mapping, HttpServletRequest request) {
+		setId("");
+		setMessageHead("");
+		setMessageDescription("");
+		super.reset(mapping, request);
 	}
 
 }

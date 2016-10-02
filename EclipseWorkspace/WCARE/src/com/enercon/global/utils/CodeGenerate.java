@@ -5,15 +5,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
-public class CodeGenerate {
+import org.apache.log4j.Logger;
+
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
+
+public class CodeGenerate implements WcareConnector{
+	
+	private final static Logger logger = Logger.getLogger(CodeGenerate.class);
+	
     public static String NewCodeGenerate(String TableName) throws SQLException, 
                                                             Exception
     {
-        //Connection con = null;
-    	JDBCUtils conmanager = new JDBCUtils();
-    	Connection conn = conmanager.getConnection();
+
+    	Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement ps = null;
         PreparedStatement ps1 = null;
         ResultSet rs = null;
@@ -80,45 +88,14 @@ public class CodeGenerate {
         } 
         catch (SQLException sqlExp) 
         {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         }
         finally 
         {
-	        try {
-	        	if (ps != null) {
-	                ps.close();
-	            }
-	            if (ps1 != null) {
-	                ps1.close();
-	            }
-	            if (rs != null) {
-	                rs.close();
-	            }
-	            if (conn != null) {
-	            	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;	                
-	            }
-	        } catch (Exception e) {
-	            ps = null;
-	            ps1 = null;
-	            rs = null;
-	            if (conn != null) {
-	            	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-	            }
-	        }
-            
-        /*
-        if (con != null)
-        {
-          con.close();
-        }*/
+        	DaoUtility.releaseResources(Arrays.asList(ps1,ps) , Arrays.asList(rs) , conn);
+   
         }
         return seqNo;
     }

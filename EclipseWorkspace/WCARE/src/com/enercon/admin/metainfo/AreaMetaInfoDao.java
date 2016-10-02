@@ -5,11 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.connection.WcareConnector;
-import com.enercon.global.utils.JDBCUtils;
+import com.enercon.dao.DaoUtility;
 
 public class AreaMetaInfoDao implements WcareConnector{
-
+    private final static Logger logger = Logger.getLogger(AreaMetaInfoDao.class);
 	public static String getAreaNameBasedOnWecId(String wecId) throws SQLException{
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
@@ -30,20 +32,7 @@ public class AreaMetaInfoDao implements WcareConnector{
 			return areaName;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 	}
 }

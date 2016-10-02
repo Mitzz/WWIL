@@ -16,19 +16,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.ajax.ajaxVo.SelectVo;
 import com.enercon.ajax.interfaces.AjaxVo;
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.dao.IredaDAO;
 import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utils.JDBCUtils;
 import com.enercon.model.ireda.IredaProject;
 
-public class AjaxDao {
-
+public class AjaxDao implements WcareConnector {
+	private final static Logger logger = Logger.getLogger(AjaxDao.class);
 	public String getWECIdNameBasedOnCustomerId(String customerId) {
 
 		StringBuffer xmlData = new StringBuffer();
-		JDBCUtils conmanager = new JDBCUtils();
+	//	JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -36,7 +39,7 @@ public class AjaxDao {
 			
 			
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select S_wec_id, S_Wecshort_Descr " + 
 					"From Customer_Meta_Data " + 
 					"Where S_Customer_Id = ? " + 
@@ -57,24 +60,10 @@ public class AjaxDao {
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return new String(xmlData);
 
@@ -83,7 +72,7 @@ public class AjaxDao {
 	public String getPlantNoBasedOnLocationNo(String locationNo) {
 
 		StringBuffer xmlData = new StringBuffer();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -91,7 +80,7 @@ public class AjaxDao {
 			
 			
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select Plantmas.S_Plant_No, Plantmas.S_Plant_No || ' (' ||  Wecmas.S_Wecshort_Descr || ')' as S_Plant_No_WEC_Name " + 
 					"From Scadadw.Tbl_Plant_Master Plantmas, Tbl_Wec_Master Wecmas " + 
 					"Where Plantmas.S_Serial_No = Wecmas.S_Technical_No " + 
@@ -113,24 +102,10 @@ public class AjaxDao {
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return new String(xmlData);
 
@@ -143,14 +118,14 @@ public class AjaxDao {
 	public static List<AjaxVo> getAreaVoBasedOnCustomerIds(String customerIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_Area_ID, S_AREA_NAME " + 
 					"from customer_meta_data " + 
@@ -166,23 +141,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			//System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -191,14 +153,14 @@ public class AjaxDao {
 	public static List<AjaxVo> getAreaSelectVoBasedOnWecType(String wecType) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_Area_ID, S_AREA_NAME " + 
 					"from customer_meta_data " + 
@@ -214,23 +176,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -239,14 +188,14 @@ public class AjaxDao {
 	public static List<AjaxVo> getAreaSelectVoBasedOnStateIds(String stateIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_Area_ID, S_AREA_NAME " + 
 					"from customer_meta_data " + 
@@ -262,23 +211,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			//System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -288,14 +224,14 @@ public class AjaxDao {
 			String customerIds, String areaIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_SITE_ID, S_SITE_NAME " + 
 					"from customer_meta_data " + 
@@ -313,23 +249,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -339,14 +262,14 @@ public class AjaxDao {
 			String wecType, String areaIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_SITE_ID, S_SITE_NAME " + 
 					"from customer_meta_data " + 
@@ -364,23 +287,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -390,14 +300,14 @@ public class AjaxDao {
 			String stateIds, String areaIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_SITE_ID, S_SITE_NAME " + 
 					"from customer_meta_data " + 
@@ -415,23 +325,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -441,14 +338,14 @@ public class AjaxDao {
 			String customerIds, String areaIds, String siteIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_wec_id, S_WECSHORT_DESCR " + 
 					"from CUSTOMER_META_DATA " + 
@@ -467,23 +364,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -493,14 +377,14 @@ public class AjaxDao {
 			String wecType, String areaIds, String siteIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_wec_id, S_WECSHORT_DESCR " + 
 					"from CUSTOMER_META_DATA " + 
@@ -519,23 +403,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			//System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -545,14 +416,14 @@ public class AjaxDao {
 			String stateIds, String areaIds, String siteIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+	//	JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"Select S_wec_id, S_WECSHORT_DESCR " + 
 					"from CUSTOMER_META_DATA " + 
@@ -571,23 +442,10 @@ public class AjaxDao {
 			return ajaxVo;
 		}
 		catch(Exception e){
-			//System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return null;
 	
@@ -597,14 +455,14 @@ public class AjaxDao {
 			String locationIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"SELECT S_WEC_ID,S_WEC_NAME "+
 					"from ecare.TBL_WEC_MASTER WM "+
@@ -625,23 +483,10 @@ public class AjaxDao {
 			
 		}
 		catch(Exception e){
-			//System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ajaxVo;
 	}
@@ -649,14 +494,14 @@ public class AjaxDao {
 	public static List<AjaxVo> getWecSelectVoBasedOnProjectIds(String projectIds) {
 
 		List<AjaxVo> ajaxVo = new ArrayList<AjaxVo>();
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 
 					"SELECT WM.S_WEC_ID,WM.S_WECSHORT_DESCR "+
 					"FROM TBL_WEC_PROJECT_MAPPING PRM,TBL_WEC_MASTER WM "+
@@ -674,23 +519,10 @@ public class AjaxDao {
 			
 		}
 		catch(Exception e){
-			//System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return ajaxVo;
 	}
@@ -827,6 +659,7 @@ interface ListWorker<T> extends Callable<T>{
 }
 
 class Worker implements ListWorker<AjaxVo>{
+	private final static Logger logger = Logger.getLogger(Worker.class);
 	private String iredaProjectNo;
 	private String fromDate;
 	private String toDate;
@@ -851,7 +684,7 @@ class Worker implements ListWorker<AjaxVo>{
 					try {
 						iredaProject.populateStateWiseTotalDataForManyDaysWithThreading(fromDate, toDate);
 					} catch (SQLException e) {
-						e.printStackTrace();
+						logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 					}
 				}
 			});
@@ -862,7 +695,7 @@ class Worker implements ListWorker<AjaxVo>{
 					try {
 						iredaProject.populateGrandTotalForManyDays(fromDate, toDate);
 					} catch (SQLException e) {
-						e.printStackTrace();
+						logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 					}
 				}
 			});
@@ -883,7 +716,7 @@ class Worker implements ListWorker<AjaxVo>{
 }
 
 class ListProducer<T> {
-	
+	private final static Logger logger = Logger.getLogger(ListProducer.class);
 	public List<T> submit(List<ListWorker<T>> worker){
 		long start = System.currentTimeMillis();
 		
@@ -909,9 +742,9 @@ class ListProducer<T> {
 			try {
 				returnList.add(element.get());
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			} catch (ExecutionException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 		long end = System.currentTimeMillis();

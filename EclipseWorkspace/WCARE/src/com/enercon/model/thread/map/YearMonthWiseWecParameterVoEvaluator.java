@@ -6,14 +6,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.global.utility.DateUtility;
-import com.enercon.model.report.IWecParameterVo;
+import com.enercon.model.parameter.wec.IWecParameterVo;
 import com.enercon.model.summaryreport.Month;
-import com.enercon.model.summaryreport.Parameter;
+import com.enercon.model.parameter.wec.Parameter;
 import com.enercon.model.summaryreport.Year;
 
 public class YearMonthWiseWecParameterVoEvaluator<Key extends Year, Value> implements MapValueEvaluatorWorker<Key, Map<Month, IWecParameterVo>>{
 
+	private final static Logger logger = Logger.getLogger(YearMonthWiseWecParameterVoEvaluator.class);
+	
 	private Key year;
 	private String fromDate;
 	private String toDate;
@@ -68,6 +72,8 @@ public class YearMonthWiseWecParameterVoEvaluator<Key extends Year, Value> imple
 		int monthDifference = 0;
 		
 		monthDifference = DateUtility.getMonthDifferenceBetweenTwoDates(getFromDate(), getToDate());
+		//logger.debug("From Date: " + fromDate + ", To Date: " + toDate);
+		//logger.debug("Month Difference: " + monthDifference);
 		
 		if(monthDifference == 0){
 			monthWecParameterVoEvaluators.add(getWorker1());
@@ -85,8 +91,10 @@ public class YearMonthWiseWecParameterVoEvaluator<Key extends Year, Value> imple
 			} else {
 				offsetToDate = DateUtility.getMonthLastDateByOffsetFromGivenDate(getToDate(), -1);
 			}
+			//logger.debug("Offset FromDate: " + offsetFromDate + ", Offset To Date: " + offsetToDate);
 			monthDifference = DateUtility.getMonthDifferenceBetweenTwoDates(offsetFromDate, offsetToDate);
-			if(monthDifference > 0){
+			//logger.debug("Month Difference: " + monthDifference);
+			if(monthDifference >= 0){
 				for(Month month	: Month.values(DateUtility.gettingMonthNumberFromStringDate(offsetFromDate), DateUtility.gettingMonthNumberFromStringDate(offsetToDate))){
 					monthWecParameterVoEvaluators.add(getWorker3(month));
 				}

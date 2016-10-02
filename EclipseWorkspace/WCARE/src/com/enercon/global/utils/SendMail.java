@@ -47,7 +47,7 @@ public class SendMail {
 
 		} catch (Exception exp) {
 
-			exp.printStackTrace();
+			logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 
 		} finally {
 
@@ -55,7 +55,7 @@ public class SendMail {
 				if (input != null)
 					input.close();
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
 			}
 		}
 
@@ -135,7 +135,7 @@ public class SendMail {
 		} catch (Exception mex) {
 
 			// Prints all nested (chained) exceptions as well
-			mex.printStackTrace();
+			logger.error("\nClass: " + mex.getClass() + "\nMessage: " + mex.getMessage() + "\n", mex);
 
 		}
 		return flag;
@@ -176,7 +176,7 @@ public class SendMail {
 			flag = true;
 		} catch (Exception mex) {
 			// Prints all nested (chained) exceptions as well
-			mex.printStackTrace();
+			logger.error("\nClass: " + mex.getClass() + "\nMessage: " + mex.getMessage() + "\n", mex);
 		}
 		return flag;
 	}
@@ -233,7 +233,7 @@ public class SendMail {
 			flag = true;
 		} catch (Exception mex) {
 			// Prints all nested (chained) exceptions as well
-			mex.printStackTrace();
+			logger.error("\nClass: " + mex.getClass() + "\nMessage: " + mex.getMessage() + "\n", mex);
 		}
 		return flag;
 	}
@@ -295,7 +295,7 @@ public class SendMail {
 			flag = true;
 		} catch (Exception mex) {
 			// Prints all nested (chained) exceptions as well
-			mex.printStackTrace();
+			logger.error("\nClass: " + mex.getClass() + "\nMessage: " + mex.getMessage() + "\n", mex);
 		}
 		return flag;
 	}

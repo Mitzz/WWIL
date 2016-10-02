@@ -6,11 +6,17 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.enercon.ajax.ajaxVo.SelectVo;
 import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.struts.dao.query.SelectVoQuerySelector;
 
 public class SelectVoDao implements WcareConnector, SelectVoQuerySelector{
+	
+	 private final static Logger logger = Logger.getLogger(SelectVoDao.class);
+	
 	public static List<SelectVo> getSelectVo(String queryResolver){
 
 		List<SelectVo> selectVo = new ArrayList<SelectVo>();
@@ -31,25 +37,10 @@ public class SelectVoDao implements WcareConnector, SelectVoQuerySelector{
 			return selectVo;
 		}
 		catch(Exception e){
-			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			 DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return selectVo;
 	}

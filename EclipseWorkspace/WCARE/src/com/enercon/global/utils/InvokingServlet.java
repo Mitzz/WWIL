@@ -8,11 +8,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class InvokingServlet extends HttpServlet {
+import org.apache.log4j.Logger;
 
+import com.enercon.model.graph.Graph;
+
+public class InvokingServlet extends HttpServlet {
+	private final static Logger logger = Logger.getLogger(InvokingServlet.class);
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		config.getServletContext().setAttribute("contextPath", "/WCARE");
 		try {
 			System.out.println("WCARE Invoking Servlet Started");
 //			productionCode();
@@ -20,11 +25,19 @@ public class InvokingServlet extends HttpServlet {
 			System.out.println("WCARE Invoking Servlet Ended");
 		} catch (Exception e) {
 			System.out.println("Exception in init Method of InvokingServlet");
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 
 	private void productionCode() throws Exception {
+		/*new Thread(new Runnable() {
+
+			public void run() {
+				Graph.getInstance();
+			}
+			
+		}).start();*/
+		
 		new CallSchedule();
 	}
 
@@ -32,20 +45,25 @@ public class InvokingServlet extends HttpServlet {
 //		new CallSchedulerForMissingScadaData().callTimer();
 //		new CallSchedulerForSendingMail().sendMail("09/09/2014");// todays date;
 
-		System.out.println("Invoking Servlet with Test Code");
+		logger.debug("Invoking Servlet with Test Code");
 		new Thread(new Runnable() {
 
 			public void run() {
 				try {
+					Graph G = Graph.getInstance();
+					G.log();
+					/*G.flush();
+					G.initialize();*/
 //					 new CallSchedulerForSendingMail().sendIPPGroupMail("02-OCT-2015");
-					 new CallSchedulerForSendingMail().sendMail("04-OCT-2015");
+					 new CallSchedulerForSendingMail().sendMail("06-MAR-2016");
 //					new CallJobToPushScadaData().execute(null);
 					// new CallJobToSentMissingScadaData().execute(null);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 		}).start();
+		logger.debug("Invoking Servlet with Test Code");
 	}
 
 	@Override

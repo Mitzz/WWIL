@@ -1,22 +1,31 @@
 package com.enercon.global.utils;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-
-import org.w3c.dom.*;
-
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
-import java.sql.Connection;	
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 
 
-public class CallSchedulerTo {
+public class CallSchedulerTo implements WcareConnector{
+	private final static Logger logger = Logger.getLogger(CallSchedulerTo.class);
 	
 	
 	public void CallTimer() throws  Exception  {
@@ -39,7 +48,7 @@ public class CallSchedulerTo {
 		//System.out.print("Enter root: ");
 		
         DecimalFormat formatter = new DecimalFormat("#########0.00");
-        JDBCUtils conmanager = new JDBCUtils();
+        //JDBCUtils conmanager = new JDBCUtils();
         
 		
 			//System.out.print("Enter the element: ");
@@ -51,13 +60,17 @@ public class CallSchedulerTo {
 			double totalCurCum=0;
 			double totalCumAll=0;
 			double totalYtdyAll=0;
+			String sqlQuery1 = "";			
+			PreparedStatement prepStmt = null;
+			ResultSet rs = null;
+			Connection conn = null;
 			try {
-				Connection conn = conmanager.getConnection();
-				Statement st = conn.createStatement();
+				conn = wcareConnector.getConnectionFromPool();
+				//Statement st = conn.createStatement();
 				
-				String sqlQuery1 = "";			
-				PreparedStatement prepStmt = null;
-				ResultSet rs = null;
+				sqlQuery1 = "";			
+				prepStmt = null;
+				rs = null;
 				
 				/* sqlQuery1 = CallSchedulerXMLSQLC.CHECK_CUM_GEN_REGULAR;				
 				 prepStmt = conn.prepareStatement(sqlQuery1);
@@ -210,12 +223,13 @@ public class CallSchedulerTo {
 					
 				//}
 					
-					st.close();
+					//st.close();
 					conn.commit();
-	        		conn.close();
+	        		//conn.close();
 			} catch (Exception e) {
-				
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			} finally {
+				DaoUtility.releaseResources(Arrays.asList(prepStmt), Arrays.asList(rs), conn);
 			}
 			
 
@@ -225,7 +239,7 @@ public void CreateXML() throws  Exception  {
 	
 		int no = 7;
 		//System.out.print("Enter root: ");
-		
+		logger.warn("Running...");
 		Date date = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
 		String rdate = dateFormat.format(date.getTime()); 
@@ -237,7 +251,6 @@ public void CreateXML() throws  Exception  {
 		Element rootElement = document.createElement(root);
         document.appendChild(rootElement);
         DecimalFormat formatter = new DecimalFormat("#########0.00");
-        JDBCUtils conmanager = new JDBCUtils();
         String cox_data=".",coal_data=".",co2_data=".",fly_data=".",water_data=".";
         String tcox_data=".";
         double totalgen=0;
@@ -245,13 +258,16 @@ public void CreateXML() throws  Exception  {
 		double totalCumAll=0;
 		double todayCumAll=0;
 		
+		Connection conn = null;
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
 		try {
-			Connection conn = conmanager.getConnection();
-			Statement st = conn.createStatement();
+			conn = wcareConnector.getConnectionFromPool();
+			//Statement st = conn.createStatement();
 			
 			String sqlQuery1 = CallSchedulerXMLSQLC.CHECK_CUM_GEN_REGULAR;				
-			PreparedStatement prepStmt = conn.prepareStatement(sqlQuery1);
-			ResultSet rs = prepStmt.executeQuery();
+			prepStmt = conn.prepareStatement(sqlQuery1);
+			rs = prepStmt.executeQuery();
 			if(rs.next())
 				totalgen = rs.getDouble("TOTALGEN");
 			rs.close();
@@ -276,13 +292,15 @@ public void CreateXML() throws  Exception  {
 			
 			rs.close();
 			prepStmt.close();
-			st.close();
+			//st.close();
 			conn.commit();
-        	conn.close();
+        	//conn.close();
 		} catch (Exception e) {
 			
-			e.printStackTrace();
-		}			
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		} finally {
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+		}
 		
 		
 		for (int i = 1; i <= no; i++){

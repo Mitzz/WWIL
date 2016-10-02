@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,9 @@ import com.enercon.admin.metainfo.StateMetaInfo;
 import com.enercon.admin.metainfo.WECMetaInfo;
 import com.enercon.connection.WcareConnector;
 import com.enercon.customer.dao.CustomerSQLC;
+import com.enercon.dao.DaoUtility;
 import com.enercon.dao.master.WecMasterDao;
 import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utility.MethodClass;
 import com.enercon.global.utility.NumberUtility;
 import com.enercon.global.utility.TimeUtility;
 import com.enercon.global.utils.GlobalUtils;
@@ -550,14 +551,21 @@ public class CustomerUtility implements WcareConnector{
 		
 		Connection conn = null;
 		List<Object> tranList = new ArrayList<Object>();
+		
+		//All Active Wec connected to ebId
 		Set<String> remainingActiveWecIds = FindingQueryDao.getActiveWecIdsBasedOnOneEbId(ebId);
+		//logger.debug(remainingActiveWecIds);
 		try{
 		conn = wcareConnector.getConnectionFromPool();
 		requestDate = AdminDao.convertDateFormat(requestDate, "dd/MM/yyyy", "dd-MMM-yy");
-		Map<String, Integer> publishStatusWECWise = null;
-		publishStatusWECWise = getPublishStatusWECWiseBasedOnEbId(ebId, requestDate);
+		Map<String, Integer> unpublishWECWiseCount = null;
+		
+		//Count of Unpublish Data in wecreading of all wecs  
+		unpublishWECWiseCount = getPublishStatusWECWiseBasedOnEbId(ebId, requestDate);
+		//logger.debug(unpublishWECWiseCount);
+		//List of Wec Data(Data itself is list)
 		ArrayList<ArrayList<Object>> ebInfo = EBMetaInfo.getOneEBWECWiseInfoForOneDay(ebId, requestDate);
-		//GlobalUtils.displayVectorMember(ebInfo);
+		
 		Vector<Object> v = new Vector<Object>();
 		String wecId = null;
 		String scadaRemark = " <span style='color:red;'>Connectivity failure during data transfer </span>";
@@ -565,26 +573,32 @@ public class CustomerUtility implements WcareConnector{
 		String remarks = "";
 		
 //		System.out.println("publishStatusWECWise :: " + publishStatusWECWise);
-		for (ArrayList<Object> WECInfo : ebInfo) {
-			isEbDataAvailable = true;
-			wecId = (String) WECInfo.get(0);
+		for (ArrayList<Object> wecDataInfo : ebInfo) {
 			
-			boolean isLullHourDash = checkLullHour(WECInfo.get(0).toString(), conn, DateUtility.stringDateFormatToSQLDate(requestDate, "dd-MMM-yy"));
+			//Not Needed
+			isEbDataAvailable = true;
+			
+			//Wec Id
+			wecId = (String) wecDataInfo.get(0);
+			
+			//true if (scadaConnected and operating hour is 0 and fault hour < 4 || Data Not Present)
+			boolean isLullHourDash = checkLullHour(wecDataInfo.get(0).toString(), conn, DateUtility.stringDateFormatToSQLDate(requestDate, "dd-MMM-yy"));
 //			System.out.println("WEC Description : " + WECInfo.get(1).toString() + ", lull hour : " + isLullHourDash);
+			
+			//Removing if lulldash is not i.e Data which will seen will be remove 
 			if(!isLullHourDash) remainingActiveWecIds.remove(wecId);
 			
 			//Data partially published
-			if(publishStatusWECWise.containsKey(wecId) && publishStatusWECWise.get(wecId) > 0){
+			if(unpublishWECWiseCount.containsKey(wecId) && unpublishWECWiseCount.get(wecId) > 0){
 				
 				//GlobalUtils.displayVectorMember(WECInfo);
 				v = new Vector<Object>();
-				v.add(WECInfo.get(1));//Descr:0
-				v.add(WECInfo.get(3));//WEC Type:1
+				v.add(wecDataInfo.get(1));//Descr:0
+				v.add(wecDataInfo.get(3));//WEC Type:1
 				
 				v.add("-");//Generation:2
 				v.add("-");//Operatinghr:3
 				v.add("-");//Lull Hour:4
-				
 				
 				v.add("-");//Mavail:5
 				v.add("-");//Gavail:6
@@ -592,10 +606,10 @@ public class CustomerUtility implements WcareConnector{
 				
 				v.add(wecId);//WECId:8
 				
-				v.add(WECInfo.get(1) + " - " + scadaRemark);
+				v.add(wecDataInfo.get(1) + " - " + scadaRemark);
 				
 				v.add(remarks);//Remards : 9
-				v.add(WECInfo.get(18));//TRIALRUN : 10
+				v.add(wecDataInfo.get(18));//TRIALRUN : 10
 				v.add("-");//MIAVIAL : 11
 				v.add("-");//GIAVIAL : 12
 			}
@@ -603,8 +617,8 @@ public class CustomerUtility implements WcareConnector{
 //				GlobalUtils.displayVectorMember(WECInfo);
 				if(!isLullHourDash){
 					v = new Vector<Object>();
-					v.add(WECInfo.get(1));//Descr : 0
-					v.add(WECInfo.get(3));//WEC Type : 1
+					v.add(wecDataInfo.get(1));//Descr : 0
+					v.add(wecDataInfo.get(3));//WEC Type : 1
 					
 					if (isLullHourDash) {
 						v.add("-");//Gen : 2
@@ -612,31 +626,31 @@ public class CustomerUtility implements WcareConnector{
 						v.add("-");//LullHr : 4
 					}
 					else{
-						v.add(NumberUtility.formatNumber(((Long)WECInfo.get(6))));//Generation : 2
-						v.add(TimeUtility.convertMinutesToTimeStringFormat((Long)WECInfo.get(8), ":"));//Operatinghr : 3
-						v.add(TimeUtility.convertMinutesToTimeStringFormat((Long)WECInfo.get(12), ":"));//LullHour : 4
+						v.add(NumberUtility.formatNumber(((Long)wecDataInfo.get(6))));//Generation : 2
+						v.add(TimeUtility.convertMinutesToTimeStringFormat((Long)wecDataInfo.get(8), ":"));//Operatinghr : 3
+						v.add(TimeUtility.convertMinutesToTimeStringFormat((Long)wecDataInfo.get(12), ":"));//LullHour : 4
 					}
 					
-					v.add(WECInfo.get(13));//Mavail:5
-					v.add(WECInfo.get(14));//Gavail:6
+					v.add(wecDataInfo.get(13));//Mavail:5
+					v.add(wecDataInfo.get(14));//Gavail:6
 					if(isLullHourDash){
 						v.add("-");//Cfactor : 7
 					}
 					else{
-						v.add(WECInfo.get(15));//Cfactor : 7
+						v.add(wecDataInfo.get(15));//Cfactor : 7
 					}
-					v.add(WECInfo.get(0));//WECId : 8
+					v.add(wecDataInfo.get(0));//WECId : 8
 					
 					if (!isLullHourDash) {
-						actualremarks = WECInfo.get(10).toString();
+						actualremarks = wecDataInfo.get(10).toString();
 						remarks = actualremarks.equals("") ? "NIL" : actualremarks;//Remarks
 					} else {
-						remarks = actualremarks.equals("") ? WECInfo.get(1) + "-" + scadaRemark : WECInfo.get(1).toString() + actualremarks + "." + scadaRemark;
+						remarks = actualremarks.equals("") ? wecDataInfo.get(1) + "-" + scadaRemark : wecDataInfo.get(1).toString() + actualremarks + "." + scadaRemark;
 					}
 					v.add(remarks);//Remaerks : 9
-					v.add(WECInfo.get(18));//TRIALRUN : 10
-					v.add(WECInfo.get(17));//MIAVIAL : 11
-					v.add(WECInfo.get(16));//GIAVIAL : 12
+					v.add(wecDataInfo.get(18));//TRIALRUN : 10
+					v.add(wecDataInfo.get(17));//MIAVIAL : 11
+					v.add(wecDataInfo.get(16));//GIAVIAL : 12
 				}
 			}
 			/*MethodClass.displayMethodClassName();
@@ -672,23 +686,17 @@ public class CustomerUtility implements WcareConnector{
 				
 			}
 		}
-		
-
+		//logger.debug(tranList);
 		return tranList;
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
+				if(conn != null){ wcareConnector.returnConnectionToPool(conn);}
+			}catch(Exception e){
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 		return tranList;
@@ -722,23 +730,16 @@ public class CustomerUtility implements WcareConnector{
 			stmt = connection.prepareStatement(query);
 			stmt.setString(1, requestDate);
 			stmt.setString(2, ebId);
-			
+			DaoUtility.displayQueryWithParameter(13, query, requestDate, ebId);
 			resultSet = stmt.executeQuery();
 			
 			while(resultSet.next()){
+				DaoUtility.getRowCount(13, resultSet);
 				wecWisePublishStatus.put(resultSet.getString("S_wec_ID"), resultSet.getInt("Publish_Count"));
 			}
 			//System.out.println("jshf : WecWisePublishStatusMapping :::: " + wecWisePublishStatus);
 		}finally{
-			if(connection != null){
-				wcareConnector.returnConnectionToPool(connection);
-			}
-			if(stmt != null){
-				stmt = null;
-			}
-			if(resultSet != null){
-				resultSet = null;
-			}
+			 DaoUtility.releaseResources(stmt, resultSet, connection);
 			
 		}
 		
@@ -752,17 +753,24 @@ public class CustomerUtility implements WcareConnector{
 	 * @return
 	 */
 	public static List<Object> getStateWiseTotalForOneDayBasedOnCustomerIdMeta(String customerId, String requestDate){
+		logger.info("------------Start");
+		logger.info(String.format("Customer Id: %s, Request Date: %s", customerId, requestDate));
 		List<Object> tranList = new ArrayList<Object>();
 		Vector<Object> v = new Vector<Object>();
 		ArrayList<ArrayList<Object>> stateWiseWECTotal = StateMetaInfo.getStateWiseTotalForOneDayBasedOnCustomerIdMeta(customerId, DateUtility.convertDateFormats(requestDate, "dd/MM/yyyy", "dd-MMM-yyyy"));
+		logger.info(String.format("Value Returned stateWiseWECTotal: %s", stateWiseWECTotal));
 		for (ArrayList<Object> stateWECTotal : stateWiseWECTotal) {
+			logger.info(String.format("Size: %s, Data: %s", stateWECTotal.size(), stateWECTotal));
 			for(int i = 0; i < stateWECTotal.size(); i++){
 				v.add(stateWECTotal.get(i));
+//				logger.info(stateWECTotal.get(i));
 			}
 			tranList.add(v);
+			
 			v = new Vector<Object>();
 		}
-		//GlobalUtils.displayVectorMember(tranList);
+		logger.info(String.format("transList: %s", tranList));
+		logger.info("-------------End");
 		return tranList;
 	}
 	
@@ -797,20 +805,60 @@ public class CustomerUtility implements WcareConnector{
 	 * @return
 	 */
 	public static List<Object> getSiteWiseTotalForOneDayBasedOnStateIdCustomerIdMeta(String customerId, String stateId,String readingDate){
+		logger.debug("--------------Start");
+		logger.debug(String.format("Customer Id: %s, State Id: %s, Reading Date: %s", customerId, stateId, readingDate));
 		List<Object> tranList = new ArrayList<Object>();
 		Vector<Object> v = new Vector<Object>();
-		ArrayList<ArrayList<Object>> stateWiseWECTotal = SiteMetaInfo.getSiteWiseTotalForOneDayBasedOnStateIdCustomerIdMeta(customerId, stateId,DateUtility.convertDateFormats(readingDate, "dd/MM/yyyy", "dd-MMM-yyyy"));
-		for (ArrayList<Object> stateWECTotal : stateWiseWECTotal) {
-			for(int i = 0; i < stateWECTotal.size(); i++){
-				v.add(stateWECTotal.get(i));
+		ArrayList<ArrayList<Object>> siteWiseWECTotal = SiteMetaInfo.getSiteWiseTotalForOneDayBasedOnStateIdCustomerIdMeta(customerId, stateId,DateUtility.convertDateFormats(readingDate, "dd/MM/yyyy", "dd-MMM-yyyy"));
+		for (ArrayList<Object> siteWECTotal : siteWiseWECTotal) {
+			logger.debug(String.format("Size: %s, Data: %s", siteWECTotal.size(), siteWECTotal));
+			for(int i = 0; i < siteWECTotal.size(); i++){
+//				logger.debug(String.format("(%s)%s: %s ", i, getMpDescription(i), siteWECTotal.get(i)));
+				v.add(siteWECTotal.get(i));
 			}
+			
 			tranList.add(v);
 			v = new Vector<Object>();
 		}
 		//GlobalUtils.displayVectorMember(tranList);
+		logger.debug("--------------End");
 		return tranList;	
 	}
 	
+	private static String getMpDescription(int i) {
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		if(i > 27) return "Undefined";
+		map.put(0 , "Wec Id");
+		map.put(1 , "Wec Description");
+		map.put(2 , "Eb Id");
+		map.put(3 , "Wec Type");
+		map.put(4 , "Wec Capacity");
+		map.put(5 , "Reading Date");
+		map.put(6 , "Gen");
+		map.put(7 , "TotGen");
+		map.put(8 , "OpHr");
+		map.put(9 , "TotOpHr");
+		map.put(10, "Remarks");
+		map.put(11, "Commision Date");
+		map.put(12, "Lull Hour");
+		map.put(13, "Mavial");
+		map.put(14, "Gavial");
+		map.put(15, "CF");
+		map.put(16, "Giavial");
+		map.put(17, "Miavial");
+		map.put(18, "Trial Run");
+		map.put(19, "MF");
+		map.put(20, "MS");
+		map.put(21, "EBLoad");
+		map.put(22, "GIF");
+		map.put(23, "GIS");
+		map.put(24, "GEF");
+		map.put(25, "GES");
+		map.put(26, "WecShutdown");
+		map.put(27, "Customer Scope");
+		return map.get(i);
+	}
+
 	/*--------------------------------------------------------------------------------------------------------*/
 	/*--------------------------------------------------------------------------------------------------------*/
 	/*--------------------------------------------------------------------------------------------------------*/
@@ -820,14 +868,19 @@ public class CustomerUtility implements WcareConnector{
 		boolean makeLullHourDash = false;
 		double operatingHourPresent = 0;
 		double faultHourTotal = 0;
-		String wecScadaConnectivityQuery = CustomerSQLC.CHECK_WEC_SCADA_CONNECTIVITY;
+		String wecScadaConnectivityQuery = CustomerSQLC.CHECK_WEC_STATUS_SCADA_CONNECTIVITY;
 		
-		PreparedStatement myPrepareStmt;
+		PreparedStatement myPrepareStmt = null;
+		ResultSet myResultSet = null;
+		PreparedStatement myPrepareStmt1 = null;
+		ResultSet myResultSet1 = null;
 		try {
 			myPrepareStmt = conn.prepareStatement(wecScadaConnectivityQuery);
 			myPrepareStmt.setObject(1, wecID);
-			ResultSet myResultSet = myPrepareStmt.executeQuery();
+			DaoUtility.displayQueryWithParameter(15, wecScadaConnectivityQuery, wecID);
+			myResultSet = myPrepareStmt.executeQuery();
 			while(myResultSet.next()){
+				DaoUtility.getRowCount(15, myResultSet);
 				String machineActiveStatus = myResultSet.getString("S_status");
 //				
 				if(machineActiveStatus.equals("1")){
@@ -838,13 +891,19 @@ public class CustomerUtility implements WcareConnector{
 									"where s_wec_id = ? " +
 									"and d_reading_date = ? " +
 									"and s_mp_id = '0808000023' ";
-					PreparedStatement myPrepareStmt1 = conn.prepareStatement(myQuery1);
 					
-					myPrepareStmt1.setObject(2, reportdate);
+					myPrepareStmt1 = conn.prepareStatement(myQuery1);
+					
 					myPrepareStmt1.setObject(1, wecID);
+					myPrepareStmt1.setObject(2, reportdate);
 					
-					ResultSet myResultSet1 = myPrepareStmt1.executeQuery();
+					DaoUtility.displayQueryWithParameter(16, myQuery1, wecID, reportdate);
+					myResultSet1 = myPrepareStmt1.executeQuery();
 					while(myResultSet1.next()){
+						DaoUtility.getRowCount(16, myResultSet1);
+						
+						//Checking for operating hour data present or not
+						//If not present assume 0
 						if(myResultSet1.getObject(1) != null){
 							operatingHourPresent = myResultSet1.getDouble(1);
 						}
@@ -866,10 +925,14 @@ public class CustomerUtility implements WcareConnector{
 					myPrepareStmt1 = conn.prepareStatement(myQuery1);
 					myPrepareStmt1.setObject(1, wecID);
 					myPrepareStmt1.setObject(2, reportdate);
-					
+					DaoUtility.displayQueryWithParameter(17, myQuery1, wecID, reportdate);
 					myResultSet1 = myPrepareStmt1.executeQuery();
 					
 					while(myResultSet1.next()){
+						DaoUtility.getRowCount(17, myResultSet1);
+						
+						//Checking for fault hour data present or not
+						//If not present assume 0
 						if(myResultSet1.getObject(1) != null)
 							faultHourTotal = myResultSet1.getDouble(1);
 					}
@@ -884,8 +947,11 @@ public class CustomerUtility implements WcareConnector{
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		} finally {
+			DaoUtility.releaseResources(Arrays.asList(myPrepareStmt, myPrepareStmt1), Arrays.asList(myResultSet, myResultSet1));
 		}
+		
 		return makeLullHourDash;
 	}
 	
@@ -1244,20 +1310,9 @@ public class CustomerUtility implements WcareConnector{
 			}
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
-		finally{
-			try{
-				/*if(connection != null){
-					connection.close();
-				}*/
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
-		}
+		
 		return tranList;
 	}
 	
@@ -1364,21 +1419,10 @@ public class CustomerUtility implements WcareConnector{
 			}
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			
 		}
-		finally{
-			try{
-				/*if(conn != null){
-					conn.close();
-				}*/
-			}
-			catch(Exception ex){
-				MethodClass.displayMethodClassName();
-				ex.printStackTrace();
-			}
-		}
+		
 		return tranList;
 	}
 	

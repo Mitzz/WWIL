@@ -4,12 +4,14 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Set;
 
-import com.enercon.dao.WecDataDao;
-import com.enercon.model.report.IWecParameterVo;
-import com.enercon.model.summaryreport.Parameter;
+import org.apache.log4j.Logger;
+
+import com.enercon.dao.WecParameterDataDao;
+import com.enercon.model.parameter.wec.IWecParameterVo;
+import com.enercon.model.parameter.wec.Parameter;
 
 public class PeriodWecParameterVoEvaluator<Key, Value extends IWecParameterVo> implements MapValueEvaluatorWorker<Key, Value>{
-
+	private final static Logger logger = Logger.getLogger(PeriodWecParameterVoEvaluator.class);
 	private Key key;
 	private Set<String> wecIds;
 	private String fromDate;
@@ -34,15 +36,15 @@ public class PeriodWecParameterVoEvaluator<Key, Value extends IWecParameterVo> i
 			IWecParameterVo parameterVo = new PeriodWecParameterVoEvaluator<String, IWecParameterVo>(null, null, null, null).evaluate();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 	
 	public <T extends IWecParameterVo> T evaluate() throws SQLException, ParseException{
 		T parameter = null; 
-		parameter = new WecDataDao().getWecParameterVo(wecIds, fromDate, toDate, parameters);;
+		parameter = WecParameterDataDao.getInstance().getTotal(wecIds, fromDate, toDate, parameters);
 		return parameter;
 	}
 

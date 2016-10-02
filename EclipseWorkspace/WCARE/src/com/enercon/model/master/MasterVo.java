@@ -2,10 +2,10 @@ package com.enercon.model.master;
 
 public abstract class MasterVo {
 
-	protected String createdBy;
-	protected String createdAt;
-	protected String modifiedBy;
-	protected String modifiedAt;
+	private String createdBy;
+	private String createdAt;
+	private String modifiedBy;
+	private String modifiedAt;
 	
 	public String getCreatedBy() {
 		return createdBy;

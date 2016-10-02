@@ -1,5 +1,7 @@
 package com.enercon.global.utils;
 
+import static com.enercon.connection.WcareConnector.wcareConnector;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -31,8 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -41,6 +43,7 @@ import org.apache.log4j.Logger;
 
 import com.enercon.admin.bean.CreateRoleBean;
 import com.enercon.admin.bean.RoleMappingBean;
+import com.enercon.dao.DaoUtility;
 
 public class GlobalUtils {
 	
@@ -50,7 +53,7 @@ public class GlobalUtils {
 
 	public static DynaBean getDynaBean(HttpServletRequest request) {
 		/* Map requestParams = request.getParameterMap(); */
-		// logger.debug("inside dynabean");
+		// logger.trace("inside dynabean");
 		Enumeration enumparameter = request.getParameterNames();
 		if (enumparameter.hasMoreElements()) {
 			// Enumeration enumparameter = request.getAttributeNames();
@@ -73,7 +76,7 @@ public class GlobalUtils {
 
 	public static DynaBean getAttDynaBean(HttpServletRequest request) {
 		/* Map requestParams = request.getParameterMap(); */
-		// logger.debug("inside dynabean");
+		// logger.trace("inside dynabean");
 		Enumeration enumparameter = request.getAttributeNames();
 		DynaBean dynaBean = new DynaBean();
 		while (enumparameter.hasMoreElements()) {
@@ -85,9 +88,9 @@ public class GlobalUtils {
 	}
 
 	public Hashtable getAllRoles() throws Exception {
-		// logger.debug("Enter in to the getAllRoles GlobalUtil");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		// logger.trace("Enter in to the getAllRoles GlobalUtil");
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = GlobalSQLC.GET_ALL_ROLES;
@@ -105,31 +108,11 @@ public class GlobalUtils {
 			prepStmt.close();
 			rs.close();
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-					conmanager = null;
-					// conmanager.closeConnection();
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-					conmanager = null;
-					// conmanager.closeConnection();
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return retHash;
 	}
@@ -171,15 +154,15 @@ public class GlobalUtils {
 	 * 
 	 */
 	public Hashtable getAllUser() throws Exception {
-		// logger.debug("Enter In to the getAllUser In Global");
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		// logger.trace("Enter In to the getAllUser In Global");
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = GlobalSQLC.GET_ALL_USER;
 		Hashtable retHash = new Hashtable();
 		try {
-			// logger.debug("Enter In to the getAllUser");
+			// logger.trace("Enter In to the getAllUser");
 			prepStmt = conn.prepareStatement(sqlQuery);
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
@@ -191,35 +174,15 @@ public class GlobalUtils {
 			}
 			prepStmt.close();
 			rs.close();
-			// logger.debug("After Executing Query");
+			// logger.trace("After Executing Query");
 		} catch (SQLException sqlExp) {
-			sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 			Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 			throw exp;
 		} finally {
-			try {
-				if (prepStmt != null)
-					prepStmt.close();
-				if (rs != null)
-					rs.close();
-				if (conn != null) {
-					conn.close();
-					conn = null;
-					conmanager = null;
-					// conmanager.closeConnection();
-				}
-			} catch (Exception e) {
-				prepStmt = null;
-				rs = null;
-				if (conn != null) {
-					conn.close();
-					conn = null;
-					conmanager = null;
-					// conmanager.closeConnection();
-				}
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
-		// logger.debug("Hastable is :Debugged : Global Util "+retHash);
+		// logger.trace("Hastable is :Debugged : Global Util "+retHash);
 		return retHash;
 	}
 
@@ -257,7 +220,7 @@ public class GlobalUtils {
 	        while (en.hasMoreElements()) {
 	            
 	            String paramName = (String) en.nextElement();
-	            logger.debug(paramName + " = " + request.getParameter(paramName));
+	            logger.trace(paramName + " = " + request.getParameter(paramName));
 	            
 	        }
 	}
@@ -276,7 +239,7 @@ public class GlobalUtils {
 			else{
 				timeStringSplitted = str.split(delimiter);
 			}
-			//logger.debug("0:" + timeStringSplitted[0] + ",[1]:" + timeStringSplitted[1]);
+			//logger.trace("0:" + timeStringSplitted[0] + ",[1]:" + timeStringSplitted[1]);
 			int timeStringMinuteValue = Integer.parseInt(timeStringSplitted[1]);
 			int timeStringHourValue   = Integer.parseInt(timeStringSplitted[0]);
 			totalTimeInMinutes = timeStringMinuteValue + (timeStringHourValue * 60);
@@ -305,7 +268,7 @@ public class GlobalUtils {
 		else{
 			hourMinute.append(s[1]);
 		}
-		//logger.debug(hourMinute);
+		//logger.trace(hourMinute);
 		
 		return new String(hourMinute);
 	}
@@ -322,7 +285,7 @@ public class GlobalUtils {
 				mm = Integer.parseInt(split[1]) * 10;
 			}
 			hh = Integer.parseInt(split[0]) * 60;
-			//logger.debug("sjdlsdkfjd: " + hh + mm);
+			//logger.trace("sjdlsdkfjd: " + hh + mm);
 			return (hh + mm);
 		}
 		else{
@@ -335,7 +298,7 @@ public class GlobalUtils {
 		try{
 		int mm = 0;
 		int hh = 0;
-		//logger.debug("GetMinutesModified:" + minute);
+		//logger.trace("GetMinutesModified:" + minute);
 		if(!minute.equalsIgnoreCase("")){
 			if(minute.contains(".")){
 				String[] split = minute.split("\\.");
@@ -346,17 +309,17 @@ public class GlobalUtils {
 					mm = (int) Double.parseDouble(split[1]) * 10;
 				}
 				else{
-					//logger.debug("sdddddddddddddddddddddddddddddddddddddd");
+					//logger.trace("sdddddddddddddddddddddddddddddddddddddd");
 					mm = 0 ;
 				}
 				if(split[0].length() == 0){
-					//logger.debug("sdddddddddddddddddddddddddddddddddddddd");
+					//logger.trace("sdddddddddddddddddddddddddddddddddddddd");
 					hh = 0;
 				}
 				else{
 					hh = (int) Double.parseDouble(split[0]) * 60;
 				}
-				//logger.debug("sjdlsdkfjd: " + hh + mm);
+				//logger.trace("sjdlsdkfjd: " + hh + mm);
 				return hh + mm;
 			}
 			else{
@@ -368,25 +331,26 @@ public class GlobalUtils {
 		}
 		}
 		catch(Exception e){
-			logger.debug("getMinutesModified Exception");
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			logger.trace("getMinutesModified Exception");
 		}
 		return 0;
 	}
 	
 	public static void displaySessionAttribute(HttpSession session){
-		logger.debug("------Session Attributes and their value-----");
+		logger.trace("------Session Attributes and their value-----");
 		Enumeration<String> attributeNames = session.getAttributeNames();
 		while (attributeNames.hasMoreElements()) {
 		    String name = attributeNames.nextElement();
 		    Object value = session.getAttribute(name);
-		    logger.debug(name + "=" + value);
+		    logger.trace(name + "=" + value);
 		}
-		logger.debug("------End-----");
+		logger.trace("------End-----");
 	}
 
 	public static void getSQLQueryResultInHTMLFile() {
 
-		JDBCUtils conmanager = new JDBCUtils();
+	//	JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -481,7 +445,7 @@ public class GlobalUtils {
 		try {
 			fos = new PrintWriter(new BufferedWriter(new FileWriter(
 					fileWriterPath)), true);
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "SELECT * FROM TBL_ROLE";
 			prepStmt = conn.prepareStatement(sqlQuery);
 
@@ -508,7 +472,8 @@ public class GlobalUtils {
 			content.append("\t</body>\n" + "</html>\n");
 			fos.println(new String(content));
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			//logger.trace(e.getMessage());
 		} finally {
 			try {
 				if (conn != null) {
@@ -524,7 +489,8 @@ public class GlobalUtils {
 					fos.close();
 				}
 			} catch (Exception e) {
-				logger.debug(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+				//logger.trace(e.getMessage());
 			}
 		}
 	}
@@ -542,10 +508,12 @@ public class GlobalUtils {
 				columnNames[i - 1] = metaData.getColumnName(i);
 			}
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return columnNames;
 	}
+	
+	
 
 	public static void getJavaStringBasedOnQuery() {
 		BufferedReader fileReader = null;
@@ -562,7 +530,8 @@ public class GlobalUtils {
 				fos.println(lineString);
 			}
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			//logger.trace(e.getMessage());
 		} finally {
 			try {
 				if (fileReader != null) {
@@ -572,7 +541,8 @@ public class GlobalUtils {
 					fos.close();
 				}
 			} catch (Exception e) {
-				logger.debug(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+				//logger.trace(e.getMessage());
 			}
 		}
 	}
@@ -632,7 +602,7 @@ public class GlobalUtils {
 		// To display the output
 		for (int i = 0; i < length; i++) {
 			if (characters[i] != null) {
-				logger.debug(characters[i] + " " + frequency[i]);
+				logger.trace(characters[i] + " " + frequency[i]);
 			}
 		}
 	}
@@ -667,7 +637,7 @@ public class GlobalUtils {
 	}
 
 	public static void getUserViewSourceCodeInFile() {
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -679,16 +649,16 @@ public class GlobalUtils {
 		String fileReaderPath = "";
 		String fileWriterPath = "";
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select View_Name,Text From User_Views";
 			prepStmt = conn.prepareStatement(sqlQuery);
 
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
-				logger.debug("VIEW_NAME:" + rs.getObject(1));
-				logger.debug("---");
-				logger.debug("Text:" + rs.getObject(2));
-				logger.debug("----------------------------------------------------");
+				logger.trace("VIEW_NAME:" + rs.getObject(1));
+				logger.trace("---");
+				logger.trace("Text:" + rs.getObject(2));
+				logger.trace("----------------------------------------------------");
 
 				fileWriterPath = "D:\\Mithul\\Dropbox\\Photos\\Mitz\\Languages\\WWIL\\ECARE\\Views\\"
 						+ rs.getObject(1) + ".sql";
@@ -707,18 +677,11 @@ public class GlobalUtils {
 
 			}
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			//logger.trace(e.getMessage());
 		} finally {
 			try {
-				if (conn != null) {
-					conn.close();
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 				if (fileReader != null) {
 					fileReader.close();
 				}
@@ -726,13 +689,14 @@ public class GlobalUtils {
 					fos.close();
 				}
 			} catch (Exception e) {
-				logger.debug(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+				//logger.trace(e.getMessage());
 			}
 		}
 	}
 
 	public static void storingTableStartingWithTBLAlongwithItsColumnNames() {
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -748,7 +712,7 @@ public class GlobalUtils {
 		try {
 			fos = new PrintWriter(new BufferedWriter(new FileWriter(fileWriterPath)), true);
 
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select Table_Name From User_Tables  " + 
 						"                  Where Table_Name Like 'TBL%'  " + 
 						"                  order by table_name " ;
@@ -771,18 +735,11 @@ public class GlobalUtils {
 				fos.println();
 			}
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			//logger.trace(e.getMessage());
 		} finally {
 			try {
-				if (conn != null) {
-					conn.close();
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 				if (fileReader != null) {
 					fileReader.close();
 				}
@@ -790,7 +747,8 @@ public class GlobalUtils {
 					fos.close();
 				}
 			} catch (Exception e) {
-				logger.debug(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+				//logger.trace(e.getMessage());
 			}
 		}
 		// return null;
@@ -910,9 +868,9 @@ public class GlobalUtils {
 		}
 
 		catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
 				if (schema != null) {
@@ -924,7 +882,7 @@ public class GlobalUtils {
 				}
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 
@@ -951,7 +909,7 @@ public class GlobalUtils {
 			}
 		}
 		output = output + count + "" + lastChar;
-		logger.debug(output);
+		logger.trace(output);
 	}
 
 	public static void seqNoGenerated() {
@@ -961,11 +919,11 @@ public class GlobalUtils {
 			s = "000000".substring(0, 6 - s.length()) + s;
 		}
 		String seqNo = sCode + s;
-		logger.debug(seqNo);
+		logger.trace(seqNo);
 	}
 	
 	public static void getTableDataWhoseRecordCountIsInGivenRange(int recordCount){
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -979,7 +937,7 @@ public class GlobalUtils {
 			//fos = new PrintWriter(new BufferedWriter(new FileWriter(fileWriterPath)), true);
 			
 			/*SQL Query Part*/
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "Select 'SELECT COUNT(*) FROM '||Table_Name,'SELECT * FROM '||Table_Name,TABLE_NAME  From User_Tables  " + 
 					"Where Table_Name Like 'TBL_%' " + 
 					"ORDER BY TABLE_NAME " ;
@@ -996,8 +954,8 @@ public class GlobalUtils {
 				while(rs1.next()){
 					long count = rs1.getLong(1);
 					if(count < recordCount && count > 3){
-						logger.debug(countQuery + " : " + tableQuery);
-						//logger.debug(count);
+						logger.trace(countQuery + " : " + tableQuery);
+						//logger.trace(count);
 						getSQLQueryResultInHTMLFile(tableQuery, tableName);
 					}
 				}
@@ -1005,31 +963,18 @@ public class GlobalUtils {
 			
 		}
 		catch(Exception e){
-			logger.debug(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			//logger.trace(e.getMessage());
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				
-			}
-			catch(Exception e){
-				logger.debug(e.getMessage());
-			}
+			DaoUtility.releaseResources(Arrays.asList(prepStmt,prepStmt1) , Arrays.asList(rs,rs1) , conn);
 		}
 		
 	}
 	
 	public static void getSQLQueryResultInHTMLFile(String sqlQuery, String fileName) {
 
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
@@ -1041,7 +986,7 @@ public class GlobalUtils {
 		try {
 			fos = new PrintWriter(new BufferedWriter(new FileWriter(
 					fileWriterPath)), true);
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			prepStmt = conn.prepareStatement(sqlQuery);
 
 			rs = prepStmt.executeQuery();
@@ -1067,23 +1012,17 @@ public class GlobalUtils {
 			content.append("\t</body>\n" + "</html>\n");
 			fos.println(new String(content));
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			//logger.trace(e.getMessage());
 		} finally {
 			try {
-				if (conn != null) {
-					conn.close();
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 				if (fos != null) {
 					fos.close();
 				}
 			} catch (Exception e) {
-				logger.debug(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+				//logger.trace(e.getMessage());
 			}
 		}
 	
@@ -1188,7 +1127,7 @@ public class GlobalUtils {
 	 * colValue.add(resultSet.getObject(columnName));
 	 * columnNameWithRowValuesMapping.put(columnName, colValue); } } return
 	 * columnNameWithRowValuesMapping; } catch(Exception e){
-	 * logger.debug(e.getMessage()); } return
+	 * logger.trace(e.getMessage()); } return
 	 * columnNameWithRowValuesMapping; }
 	 */
 
@@ -1234,7 +1173,7 @@ public class GlobalUtils {
 		List<Integer> list1 = Arrays.asList(1,2,3,4,5);
 		List<Integer> list2 = Arrays.asList(1,2,3,5);
 		
-		logger.debug(intersection(list1, list2));
+		logger.trace(intersection(list1, list2));
 		
 	}
 

@@ -3,8 +3,9 @@ package com.enercon.admin.util;
 import com.enercon.admin.bean.CreateRoleBean;
 import com.enercon.admin.bean.AdminBean;
 import com.enercon.admin.dao.AdminDao;
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utils.DynaBean;
-import com.enercon.global.utils.JDBCUtils;
 
 import com.enercon.reports.dao.ReportDao;
 //import java.text.SimpleDateFormat;
@@ -24,7 +25,7 @@ import org.apache.log4j.Logger;
  * @Date: 20 May 2007
  */ 
 
-public class AdminUtil {
+public class AdminUtil implements WcareConnector{
     /**
      * For Logging Purpose.
      */
@@ -39,7 +40,8 @@ public class AdminUtil {
             List transList = adminDao.getAuthDetail(roleid);
             return transList;
         } catch (Exception exp) {
-            logger.error("Error in  getting getAllPendingpunch ");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+            /*logger.error("Error in  getting getAllPendingpunch ");*/
             throw exp;
         }
     }
@@ -51,7 +53,8 @@ public class AdminUtil {
 
             retHash = adminDao.getAllUserDao();
         } catch (Exception exp) {
-            logger.error("Error occured while getAllUser");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+            /*logger.error("Error occured while getAllUser");*/
             throw exp;
         }
 
@@ -63,7 +66,8 @@ public class AdminUtil {
             List transList = secDAO.getLoginDetail(fdt,ldt); 
             return transList;
         } catch (Exception exp) {
-            logger.error("Error in  getting transactions for Birth Day ");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+            /*logger.error("Error in  getting transactions for Birth Day ");*/
             throw exp;
         }
     } 
@@ -75,7 +79,7 @@ public class AdminUtil {
           	List transList = adminDAO.searchempbyfilter(empcode,firname,lastname,location,bloodgroup);
             return transList;
         	} catch (Exception exp) {
-            logger.error("Error  ");
+        		logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
             throw exp;
         }
     }
@@ -100,8 +104,8 @@ public class AdminUtil {
     public static String fillLocationMaster(String tablename,String default_selected) throws Exception{
     	StringBuffer buffer = new StringBuffer();
         AdminDao ad = new AdminDao();
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+       // JDBCUtils conmanager = new JDBCUtils();
+        Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         String sqlQuery = ad.getMaster(tablename);
@@ -121,33 +125,11 @@ public class AdminUtil {
         	prepStmt.close();
         }
         catch (Exception exp) {
-        	exp.printStackTrace();
-            if (conn != null) {
-            	conn.close();
-            	conn = null;            	
-                conmanager.closeConnection();
-                conmanager = null;
-                
-            }
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+            
             return ("Insertion Error");
         } finally {
-            try {
-                if (prepStmt != null)
-                    prepStmt.close();
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            } catch (Exception e) {
-
-                prepStmt = null;
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            }
+        	DaoUtility.releaseResources(prepStmt, rs, conn);
         }
         return buffer.toString();
     }
@@ -155,11 +137,13 @@ public class AdminUtil {
     public static String fillMaster(String tablename, String default_selected) throws Exception{
         StringBuffer buffer = new StringBuffer();
         AdminDao ad = new AdminDao();
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+        // JDBCUtils conmanager = new // JDBCUtils();
+        Connection conn =  wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         String sqlQuery = ad.getMaster(tablename);
+//        logger.debug(sqlQuery);
+        DaoUtility.displayQueryWithParameter(230, sqlQuery, null);
         try{
         	prepStmt = conn.prepareStatement(sqlQuery);
         	rs = prepStmt.executeQuery();
@@ -175,42 +159,20 @@ public class AdminUtil {
         	prepStmt.close();
         }
         catch (Exception exp) {
-        	exp.printStackTrace();
-            if (conn != null) {
-            	conn.close();
-            	conn = null;            	
-                conmanager.closeConnection();
-                conmanager = null;
-                
-            }
-            return ("Insertion Error");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+        	return ("Insertion Error");
         } finally {
-            try {
-                if (prepStmt != null)
-                    prepStmt.close();
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            } catch (Exception e) {
-
-                prepStmt = null;
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            }
+        	DaoUtility.releaseResources(prepStmt, rs, conn);
         }
+        logger.debug(buffer.toString());
         return buffer.toString();
     }
     
     public static String fillWhereMaster(String tablename, String default_selected,String uid) throws Exception{
         StringBuffer buffer = new StringBuffer();
         AdminDao ad = new AdminDao();
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+        // JDBCUtils conmanager = new // JDBCUtils();
+        Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         String sqlQuery = ad.getMaster(tablename);
@@ -257,32 +219,10 @@ public class AdminUtil {
         	prepStmt.close();
         }
         catch (Exception exp) {
-        	exp.printStackTrace();
-            if (conn != null) {
-            	conn.close();
-                conmanager.closeConnection();
-                conn = null;
-            }
-            return ("Insertion Error");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+        	 return ("Insertion Error");
         } finally {
-            try {
-                if (prepStmt != null)
-                    prepStmt.close();
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            } catch (Exception e) {
-
-
-                prepStmt = null;
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            }
+        	DaoUtility.releaseResources(prepStmt, rs, conn);    		
         }
         return buffer.toString();
     }
@@ -338,7 +278,8 @@ public class AdminUtil {
 
             retHash = adminDao.getAllRolesDao();
         } catch (Exception exp) {
-            logger.error("Error occured while getAllRoles");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);  		
+           /* logger.error("Error occured while getAllRoles");*/
             throw exp;
         } 
         return retHash;
@@ -353,7 +294,8 @@ public class AdminUtil {
 
             retHash = adminDao.getAllTransactionNamesDao();
         } catch (Exception exp) {
-            logger.error("Error occured while getAllTransactionNames");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);   		
+           /* logger.error("Error occured while getAllTransactionNames");*/
             throw exp;
         }
 
@@ -366,7 +308,8 @@ public class AdminUtil {
             List transList = rd.getWECMasterData(state,area,substation,feeder,site,cust,eb,wec,wectype,comm,userid,comm1,wecStatus);
             return transList;
         } catch (Exception exp) {
-            logger.error("Error in  getting getAllPendingLeaves ");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+            /*logger.error("Error in  getting getAllPendingLeaves ");*/
             throw exp;
         }
     } 
@@ -377,7 +320,8 @@ public class AdminUtil {
             List transList = rd.getCustomerFeedbackData(custname);
             return transList;
         } catch (Exception exp) {
-            logger.error("Error in  getting getAllPendingLeaves ");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+            /*logger.error("Error in  getting getAllPendingLeaves ");*/
             throw exp;
         }
     } 
@@ -388,7 +332,8 @@ public class AdminUtil {
             List transList = rd.getWECShortFall(states,customers,fiscalyear,co);
             return transList;
         } catch (Exception exp) {
-            logger.error("Error in  getting getAllPendingLeaves ");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+            /*logger.error("Error in  getting getAllPendingLeaves ");*/
             throw exp;
         }
     } 
@@ -396,8 +341,8 @@ public class AdminUtil {
     public static String GetDashRight(String tablename,String uid) throws Exception{
         String buffer = new String();
         AdminDao ad = new AdminDao();
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+        // JDBCUtils conmanager = new // JDBCUtils();
+        Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         String sqlQuery = ad.getMaster(tablename);
@@ -415,32 +360,10 @@ public class AdminUtil {
         	prepStmt.close();
         }
         catch (Exception exp) {
-        	exp.printStackTrace();
-            if (conn != null) {
-            	conn.close();
-                conmanager.closeConnection();
-                conn = null;
-            }
-            return ("Insertion Error");
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+        	 return ("Insertion Error");
         } finally {
-            try {
-                if (prepStmt != null)
-                    prepStmt.close();
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            } catch (Exception e) {
-
-
-                prepStmt = null;
-                if (conn != null) {
-                	conn.close();
-                    conmanager.closeConnection();
-                    conn = null;
-                }
-            }
+        	DaoUtility.releaseResources(prepStmt, rs, conn);
         }
         return buffer.toString();
     }
@@ -472,9 +395,9 @@ public class AdminUtil {
             
              msg = adminDao.getMsg(msgid); 
         } catch (Exception exp) {
-            exp.printStackTrace();
-            logger.error("PWC_ENERCON_ERROR: AdminUtils: checkRoleExists: Exception: " + 
-                         exp.toString());
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+           /* logger.error("PWC_ENERCON_ERROR: AdminUtils: checkRoleExists: Exception: " + 
+                         exp.toString());*/
         }
         return msg;
     
@@ -513,9 +436,9 @@ public class AdminUtil {
             AdminDao adminDao = new AdminDao();
             roleExists = adminDao.checkRoleExists(roleName);
         } catch (Exception exp) {
-            exp.printStackTrace();
-            logger.error("PWC_ENERCON_ERROR: AdminUtils: checkRoleExists: Exception: " + 
-                         exp.toString());
+        	logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
+           /* logger.error("PWC_ENERCON_ERROR: AdminUtils: checkRoleExists: Exception: " + 
+                         exp.toString());*/
         }
         return roleExists;
     }
@@ -534,7 +457,8 @@ public class AdminUtil {
     	}
     	catch(Exception e)
     	{
-    		e.printStackTrace();
+    		 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+
     	}
     	return imageDesc;
     }

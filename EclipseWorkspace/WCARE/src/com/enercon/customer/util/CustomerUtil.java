@@ -26,7 +26,7 @@ public class CustomerUtil {
           	List transList = custDAO.getOverallTotal(custid,rdate,RType);
             return transList;
         	} catch (Exception exp) {
-            logger.error("Error  ");
+            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
             throw exp;
         }
     }
@@ -38,7 +38,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getMessage(custid); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -51,7 +51,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getMessageByLogid(custid); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -64,7 +64,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getState(); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -76,7 +76,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getState(wecid,ebid); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -88,7 +88,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getWECType(wectype); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }  
@@ -100,7 +100,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getOverallTotalAdmin(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -113,7 +113,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getCustomerDetail(loginid); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -126,7 +126,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getLoginHistoryDetail(); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -139,7 +139,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getStateTotal(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -152,7 +152,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getSubstationTotal(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -166,7 +166,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getStateTotalByLogid(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -180,7 +180,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getERDADetail(rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }*/
@@ -194,7 +194,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getEBDataDetail(fdate,tdate,site,state,custid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -207,7 +207,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getBillDataDetail(fdate,tdate,site,state,custid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -220,7 +220,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getMailData(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -232,7 +232,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getMailDataCustomer(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -244,7 +244,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getMailDataCLP(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -256,9 +256,9 @@ public class CustomerUtil {
 	           CustomerDao custDAO = new CustomerDao();
 	          	List transList = custDAO.getStateTotalAdmin(custid,rdate,RType);
 	            return transList;
-	        	} catch (Exception exp) {
-	            logger.error("Error  ");
-	            throw exp;
+	        	} catch (Exception e) {
+	        	logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n");
+	            throw e;
 	        }
 	    }
    public List getStateTotalByID(String custid,String rdate,String stateid,String RType) throws Exception {
@@ -269,7 +269,7 @@ public class CustomerUtil {
 	          	List transList = custDAO.getStateTotalByID(custid,rdate,stateid,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -282,7 +282,7 @@ public List getSiteTotal(String custid,String rdate,String stateid,String RType)
 	          	List transList = custDAO.getSiteTotal(custid,rdate,stateid,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -294,7 +294,7 @@ public List getSiteTotalAdmin(String custid,String rdate,String stateid,String R
 	          	List transList = custDAO.getSiteTotalAdmin(custid,rdate,stateid,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -307,7 +307,7 @@ public List getEBHeading(String custid,String rdate,String stateid,String siteid
 	          	List transList = custDAO.getEBHeading(custid,rdate,stateid,siteid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -319,7 +319,7 @@ public List getWECCurtailmentList(String custid,String fromDate,String toDate) t
 	          	List transList = custDAO.getWECCurtailmentList(custid,fromDate,toDate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -331,7 +331,7 @@ public List getNearByWECCurtailmentList(String wecid,String fromDate,String toDa
 	          	List transList = custDAO.getNearByWECCurtailmentList(wecid,fromDate,toDate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -343,7 +343,7 @@ public List getEBHeadingSite(String custid,String rdate,String stateid,String si
 	          	List transList = custDAO.getEBHeadingSite(custid,rdate,stateid,siteid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -356,7 +356,7 @@ public List getEBHeadingState(String custid,String rdate,String stateid) throws 
 	          	List transList = custDAO.getEBHeadingState(custid,rdate,stateid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -368,7 +368,7 @@ public List getEBHeadingTotal(String custid,String rdate) throws Exception {
 	          	List transList = custDAO.getEBHeadingTotal(custid,rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -382,7 +382,7 @@ public List getBillingDetail(String custid,String month,String year,String site,
 	          	List transList = custDAO.getBillingDetail(custid, month, year,site,state);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -395,7 +395,7 @@ public List getEBHeadingSiteWise(String stateid,String siteid) throws Exception 
 	          	List transList = custDAO.getEBHeadingSiteWise(stateid,siteid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -408,7 +408,7 @@ public List getMPRHeading(String stateid,String WEC) throws Exception {
 	          	List transList = custDAO.getMPRHeading(stateid,WEC);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -420,7 +420,7 @@ public List getSubMPRHeading(String stateid,String WEC) throws Exception {
 	          	List transList = custDAO.getSubMPRHeading(stateid,WEC);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -433,7 +433,7 @@ public List getCustMPRHeading(String cid,String stateid,String site) throws Exce
 	          	List transList = custDAO.getCustMPRHeading(cid,stateid,site);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -445,7 +445,7 @@ public List getMPRHeading1(String wecid,String ebid) throws Exception {
 	          	List transList = custDAO.getMPRHeading1(wecid,ebid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -457,7 +457,7 @@ public List getFindWECByEB(String ebid) throws Exception {
 	          	List transList = custDAO.getFindWECByEB(ebid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -469,7 +469,7 @@ public List getSiteMPRHeading(String stateid,String WEC,String siteid) throws Ex
 	          	List transList = custDAO.getSiteMPRHeading(stateid,WEC,siteid); 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -482,7 +482,7 @@ public List getState(String custid,String rdate,String RType) throws Exception {
 	          	List transList = custDAO.getState(custid,rdate,RType);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -495,7 +495,7 @@ public List getSite(String custid,String rdate,String stateid,String RType) thro
       	List transList = custDAO.getSite(custid,rdate,stateid,RType);
         return transList;
     	} catch (Exception exp) {
-        logger.error("Error  ");
+        logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
         throw exp;
     }
 }
@@ -508,7 +508,7 @@ public List getWEC(String custid,String rdate,String siteid,String RType) throws
    	List transList = custDAO.getWEC(custid,rdate,siteid,RType);
      return transList;
  	} catch (Exception exp) {
-     logger.error("Error  ");
+     logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
      throw exp;
  }
 }
@@ -520,7 +520,7 @@ try {
 	List transList = custDAO.getWECDataCum(ebid,rdate);
   return transList;
 	} catch (Exception exp) {
-  logger.error("Error  ");
+  logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
   throw exp;
 }
 }
@@ -533,7 +533,7 @@ CustomerDao custDAO = new CustomerDao();
 	List transList = custDAO.getEBWiseTotalCum(ebid,rdate);
 return transList;
 	} catch (Exception exp) {
-logger.error("Error  ");
+logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 throw exp;
 }
 }
@@ -546,7 +546,7 @@ public List getWECData(String ebid,String rdate,String type) throws Exception {
 	          	List transList = custDAO.getWECData(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -559,7 +559,7 @@ public List getWECDataNew(String ebid,String rdate,String type) throws Exception
 	          	List transList = custDAO.getWECDataNew(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -572,7 +572,7 @@ public List getWECDataUpload(String ebid,String rdate,String type) throws Except
 	          	List transList = custDAO.getWECDataUpload(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -585,7 +585,7 @@ public List getWECDataAdmin(String ebid,String rdate,String type) throws Excepti
 	          	List transList = custDAO.getWECDataAdmin(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -598,7 +598,7 @@ public List getFeedbackReport() throws Exception {
 	          	List transList = custDAO.getFeedbackReport();
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -611,7 +611,7 @@ public List getWECDataCompare(String wecid,String rdate,String type) throws Exce
 	          	List transList = custDAO.getWECDataCompare(wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -623,7 +623,7 @@ public List getCompareData(String ebid,String rdate,String type) throws Exceptio
 	          	List transList = custDAO.getCompareData(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -638,7 +638,7 @@ public List getCompareWECData(String ebid,String wecid,String rdate,String type)
 	          	List transList = custDAO.getCompareWECData(ebid,wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    } 
@@ -651,7 +651,7 @@ public List getCustomerDetail(String custid,String stateid,String siteid) throws
 	          	List transList = custDAO.getCustomerDetail(custid,stateid,siteid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    } 
@@ -665,7 +665,7 @@ public List getWECDateWise(String ebid,String rdate) throws Exception {
 	          	List transList = custDAO.getWECDateWise(ebid,rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -678,7 +678,7 @@ public List getWECDetail(String ebid,String wecid,String rdate,String type) thro
 	          	List transList = custDAO.getWECDetail(ebid,wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -691,7 +691,7 @@ public List getWECDetailAdmin(String ebid,String wecid,String rdate,String type)
 	          	List transList = custDAO.getWECDetailAdmin(ebid,wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -703,7 +703,7 @@ public List getStateWiseDash(String stateid, String fdate, String tdate)  throws
 	          	List transList = custDAO.getStateWiseDash(stateid,fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -715,7 +715,7 @@ public List getStateWiseDashAvg(String stateid, String fdate, String tdate)  thr
 	          	List transList = custDAO.getStateWiseDashAvg(stateid,fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -729,7 +729,7 @@ public List getStateWiseAverage(String fdate, String tdate)  throws Exception {
 	          	List transList = custDAO.getStateWiseAverage(fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -742,7 +742,7 @@ public List getSiteWiseAverage(String id,String fdate, String tdate)  throws Exc
 	          	List transList = custDAO.getSiteWiseAverage(id,fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -754,7 +754,7 @@ public List getSiteWiseAverageGeneration(String id,String fdate, String tdate)  
 	          	List transList = custDAO.getSiteWiseAverageGeneration(id,fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -766,7 +766,7 @@ public List getWECTypeWiseAverageGeneration(String id,String fdate, String tdate
 	          	List transList = custDAO.getWECTypeWiseAverageGeneration(id,fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -778,7 +778,7 @@ public List getWECTypeWiseAverageGenerationAvg(String id,String fdate, String td
 	          	List transList = custDAO.getWECTypeWiseAverageGenerationAvg(id,fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -790,7 +790,7 @@ public List getSiteWiseAverageGenerationAvg(String id,String fdate, String tdate
 	          	List transList = custDAO.getSiteWiseAverageGenerationAvg(id,fdate,tdate) ; 
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -802,7 +802,7 @@ public List getMPRDetailAdmin(String siteid,String customerid,String fdate,Strin
 	          	List transList = custDAO.getMPRDetailAdmin(siteid,customerid,fdate,tdate,wectype);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -814,7 +814,7 @@ public List getSubMPRDetailAdmin(String siteid,String customerid,String fdate,St
 	          	List transList = custDAO.getSubMPRDetailAdmin(siteid,customerid,fdate,tdate,wectype);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -827,7 +827,7 @@ public List getCpmDetailAdmin(String siteid,String customerid,String fdate,Strin
 	          	List transList = custDAO.getCpmDetailAdmin(siteid,customerid,fdate,wectype,type);  
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -840,7 +840,7 @@ public List getQueryDetail(String userid,String type) throws Exception {
 	          	List transList = custDAO.getQueryDetail(userid,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -853,7 +853,7 @@ public List getMPRSerachByWec(String siteid,String customerid,String fdate,Strin
 	          	List transList = custDAO.getMPRSerachByWec(siteid,customerid,fdate,tdate,wectype,wecid,ebid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -865,7 +865,7 @@ public List getMPRSerachByWecTotal(String siteid,String customerid,String fdate,
 	          	List transList = custDAO.getMPRSerachByWecTotal(siteid,customerid,fdate,tdate,wectype,wecid,ebid);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -877,7 +877,7 @@ public List getFilterDetail(String stateid,String siteid,String fdate,String tda
 	          	List transList = custDAO.getFilterDetail(stateid,siteid,fdate,tdate,wectype,fobject,ftype,firstparam,secparam,ebobject);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -891,7 +891,7 @@ public List getWecSelectedListDetail(String weclist,String fdate,String tdate,St
 	          	List transList = custDAO.getWecSelectedListDetail(weclist,fdate,tdate,ptype);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -903,7 +903,7 @@ public List getEBSelectDetail(String weclist,String fdate,String tdate,String pt
 	          	List transList = custDAO.getEBSelectDetail(weclist,fdate,tdate,ptype);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -915,7 +915,7 @@ public List getEBSelectedListDetail(String weclist,String fdate,String tdate) th
 	          	List transList = custDAO.getEBSelectedListDetail(weclist,fdate,tdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -927,7 +927,7 @@ public List getCustFilterDetail(String fdate,String tdate,String fobject,String 
 	          	List transList = custDAO.getCustFilterDetail(fdate,tdate,fobject,ftype,firstparam,secparam,userid,ebobject);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -940,7 +940,7 @@ public List getMPRDetailAdminTotal(String siteid,String customerid,String fdate,
 	          	List transList = custDAO.getMPRDetailAdminTotal(siteid,customerid,fdate,tdate,wectype);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -952,7 +952,7 @@ public List getCMPDetailAdminTotal(String siteid,String customerid,String fdate,
 	          	List transList = custDAO.getCMPDetailAdminTotal(siteid,customerid,fdate,wectype,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -964,7 +964,7 @@ public List getWECMonthwise(String ebid,String wecid,String rdate,String type) t
 	          	List transList = custDAO.getWECMonthwise(ebid,wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -976,7 +976,7 @@ public List getWECSitewise(String siteid,String stateid,String custid,String rda
 	          	List transList = custDAO.getWECSitewise(siteid,stateid,custid,rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -988,7 +988,7 @@ public List getWECStatewise(String stateid,String custid,String rdate) throws Ex
 	          	List transList = custDAO.getWECStatewise(stateid,custid,rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1000,7 +1000,7 @@ public List getWECMonthwiseAdmin(String ebid,String wecid,String rdate,String ty
 	          	List transList = custDAO.getWECMonthwiseAdmin(ebid,wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1013,7 +1013,7 @@ public List getWECDetailTotal(String ebid,String wecid,String rdate,String type)
 	          	List transList = custDAO.getWECDetailTotal(ebid,wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1026,7 +1026,7 @@ public List getWECDetailTotalAdmin(String ebid,String wecid,String rdate,String 
 	          	List transList = custDAO.getWECDetailTotalAdmin(ebid,wecid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1038,7 +1038,7 @@ public List getEBData(String ebid,String rdate,String type) throws Exception {
 	          	List transList = custDAO.getEBData(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    } 
@@ -1050,7 +1050,7 @@ public List getEBDataCum(String ebid,String rdate) throws Exception {
 	          	List transList = custDAO.getEBDataCum(ebid,rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    } 
@@ -1062,7 +1062,7 @@ public List getEBWiseTotal(String ebid,String rdate,String type) throws Exceptio
 	          	List transList = custDAO.getEBWiseTotal(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1074,7 +1074,7 @@ public List getSiteWiseTotal(String siteid,String custid,String rdate,String typ
 	          	List transList = custDAO.getSiteWiseTotal(siteid,custid,rdate,type); 
 	            return transList; 
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1087,7 +1087,7 @@ public List getStateWiseTotal(String stateid,String custid,String rdate,String t
 	          	List transList = custDAO.getStateWiseTotal(stateid,custid,rdate,type); 
 	            return transList; 
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1102,7 +1102,7 @@ public List getUploadStatus(String userid,String rdate) throws Exception {
 //	          	System.out.println(watch.getElapsedTimeInSeconds());
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1115,7 +1115,7 @@ public List getStateSiteUploadStatus(String userid,String rdate) throws Exceptio
 	          	List transList = custDAO.getStateSiteUploadStatus(userid,rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1128,7 +1128,7 @@ public List getEmployeeEmailList() throws Exception {
 	          	List transList = custDAO.getEmployeeEmailList();
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1140,7 +1140,7 @@ public List getEBWiseTotalAdmin(String ebid,String rdate,String type) throws Exc
 	          	List transList = custDAO.getEBWiseTotalAdmin(ebid,rdate,type);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1152,7 +1152,7 @@ public List getCustList() throws Exception {
 	          	List transList = custDAO.getCustList();
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1165,7 +1165,7 @@ public String getCustemail(String userid) throws Exception {
 	           String email = custDAO.getCustemail(userid);
 	            return email;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1177,7 +1177,7 @@ public String getEBRemarks(String ebid,String readdate) throws Exception {
 	           String email = custDAO.getEBRemarks(ebid,readdate);
 	            return email;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1192,7 +1192,7 @@ public List getCustList(String Userid) throws Exception {
 	            return transList;
 	            
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1207,7 +1207,7 @@ public List getSiteList(String Userid) throws Exception {
 	            return transList;
 	            
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1221,7 +1221,7 @@ public List getStateList(String Userid) throws Exception {
 	            return transList;
 	            
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1237,7 +1237,7 @@ public List getWecTypeList(String Userid) throws Exception {
 	            return transList;
 	            
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1254,7 +1254,7 @@ public List getIPAddress(String Userid,String rdate) throws Exception {
 	            return transList;
 	            
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1266,7 +1266,7 @@ public List getERDADetail1(String rdate) throws Exception {
 	          	List transList = custDAO.getERDADetail(rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1279,7 +1279,7 @@ public List getERDAWECWiseDetail(String custid, String stateid,String rdate) thr
 	          	List transList = custDAO.getERDAWECWiseDetail(custid,stateid,rdate);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1291,7 +1291,7 @@ public List getInitialYearGen(String custid,String fdate, String tdate, String t
 	          	List transList = custDAO.getInitialYearGen(custid,fdate,tdate,type,rtype);
 	            return transList;
 	        	} catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1302,7 +1302,7 @@ public List getInitialYearGen(String custid,String fdate, String tdate, String t
 	        List transList = custDAO.getInitialYearDailyGen(custid,fdate,tdate,type,rtype);
 	        return transList;
 	        } catch (Exception exp) {
-	            logger.error("Error  ");
+	            logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	            throw exp;
 	        }
 	    }
@@ -1313,7 +1313,7 @@ public List getInitialYearGen(String custid,String fdate, String tdate, String t
 		 	ttlUnpublishedData = custDAO.getTotalUnpublishedData(ardate);
 		 
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return ttlUnpublishedData;
 	}
@@ -1324,7 +1324,7 @@ public List getInitialYearGen(String custid,String fdate, String tdate, String t
 	      	List transList = custDAO.getMissingScadaDataReport1(stateName,areaName,siteName,reportDate);
 	        return transList;
 	    	} catch (Exception exp) {
-	        logger.error("Error  ");
+	        logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	        throw exp;
 	    }
 	}
@@ -1335,7 +1335,7 @@ public List getInitialYearGen(String custid,String fdate, String tdate, String t
 	      	List transList = custDAO.getMissingScadaDataReport(stateName,areaName,siteName,reportDate);
 	        return transList;
 	    	} catch (Exception exp) {
-	        logger.error("Error  ");
+	        logger.error("\nClass: " + exp.getClass() + "\nMessage: " + exp.getMessage() + "\n", exp);
 	        throw exp;
 	    }
 	}

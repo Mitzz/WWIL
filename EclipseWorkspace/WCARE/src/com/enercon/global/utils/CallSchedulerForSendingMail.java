@@ -9,26 +9,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.NumberUtility;
 import com.enercon.model.DataVo;
-import com.enercon.model.report.IWecParameterVo;
+import com.enercon.model.graph.IStateMasterVo;
+import com.enercon.model.graph.IWecMasterVo;
+import com.enercon.model.parameter.wec.IWecParameterVo;
 import com.enercon.reports.pojo.GenerationReport;
 
 
 public class CallSchedulerForSendingMail{
+	
+	private final static Logger logger = Logger.getLogger(CallSchedulerForSendingMail.class);
+	
 	private SendMail sm = new SendMail();
 	private String blankSpace = "&nbsp;";
-//	private final String[] receiverEmailIDsForGenerationReport = {"Generation.Report@windworldindia.com"};
-	private static final String[] receiverEmailIDsForGenerationReport = {"mithul.bhansali@windworldindia.com"};
+	private final String[] receiverEmailIDsForGenerationReport = {"Generation.Report@windworldindia.com"};
+//	private static final String[] receiverEmailIDsForGenerationReport = {"mithul.bhansali@windworldindia.com"};
 	
-//	private static final String[] receiverEmailIDsForIppGroup= {"Ipp.Report@windworldindia.com"};
-	private static final String[] receiverEmailIDsForIppGroup= {"mithul.bhansali@windworldindia.com"};
+	private static final String[] receiverEmailIDsForIppGroup= {"Ipp.Report@windworldindia.com"};
+//	private static final String[] receiverEmailIDsForIppGroup= {"mithul.bhansali@windworldindia.com"};
 
 	private final String senderEmailID = "WindWorldCare@windworldindia.com";
 	
@@ -82,8 +86,10 @@ public class CallSchedulerForSendingMail{
 				"	<tr style='font-family:arial;font-size:12px;color:#000000';'> " +
 				"		<td colspan='3' align='center'>&nbsp;</td> " +
 				"		<td colspan='8' align='center'><b>Daily</b></td> " +
-				"		<td colspan='1' align='center' style='font-family:arial;font-size:11px;color:#000000';'><b>FY:2014-15</b></td> " +
-				"		<td colspan='4' align='center' style='font-family:arial;font-size:11px;color:#000000';'><b>Cummulative FY:2015-16</b></td> " +
+				/*"		<td colspan='1' align='center' style='font-family:arial;font-size:11px;color:#000000';'><b>FY:2014-15</b></td> " +*/
+				"		<td colspan='1' align='center' style='font-family:arial;font-size:11px;color:#000000';'><b>FY:2015-16</b></td> " +
+				/*"		<td colspan='4' align='center' style='font-family:arial;font-size:11px;color:#000000';'><b>Cummulative FY:2015-16</b></td> " +*/
+				"		<td colspan='4' align='center' style='font-family:arial;font-size:11px;color:#000000';'><b>Cummulative FY:2016-17</b></td> " +
 				"	</tr> " +
 				"	<tr  bgcolor='#BBB87E' style='font-family:arial;font-size:12px;color:#000000';font-weight: bold;'> " +
 				"		<td colspan='1' align='center'><b>SN</b></td> " +
@@ -115,7 +121,7 @@ public class CallSchedulerForSendingMail{
 			try {
 				generationReport.initialiseForIpp(reportDate);
 				
-				overallWecCount += generationReport.getWecIds().size();
+				overallWecCount += generationReport.getWecs().size();
 //				overallCurrentFiscalGeneration += grandTotal.getGrandCumulativeGenerationTotalForCurrentFiscalYear();
 				overallCurrentFiscalGeneration += generationReport.getCurrentFYTotal().generation();
 //				overallPreviousFiscalGeneration += grandTotal.getGrandCumulativeGenerationTotalForPreviousFiscalYear();
@@ -123,16 +129,16 @@ public class CallSchedulerForSendingMail{
 //				overallPreviousFiscalGeneration += grandTotal.get
 				
 			} catch (ParseException e1) {
-				e1.printStackTrace();
+				logger.error("\nClass: " + e1.getClass() + "\nMessage: " + e1.getMessage() + "\n", e1);
 			} catch (SQLException e1) {
-				e1.printStackTrace();
+				logger.error("\nClass: " + e1.getClass() + "\nMessage: " + e1.getMessage() + "\n", e1);
 			}
 			try {
 				htmlMessage.append(sendMailForIppGroup(new ArrayList<GenerationReport>(Arrays.asList(generationReport))));
 			} catch (SQLException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 			System.out.println("Ge " + i + " e");
 		}
@@ -220,34 +226,34 @@ public class CallSchedulerForSendingMail{
 					"		<td colspan='1' align='center' bgcolor='#DAA520'><b> Revenue Loss Due To LR(Rs In Lacs)</b></td> " +
 					"	</tr> ") ;*/
 			
-			Map<String, IWecParameterVo> dailyDate = generationReport.getStateWiseReportDateWecParameterVo();
-			Map<String, IWecParameterVo> currentFiscalYearData = generationReport.getStateWiseCurrentFiscalYearWecParameterVo();
-			Map<String, IWecParameterVo> previousFiscalYearData = generationReport.getStateWisePreviousFiscalYearWecParameterVo();
+			Map<IStateMasterVo, IWecParameterVo> dailyDate = generationReport.getStateWiseReportDateWecParameterVo();
+			Map<IStateMasterVo, IWecParameterVo> currentFiscalYearData = generationReport.getStateWiseCurrentFiscalYearWecParameterVo();
+			Map<IStateMasterVo, IWecParameterVo> previousFiscalYearData = generationReport.getStateWisePreviousFiscalYearWecParameterVo();
 			int srNo = 0;
-			for (String stateName : generationReport.getStateWiseReportDateWecParameterVo().keySet()) {
+			for (IStateMasterVo state : generationReport.getStateWiseReportDateWecParameterVo().keySet()) {
 				
-				long size = dailyDate.get(stateName).size();
-				long generation = dailyDate.get(stateName).generation();
+				long size = dailyDate.get(state).size();
+				long generation = dailyDate.get(state).generation();
 				long averageGeneration = generation/size;
 				
-				double revenue = NumberUtility.round(dailyDate.get(stateName).revenue()/100000.0, 2);
-				double fmLoss = NumberUtility.round(dailyDate.get(stateName).fmLoss(), 0);
-				double lrLoss = NumberUtility.round(dailyDate.get(stateName).lrLoss(), 0);
-				double cf = dailyDate.get(stateName).cf();
-				double ma = dailyDate.get(stateName).ma();
-				double ga = dailyDate.get(stateName).ga();
+				double revenue = NumberUtility.round(dailyDate.get(state).revenue()/100000.0, 2);
+				double fmLoss = NumberUtility.round(dailyDate.get(state).fmLoss(), 0);
+				double lrLoss = NumberUtility.round(dailyDate.get(state).lrLoss(), 0);
+				double cf = dailyDate.get(state).cf();
+				double ma = dailyDate.get(state).ma();
+				double ga = dailyDate.get(state).ga();
 				
-				long previousFYGeneration = previousFiscalYearData.get(stateName).generation()/1000;
+				long previousFYGeneration = previousFiscalYearData.get(state).generation()/1000;
 				
-				long currentFYGeneration = currentFiscalYearData.get(stateName).generation()/1000;
-				double currentFYRevenue = NumberUtility.round(currentFiscalYearData.get(stateName).revenue()/100000.0, 2);
-				double currentFYFmLoss = NumberUtility.round(currentFiscalYearData.get(stateName).fmLoss()/100000.0, 2);
-				double currentFYLrLoss = NumberUtility.round(currentFiscalYearData.get(stateName).lrLoss()/100000.0, 2);
+				long currentFYGeneration = currentFiscalYearData.get(state).generation()/1000;
+				double currentFYRevenue = NumberUtility.round(currentFiscalYearData.get(state).revenue()/100000.0, 2);
+				double currentFYFmLoss = NumberUtility.round(currentFiscalYearData.get(state).fmLoss()/100000.0, 2);
+				double currentFYLrLoss = NumberUtility.round(currentFiscalYearData.get(state).lrLoss()/100000.0, 2);
 				
 				htmlMessage.append( 
 						"	<tr style='font-family:arial;font-size:12px;color:#000000';font-weight: bold;'> " +
 						"		<td colspan='1' align='center'>" + (++srNo) + "</td> " +
-						"		<td colspan='1'>" + stateName + "</td> " +
+						"		<td colspan='1'>" + state.getName() + "</td> " +
 						"		<td colspan='1' align='center'>" + size + "</td> " +
 						"		<td colspan='1' align='center'>" + averageGeneration + "</td> " +
 						"		<td colspan='1' align='center'>" + generation + "</td> " +
@@ -268,7 +274,7 @@ public class CallSchedulerForSendingMail{
 				htmlMessage.append( 
 						"	<tr bgcolor='#BBB87E' style='font-family:arial;font-size:12px;color:#000000';font-weight: bold;'> " +
 						"		<td colspan='2' align='center'>Total</td> " +
-						"		<td colspan='1' align='center'>" + generationReport.getWecIds().size() + "</td> " +
+						"		<td colspan='1' align='center'>" + generationReport.getWecs().size() + "</td> " +
 						"		<td colspan='2' align='center'>" + blankSpace + "</td> " +
 						"		<td colspan='1' align='center'>" + NumberUtility.round(generationReport.getReportDateTotal().revenue()/100000.0, 2) + "</td> " +
 						"		<td colspan='1' align='center' bgcolor='#DAA520'>" + NumberUtility.round(generationReport.getReportDateTotal().fmLoss(), 0) + "</td> " +
@@ -302,39 +308,38 @@ public class CallSchedulerForSendingMail{
 		
 		ApplicationContext ac = new ClassPathXmlApplicationContext("com/enercon/spring/bean/bean-config.xml");
 		
+//		for(int i = 7; i <= 7; i++ ){
 		for(int i = 1; i <= 7; i++ ){
-			System.out.println("Ge " + i);
+			logger.warn("Ge " + i);
 			GenerationReport gr = (GenerationReport) ac.getBean("generationReport" + i);
 			try {
 				gr.initialise(reportDate);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 			
 			try {
 				sendMail(new ArrayList<GenerationReport>(Arrays.asList(gr)));
 			} catch (SQLException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
-			System.out.println("Ge " + i + " end");
+			logger.warn("Ge " + i + " end");
 		}
 		
 		((ClassPathXmlApplicationContext)ac).close();
 	}
 	
-	
-
 	public void sendMail(List<GenerationReport> generationReports) throws SQLException, Exception {
 		StringBuffer htmlMessage = new StringBuffer();
 		
 		for (GenerationReport gr : generationReports) {
-			System.out.println("Start::" + gr.getCustomerFullName());
+			//System.out.println("Start::" + gr.getCustomerFullName());
 			int srNo = 0;
-			Set<String> wecIds = gr.getWecIds();
+			List<IWecMasterVo> wecs = gr.getWecs();
 			
 			htmlMessage.append( 
 							" <html> " +
@@ -387,8 +392,8 @@ public class CallSchedulerForSendingMail{
 							"             <tr class='common normal-data'> " +
 							"                 <td colspan='3'>&nbsp;</td> " +
 							"                 <td colspan='8'>Daily</td> " +
-							"                 <td>FY:2014-15</td> " +
-							"                 <td colspan='4'>Cummulative FY:2015-16</td> " +
+							"                 <td>FY:2015-16</td> " +
+							"                 <td colspan='4'>Cummulative FY:2016-17</td> " +
 							"             </tr> " +
 							"             <tr bgcolor='#BBB87E' class='common normal-data'> " +
 							"                 <td><b>SN</b></td> " +
@@ -409,12 +414,10 @@ public class CallSchedulerForSendingMail{
 							"                 <td class='loss-data'><b> Revenue Loss Due To LR(Rs In Lacs)</b></td> " +
 							"             </tr> ") ;
 			
-			System.out.println("---------------------------------");
-			Map<String, IWecParameterVo> dailyDate = gr.getStateWiseReportDateWecParameterVo();
-			Map<String, IWecParameterVo> currentFiscalYearData = gr.getStateWiseCurrentFiscalYearWecParameterVo();
-			Map<String, IWecParameterVo> previousFiscalYearData = gr.getStateWisePreviousFiscalYearWecParameterVo();
-			
-			long totalSize = wecIds.size();
+			//System.out.println("---------------------------------");
+			Map<IStateMasterVo, IWecParameterVo> dailyDate = gr.getStateWiseReportDateWecParameterVo();
+			Map<IStateMasterVo, IWecParameterVo> currentFiscalYearData = gr.getStateWiseCurrentFiscalYearWecParameterVo();
+			Map<IStateMasterVo, IWecParameterVo> previousFiscalYearData = gr.getStateWisePreviousFiscalYearWecParameterVo();
 			
 			double totalRevenue = NumberUtility.round(gr.getReportDateTotal().revenue()/100000.0, 2);
 			double totalFmLoss = NumberUtility.round(gr.getReportDateTotal().fmLoss(), 2);
@@ -425,31 +428,31 @@ public class CallSchedulerForSendingMail{
 			double fyTotalLrLoss = NumberUtility.round(gr.getCurrentFYTotal().lrLoss()/100000.0, 2);
 			
 			srNo = 0;
-			for(String stateName: dailyDate.keySet()){
+			for(IStateMasterVo state: dailyDate.keySet()){
 				
-				long size = dailyDate.get(stateName).size();
-				long generation = dailyDate.get(stateName).generation();
+				long size = dailyDate.get(state).size();
+				long generation = dailyDate.get(state).generation();
 				long averageGeneration = generation/size;
-				double revenue = NumberUtility.round(dailyDate.get(stateName).revenue()/100000.0, 2);
-				double fmLoss = dailyDate.get(stateName).fmLoss();
-				double lrLoss = dailyDate.get(stateName).lrLoss();
-				double cf = dailyDate.get(stateName).cf();
-				double ma = dailyDate.get(stateName).ma();
-				double ga = dailyDate.get(stateName).ga();
+				double revenue = NumberUtility.round(dailyDate.get(state).revenue()/100000.0, 2);
+				double fmLoss = dailyDate.get(state).fmLoss();
+				double lrLoss = dailyDate.get(state).lrLoss();
+				double cf = dailyDate.get(state).cf();
+				double ma = dailyDate.get(state).ma();
+				double ga = dailyDate.get(state).ga();
 				
-				long previousFYGeneration = previousFiscalYearData.get(stateName).generation()/1000;
+				long previousFYGeneration = previousFiscalYearData.get(state).generation()/1000;
 				
-				long currentFYGeneration = currentFiscalYearData.get(stateName).generation()/1000;
-				double currentFYRevenue = NumberUtility.round(currentFiscalYearData.get(stateName).revenue()/100000.0, 2);
-				double currentFYFmLoss = NumberUtility.round(currentFiscalYearData.get(stateName).fmLoss()/100000.0, 2);
-				double currentFYLrLoss = NumberUtility.round(currentFiscalYearData.get(stateName).lrLoss()/100000.0, 2);
+				long currentFYGeneration = currentFiscalYearData.get(state).generation()/1000;
+				double currentFYRevenue = NumberUtility.round(currentFiscalYearData.get(state).revenue()/100000.0, 2);
+				double currentFYFmLoss = NumberUtility.round(currentFiscalYearData.get(state).fmLoss()/100000.0, 2);
+				double currentFYLrLoss = NumberUtility.round(currentFiscalYearData.get(state).lrLoss()/100000.0, 2);
 				
 //				System.out.println(stateName + ":" + size + ":" + averageGeneration + ":" + generation + ":" + revenue + ":" + fmLoss + ":" + lrLoss + ":" + cf + ":" + ma + ":" + ga + ":" + previousFYGeneration + ":" + currentFYGeneration + ":" + currentFYRevenue + ":" + currentFYFmLoss + ":" + currentFYLrLoss);
 				
 				htmlMessage.append( 
 								" 			<tr class='common normal-data'> " +
 								"                 <td> " + (++srNo)+ "</td> " +
-								"                 <td>" + stateName + "</td> " +
+								"                 <td>" + state.getName() + "</td> " +
 								"                 <td>" + size + "</td> " +
 								"                 <td>" + averageGeneration + "</td> " +
 								"                 <td>" + generation + "</td> " +
@@ -470,7 +473,7 @@ public class CallSchedulerForSendingMail{
 			htmlMessage.append( 
 							" <tr bgcolor='#BBB87E' class='common normal-data'> " +
 							"                 <td colspan='2' >Total</td> " +
-							"                 <td>" + wecIds.size() + "</td> " +
+							"                 <td>" + wecs.size() + "</td> " +
 							"                 <td colspan='2' >&nbsp;</td> " +
 							"                 <td>" + totalRevenue + "</td> " +
 							"                 <td class='loss-data'>" + totalFmLoss + "</td> " +
@@ -577,8 +580,8 @@ public class CallSchedulerForSendingMail{
 								"             </tr> ") ;
 			}
 			htmlMessage.append( "</table> </body> " + " </html> ");
-			System.out.println(htmlMessage);
-			System.out.println("End::" + gr.getCustomerFullName());
+			//System.out.println(htmlMessage);
+			//System.out.println("End::" + gr.getCustomerFullName());
 	
 			for (int i = 0; i < receiverEmailIDsForGenerationReport.length; i++) {
 				new SendMail().sendMail(receiverEmailIDsForGenerationReport[i],senderEmailID,"Generation Report Of " + gr.getCustomerShortName() + " for the Date - " + gr.getReportDate(), new String(htmlMessage));

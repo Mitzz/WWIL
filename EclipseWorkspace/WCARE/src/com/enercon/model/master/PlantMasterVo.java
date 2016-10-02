@@ -15,34 +15,43 @@ public class PlantMasterVo {
 		return serialNo;
 	}
 
-	public void setSerialNo(String serialNo) {
+	public PlantMasterVo setSerialNo(String serialNo) {
 		this.serialNo = serialNo;
+		return this;
 	}
 
 	public String getLocationNo() {
 		return locationNo;
 	}
 
-	public void setLocationNo(String locationNo) {
+	public PlantMasterVo setLocationNo(String locationNo) {
 		this.locationNo = locationNo;
+		return this;
 	}
 
 	public String getPlantNo() {
 		return plantNo;
 	}
 
-	public void setPlantNo(String plantNo) {
+	public PlantMasterVo setPlantNo(String plantNo) {
 		this.plantNo = plantNo;
+		return this;
 	}
 
 	public WecMasterVo getWec() {
 		return wec;
 	}
 
-	public void setWec(WecMasterVo wec) {
+	public PlantMasterVo setWec(WecMasterVo wec) {
 		wec.setPlant(this);
 		this.wec = wec;
+		return this;
 	}
 
+	@Override
+	public String toString() {
+		return "PlantMasterVo [locationNo=" + locationNo + ", plantNo="
+				+ plantNo + "]";
+	}
 	
 }

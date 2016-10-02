@@ -4,9 +4,13 @@
 
 <%@taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <%@page import="java.sql.*" %>
-<%@page import="com.enercon.global.utils.JDBCUtils"%>
+<%@page import="com.enercon.connection.WcareConnector"%>
+<%@page import="com.enercon.dao.DaoUtility" %>
 <%@page import="com.enercon.admin.dao.AdminSQLC"%>
 <%@page import="java.text.*"%>
+<%@page import="org.apache.log4j.Logger"%>
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%! private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
 <html>
 	<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -55,9 +59,15 @@
 					<td colspan="3">
 						<table>
 							<%
-JDBCUtils conmanager = new JDBCUtils();
+							
+      /* JDBCUtils conmanager = new JDBCUtils(); */
+	Connection conn = null;
+	PreparedStatement prepStmt = null;
+	ResultSet rs = null;
+	
 try {
-	Connection conn = conmanager.getConnection();
+	
+	 conn = WcareConnector.wcareConnector.getConnectionFromPool();
 	// Statement st = conn.createStatement();
 	Format dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	// List tranList = new ArrayList();
@@ -65,8 +75,8 @@ try {
 	String sqlQuery1 = AdminSQLC.CHECK_BLOCKED_MAIL;
 	/* "SELECT D_SEND_DATE  " +
 	"FROM TBL_SEND_MAIL WHERE S_SEND_TYPE='blockedScheduledMail'"; */
-	PreparedStatement prepStmt = conn.prepareStatement(sqlQuery1);
-	ResultSet rs = prepStmt.executeQuery();
+	 prepStmt = conn.prepareStatement(sqlQuery1);
+	 rs = prepStmt.executeQuery();
 	int i=0;
 	String cls = "TableRow1";
 	while (rs.next()) {
@@ -98,7 +108,9 @@ try {
 	}
 }
 catch(Exception e){
-	e.printStackTrace();
+	logger.error("Admin/BlockScheduler:" +  "\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);	
+}finally{
+	DaoUtility.releaseResources(prepStmt, rs, conn);
 }
 							%>
 						</table>

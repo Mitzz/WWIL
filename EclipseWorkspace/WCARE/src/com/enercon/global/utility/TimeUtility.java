@@ -1,7 +1,9 @@
 package com.enercon.global.utility;
 
+import org.apache.log4j.Logger;
+
 public class TimeUtility {
-	
+	 private final static Logger logger = Logger.getLogger(TimeUtility.class);
 	public static void main(String[] args) {
 		System.out.println(convertTimeStringToMinutes("4", "."));
 	}
@@ -63,7 +65,7 @@ public class TimeUtility {
 				totalTimeInMinutes = Integer.parseInt(str) * 60;
 			}
 		}catch(Exception e){
-			System.out.println("E");
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return totalTimeInMinutes;
 	}
@@ -109,7 +111,7 @@ public class TimeUtility {
 				totalTimeInMinutes = Long.parseLong(str) * 60;
 			}
 		}catch(Exception e){
-			System.out.println("E");
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return totalTimeInMinutes;
 	}

@@ -2,15 +2,20 @@ package com.enercon.global.utility;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class HttpURLConnectionExample {
+import org.apache.log4j.Logger;
 
+public class HttpURLConnectionExample {
+	private final static Logger logger = Logger.getLogger(HttpURLConnectionExample.class);
+	
 	private final String USER_AGENT = "Mozilla/5.0";
 	private String url;
 	private Map<String, String> requestParams;
@@ -20,36 +25,35 @@ public class HttpURLConnectionExample {
 		this.requestParams = requestParams;
 	}
 
-	public String sendRequest() throws Exception {
-
+	public String sendRequest() {
 		String urlParameters = new String("");
 		
 		for (String paramName : requestParams.keySet()) {
 			urlParameters += urlParameters + paramName + "=" + requestParams.get(paramName) + "&";
 		}
-		System.out.println(urlParameters);
-		URL obj = new URL(url + "?" + urlParameters);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// optional default is GET
-		con.setRequestMethod("GET");
-
-		//add request header
-		con.setRequestProperty("User-Agent", USER_AGENT);
-
-		int responseCode = con.getResponseCode();
-//		System.out.println("\nSending 'GET' request to URL : " + url);
-//		System.out.println("Response Code : " + responseCode);
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		logger.debug(urlParameters);
+		URL obj = null;
+		HttpURLConnection con = null;
+		BufferedReader in = null;
 		String inputLine;
 		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
+		try {
+			obj = new URL(url + "?" + urlParameters);
+			con = (HttpURLConnection) obj.openConnection();
+			con.setRequestProperty("User-Agent", USER_AGENT);
+			con.setRequestMethod("GET");
+			int responseCode = con.getResponseCode();
+			in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+		} catch (MalformedURLException e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		} catch (IOException e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
-		in.close();
-
+		
 		return response.toString();
 		
 

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -17,7 +18,8 @@ import com.enercon.reports.pojo.OverAllMGSAvailibilityVo;
 import com.enercon.struts.form.AreaWiseMGSAvailabilityReportForm;
 
 public class AreaWiseMGSAvailabilityReportAction extends Action {
-
+	
+	private final static Logger logger = Logger.getLogger(AreaWiseMGSAvailabilityReportAction.class);
 	
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response){
@@ -33,7 +35,7 @@ public class AreaWiseMGSAvailabilityReportAction extends Action {
 		try {	
 			overAllVo.addAll(ReportDao.getAreaWiseMGSAvailabilityBetweenDays(reportForm.getAreaSelected(), fromDate, toDate));
 		} catch(Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		request.setAttribute("fromDate", fromDate);
 		request.setAttribute("toDate", toDate);

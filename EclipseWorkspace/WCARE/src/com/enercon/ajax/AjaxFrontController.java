@@ -9,11 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 import com.enercon.ajax.factory.AjaxFactory;
 import com.enercon.ajax.interfaces.AjaxDataRetriver;
 import com.enercon.ajax.interfaces.AjaxVo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AjaxFrontController extends HttpServlet {
        
@@ -48,7 +47,5 @@ public class AjaxFrontController extends HttpServlet {
 		response.setContentType("application/json");
 		mapper.writeValue(response.getOutputStream(), ajaxVos);
 		
-		ajaxVos = null;
-		ajaxDataRetriver = null;
 	}
 }

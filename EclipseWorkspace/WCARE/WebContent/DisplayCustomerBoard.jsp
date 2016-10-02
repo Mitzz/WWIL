@@ -32,9 +32,9 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/ajax.js"></script> 
         <script type="text/javascript" src="<%=request.getContextPath()%>/resources/ess.files/dtree.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/resources/ess.files/dtabs.js"></script>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>  
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>  
+
         <%
-        
             response.setHeader("Pragma", "no-cache");
         //response.getOutputStream().flush();
         //response.getOutputStream().close();
@@ -44,31 +44,125 @@
         %>
 
         <script type="text/javascript">
+                     
+         $(document).ready(function() {             
+        	   $("#button").click(function () {       		   
+        	   $("#button").hide();
 
-                    function displayMessage(){
-                    // alert("Dear Sir,\n\nOur server will be under maintenance from 09th Dec 2011 07:00 PM to Monday, 12th Dec 2011, 06:00 AM.\nInconvenience caused to you is regretted.");
-                    // window.open("http://172.18.25.144:7001/ECARE/index_temp.jsp");
-                    // alert("Dear Sir, \n\nWe are under process of system up-gradation & automation, for effective reporting, due to the same you may face some difficulty in the reports.\n\nIn case any difficulty  please write us at :- manoj.tiwari@windworldindia.com\n\nWe will address all your queries once automation process will get stabilized.\n\nInconvenience caused to you is deeply regretted.");
+	 	              /* $("#dynamictable").html("Dear Customer, These Key Account Managers have been assigned to you as per your Head office").css({"background-color": "#D2EBAB",
+	 	                  "font-size": "12pt" , "text-align" : "center","font-weight" : "bold" ,"border":"1px",
+	 	                 "color":"#000" ,"font-face":"Times New Roman" ,"width":"90%"}); */
+	                      	 
+	 	              $("<table/>", {id:"table"}).appendTo("#dynamictable").css({"width":"90%" ,"background":"#555555","border":"1px","cellspacing":"1","cellpadding":"2"});
+	 	              $("<thead/>", {id:"thea"}).appendTo("#table");
+	 	              $("<tr/>", {id:"tr"}).appendTo("#thea").css({"font-size": "12pt" , "text-align" : "center","font-weight" : "bold","font-family":"Times New Roman" ,"color":"#000","background":"#D2EBAB"});
+	 	              $("<th/>", {text:"Key Account Managers(KAMs) have been assigned as per Head office Location",colspan:"5"}).appendTo("#tr");
+	 	              $("<tr/>", {id:"tr1"}).appendTo("#thea").css({"font-size":"12px"}).css({"color":"#000","background":"#D2EBAB"}); 	           
+	 	              $("<th/>", {text:"Office Location"}).appendTo("#tr1");
+	                  $("<th/>", {text:"Name"}).appendTo("#tr1");
+	                  $("<th/>", {text:"Designation"}).appendTo("#tr1");
+	                  $("<th/>", {text:"Email id"}).appendTo("#tr1");
+	                  $("<th/>", {text:"Contact Number/Extn."}).appendTo("#tr1");
+	           
+	                  var xmlData = "  <contact-hierarchy>	<contact>		<office-location>			<office>Maharashtra</office> 			<office>Madhya Pradesh</office> 		</office-location>		<name> Prashant Yevale</name>		<designation>  Manager </designation>		<email-id> prashant.yevale@windworldindia.com </email-id>		<contact-number> 9820943142 - 7417</contact-number>	</contact>		<contact>		<office-location>		    <office> Tamil Nadu</office> 		</office-location>		<name> N Muthu </name>		<designation> Dy. Manager </designation>		<email-id> muthu.n@windworldindia.com</email-id>		<contact-number> 9920709839 - 7416</contact-number>	</contact>		<contact>		<office-location> 		    <office>Gujarat</office> 		    <office>Rajasthan</office> 		    <office>Delhi</office> 		    <office>&amp; Other Northern Parts</office> 		</office-location>		<name> Kaushik Guha </name>		<designation> Sr. Manager </designation>		<email-id> kaushik.guha@windworldindia.com </email-id>		<contact-number> 9930065602 - 7418</contact-number>	</contact>		<contact>		<office-location> 		    <office>Andhra Pradesh</office> <office>Karnataka</office>		   </office-location><name> Ritu Thakur</name><designation>Asst. Manager</designation><email-id> ritu.thakur@windworldindia.com </email-id><contact-number> 7506342191 - 7387</contact-number></contact></contact-hierarchy>";
+	
+	 		           var xmlDoc = $.parseXML(xmlData);
+	 		           var $xml = $(xmlDoc);
+	 		           var $contact = $xml.find('contact');
+	 	          
+	 		           var className = "";
+	 		           $contact.each(function(index){
 
-                    // var url="http://172.18.16.27:7001/ECARE/index_temp.jsp";
-                    var width = 665;
-                            var height = 200;
-                            var left = (screen.width - width) / 1;
-                            var top = (screen.height - height) / 2;
-                            var params = 'width=' + width + ', height=' + height;
-                            params += ', top=' + top + ', right=' + left;
-                            params += ', directories=no';
-                            params += ', location=no';
-                            params += ', menubar=no';
-                            params += ', resizable=no';
-                            params += ', scrollbars=no';
-                            params += ', status=no';
-                            params += ', toolbar=no';
-                            // newwin=window.open(url,'windowname5', params);
-                            // if (window.focus) {newwin.focus()}
-                            // return false;
+		           		className = "contact" + index;
+			           	var contactName = $(this).find('name').text();
+			           	var designation = $(this).find('designation').text();
+			           	var emailId = $(this).find('email-id').text();
+			           	var contactNo = $(this).find('contact-number').text();			           	
+			           	var officeLocation = $(this).find('office-location');
+			           	var offices = officeLocation.find('office');
+			           	var officeName = [];
+			           	var noOfOffices = offices.length;
+			           	
+			           	for(var z = 0; z < noOfOffices; z++){
+			           		officeName.push($(offices[z]).first().text());
+			           	}
+		           		
+						$("<tr/>", {class:className}).appendTo("#table").css({"color":"#000","background":"white"});
+						$("<td/>", {text:officeName[0]}).appendTo("." + className);
+						$("<td/>", {text:contactName, rowspan:noOfOffices }).appendTo("." + className);
+						$("<td/>", {text:designation, rowspan:noOfOffices }).appendTo("." + className);
+						$("<td/>", {text:emailId, rowspan:noOfOffices }).appendTo("." + className);
+						$("<td/>", {text:contactNo, rowspan:noOfOffices }).appendTo("." + className ).css({"text-align":"right"});
+						
+						for(var i = 1; i < noOfOffices; i++){
+							$("<td/>", {text:officeName[i]}).appendTo($("<tr/>").appendTo("#table")).css({"color":"#000","background":"white"});	
+						}	
+		           });
+   
+	    	      /*  $("#dynamictable1").html("Incase you are not able to reach the KAM, Please feel free to get in touch with the following officials").css({"background-color": "#D2EBAB",
+		                 "font-size": "12pt" , "text-align" : "center","font-weight" : "bold" , "color":"#000" ,"font-face":"Times New Roman" ,"width":"90%"}); */
+                   $('#dynamictable1').append('<table class="x" id="tb1"></table>').css({"width":"90%"});
+		           $("<tr/>", {id:"tr2"}).appendTo("#tb1").css({"font-size": "12pt" , "text-align" : "center","font-weight" : "bold","font-family":"Times New Roman" ,"color":"#000","background":"#D2EBAB"});
+		 	       $("<th/>", {text:"For Queries regarding invoices & Payment, Please contact",colspan:"4"}).appendTo("#tr2");
+		 	       var table = $('#dynamictable1').children();	 
+		 	       var xmlData ="<contact-hierarchy><contact><name> Archana Mane </name><designation> Officer </designation><email-id> archana.mane@windworldindia.com</email-id><contact-number>7506408518 - 7397 </contact-number>   </contact><contact><name> Abhishek Gupta </name><designation> Officer </designation><email-id> abhishek.gupta@windworldindia.com</email-id><contact-number>7506408497 - 7411 </contact-number>   </contact><contact><name> Pranav Khombhadia  </name><designation> Officer </designation><email-id> pranav.khombhadia@windworldindia.com</email-id><contact-number>7506408519 - 7415 </contact-number>   </contact></contact-hierarchy>";        
+		   	       var xmlDoc = $.parseXML(xmlData);
+		   	       var $xml = $(xmlDoc);
+		   	       var $contact = $xml.find('contact');
+		     	      $contact.each(function(i){  
+		     	        	 table.append("<tr><td class='a'>" + $(this).find('name').text()+"</td><td class='a'>" + $(this).find('designation').text() +"</td><td class='a' >" +   $(this).find('email-id').text()+"</td><td class='b'>" + $(this).find('contact-number').text()+"</td></tr>");
+		     	          });       
+		                 
+		                 
+		                 
+		           $('#dynamictable2').append('<table class="x" id="tb2"></table>').css({"width":"90%"});
+		           $("<tr/>", {id:"tr3"}).appendTo("#tb2").css({"font-size": "12pt" , "text-align" : "center","font-weight" : "bold","font-family":"Times New Roman" ,"color":"#000","background":"#D2EBAB"});
+		 	       $("<th/>", {text:"In case you are not able to reach the KAMs, please feel free to get in touch with the following officials",colspan:"5"}).appendTo("#tr3");
+	 	           var table = $('#dynamictable2').children();	 
+		  	       var xmlData ="<contact-hierarchy><contact><name> Manjit Bhagria </name><designation> Head - Central Support </designation><email-id> manjit.bhagria@windworldindia.com</email-id><contact-number>9967783313 - 7169 </contact-number>   </contact><contact><name> Brig. YVR Vijay </name><designation> Head - WWO </designation><email-id> yvr.vijay@windworldindia.com</email-id><contact-number>9167617817 - 7371 </contact-number>   </contact></contact-hierarchy>";        
+		   	       var xmlDoc = $.parseXML(xmlData);
+		   	       var $xml = $(xmlDoc);
+		   	       var $contact = $xml.find('contact');
+		     	      $contact.each(function(i){  
+		     	        	 table.append("<tr><td class='a'>" + $(this).find('name').text()+"</td><td class='a'>" + $(this).find('designation').text() +"</td><td class='a' >" +   $(this).find('email-id').text()+"</td><td class='b'>" + $(this).find('contact-number').text()+"</td></tr>");
+		     	          });
+  	               
+	    	       $('#dynamictable3').append('<table class="x"></table>').css({"width":"90%"});;
+	   	           var table = $('#dynamictable3').children();	     
+	   	           var xmlData ="<contact-hierarchy><contact><name> Wind World India Limited  </name><address>022 - 66924848 </address></contact>	<contact> <name>  WWIL Address </name> <address> Wind World Towers, Plot No. A - 9, Veera Industrial Estate, Veera Desai Road, Andheri (West), Mumbai 400053, MH. </address></contact></contact-hierarchy>";	        
+		       	   var xmlDoc = $.parseXML(xmlData);
+		           var $xml = $(xmlDoc);
+		           var $contact = $xml.find('contact');
+	 	   	           $contact.each(function(i){  
+	 	   	        	   table.append("<tr><th class='c'>" + $(this).find('name').text()+"<td class='a'>" + $(this).find('address').text()+" </td></tr>");  	   
+		 	   	              });                               
+		          });
+		     }); 
 
-                    }
+             function displayMessage(){
+             // alert("Dear Sir,\n\nOur server will be under maintenance from 09th Dec 2011 07:00 PM to Monday, 12th Dec 2011, 06:00 AM.\nInconvenience caused to you is regretted.");
+             // window.open("http://172.18.25.144:7001/ECARE/index_temp.jsp");
+             // alert("Dear Sir, \n\nWe are under process of system up-gradation & automation, for effective reporting, due to the same you may face some difficulty in the reports.\n\nIn case any difficulty  please write us at :- manoj.tiwari@windworldindia.com\n\nWe will address all your queries once automation process will get stabilized.\n\nInconvenience caused to you is deeply regretted.");
+
+             // var url="http://172.18.16.27:7001/ECARE/index_temp.jsp";
+             var width = 665;
+                     var height = 200;
+                     var left = (screen.width - width) / 1;
+                     var top = (screen.height - height) / 2;
+                     var params = 'width=' + width + ', height=' + height;
+                     params += ', top=' + top + ', right=' + left;
+                     params += ', directories=no';
+                     params += ', location=no';
+                     params += ', menubar=no';
+                     params += ', resizable=no';
+                     params += ', scrollbars=no';
+                     params += ', status=no';
+                     params += ', toolbar=no';
+                     // newwin=window.open(url,'windowname5', params);
+                     // if (window.focus) {newwin.focus()}
+                     // return false;
+
+             }
 
             function myFunction(sid, rdateA)
             {
@@ -156,42 +250,18 @@
 
             divdetails.innerHTML = str;
             }
-            
-            $(document).ready(function() {
-                
-          	   $("#button").click(function () {
-          		   
-          	   $("#button").hide();
-          	   
-                 $("#dynamictable").html("Contact Us").css({"background-color": "#E5EECC",
-                 "font-size": "14pt" , "text-align" : "center","font-weight" : "bold" ,
-                 "color":"#000" ,"font-face":"Times New Roman" ,"width":"90%"});
-                           
-                 $('#dynamictable').append('<table class="x"></table>');
-                 
-      	          var table = $('#dynamictable').children();	          
-      			  
-      	    	  table.append("<tr><th>Contact Priority</th><th>Name</th><th>Designation</th><th>E-mail Id</th><th>Contact Number</th></tr>");        
-      		 
-      	          /* ----------Using XML-----------  */         
-      	           var xmlData = "<contact-hierarchy> 	<contact> 		<contact-priority> First Contact Point </contact-priority> 		<name> DJ.Sharma</name> 		<designation> Head - Customer Relationship Management </designation> 		<email-id> dinesh.sharma@windworldindia.com </email-id> 		<contact-number> 9820071182</contact-number> 	</contact>  	<contact> 		<contact-priority> Second Contact Point </contact-priority> 		<name> Manjit Bhagira </name> 		<designation> Head - Central Support </designation> 		<email-id> manjit.bhagira@windworldindia.com</email-id> 		<contact-number> 9967783313</contact-number> 	</contact>  	<contact> 		<contact-priority> Third Contact Point </contact-priority> 		<name> Brig.YVR vijay </name> 		<designation> Head - WWO </designation> 		<email-id> yvr.vijay@windworldindia.com </email-id> 		<contact-number> 9167617817</contact-number> 	</contact> </contact-hierarchy>";        
-      	       	   var xmlDoc = $.parseXML(xmlData);
-      	           var $xml = $(xmlDoc);
-      	           var $contact = $xml.find('contact');
- 	     	           $contact.each(function(i){
- 	     	        	   table.append("<tr><td class='a'>" + $(this).find('contact-priority').text()+"</td><td class='a'>" + $(this).find('name').text() +"</td><td class='a'>" +   $(this).find('designation').text()+"</td><td class='a'>" + $(this).find('email-id').text() +"</td><td class='b'>" + $(this).find('contact-number').text() +"</td></tr>");		         
- 	     	           });     	                                
-                  });
-             });
+   
         </script>
         
         <style>       
-         table.x{background:#555555;border:1px;width:100%;cellspacing="1";cellpadding="2" ; }
-         table.x th{background:#D2EBAB;color:black;}
-         table.x td{background:#F6F6EC;color:black;text-align:center;}
-         table.x td.a{text-align:left;}
-         table.x td.b{text-align:right;}   
-      </style>
+	         table.x{background:#555555;border:1px;width:100%;cellspacing="1";cellpadding="2" ; }
+	         table.x th{background:#D2EBAB;color:black;}
+	         table.x td{background:#F6F6EC;color:black;text-align:center;}
+	         table.x td.a{text-align:left;}
+	         table.x td.b{text-align:right;}
+	         table.x th.c{font-family:Times New Roman;}   
+       </style>
+        
     </HEAD>
     <BODY bottomMargin=0 leftMargin=0   topMargin=0 rightMargin=0 marginheight="0" marginwidth="0" bgcolor="white">
 
@@ -306,7 +376,7 @@
 
                         <TR bgcolor='white'><td><b><font size=4 face='Times New Roman'>Dear Sir,</font></b></td></TR>
                         <TR bgcolor='white'>
-                            <TD class=white width="100%"><font color=black size=3 face='Times New Roman'><%= (String) vmsg.get(0)%></font></TD>
+                            <TD class=white width="100%"><font color=black size=3 face='Times New Roman'><pre><%= ((String) vmsg.get(0)).replace("\\N", "\n") %></pre></font></TD>
                         <TR bgcolor='white'><td><b><font  size=4 face='Times New Roman'>Regard,</font></b></td></TR>
                         <TR bgcolor='white'><td><b><font  size=4 face='Times New Roman'>Wind World(India) CRM TEAM.</font></b></td></TR>
                                         <%}
@@ -437,10 +507,15 @@
                                         <% }%> 
 
                                     </TBODY></TABLE></TD></TR></TBODY></TABLE>
-                                    <br />
-									<!-- contacts table -->
+                                    <br/>
 											 <input type="button" value="Contact Us" id="button" >
-											 <div id="dynamictable"> </div>
+											 <div id="dynamictable"> </div>	
+											 <br>
+											 <div id="dynamictable1"> </div>										 
+											 <br>
+											 <div id="dynamictable2"> </div>
+											 <br>
+											 <div id="dynamictable3"> </div>
                                     <% }%> 
                 <P><BR>
                 <P>&nbsp;</P><A name=By_Month></A>
@@ -648,4 +723,6 @@
     </iframe>
 
 </HTML>
+
+
 

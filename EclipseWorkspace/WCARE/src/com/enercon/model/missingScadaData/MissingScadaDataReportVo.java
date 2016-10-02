@@ -12,36 +12,55 @@ import com.enercon.dao.master.StateMasterDao;
 import com.enercon.dao.missingScadaData.MissingScadaDataDao;
 import com.enercon.model.comparator.MissingScadaDataVoComparators;
 import com.enercon.model.comparator.StateMasterVoComparator;
-import com.enercon.model.master.StateMasterVo;
-import com.enercon.model.master.WecMasterVo;
+import com.enercon.model.graph.IStateMasterVo;
+import com.enercon.model.graph.IWecMasterVo;
 
 public class MissingScadaDataReportVo {
 
 	private String date;
 	private List<MissingScadaDataVo> missingScadaDataVos;
-	private Map<StateMasterVo, Integer> stateWise = new TreeMap<StateMasterVo, Integer>(StateMasterVoComparator.NAME);
-	private final static Logger logger = Logger.getLogger(MissingScadaDataVo.class);
+	private Map<IStateMasterVo, Integer> stateWiseMissingWecsCount = new TreeMap<IStateMasterVo, Integer>(StateMasterVoComparator.BY_NAME);
+	private final static Logger logger = Logger.getLogger(MissingScadaDataReportVo.class);
 	
 	public MissingScadaDataReportVo(String date) {
 		this.date = date;
 	}
 
 	public MissingScadaDataReportVo populateData() throws SQLException{
-		missingScadaDataVos = new MissingScadaDataDao().getMissingScadaDataVoForReport(date);
+		logger.debug("kjdfs");
+		MissingScadaDataDao dao = MissingScadaDataDao.getInstance();
+		logger.debug("kjdfs");
+		missingScadaDataVos = dao.getMissingScadaDataVos(date);
+
+		logger.debug("kjdfs");
 		Collections.sort(missingScadaDataVos, MissingScadaDataVoComparators.SALPW);
-		logger.info("Total Wecs Data not available due to Scada for " + date + ": " + missingScadaDataVos.size());
+		
+		for(MissingScadaDataVo missingScadaVo : missingScadaDataVos){
+			dao.reason(missingScadaVo);
+			logger.warn(missingScadaVo);
+		}
+		
+//		logger.debug("kjdfs");
+		logger.warn("Total Wecs Data not available due to Scada for " + date + ": " + missingScadaDataVos.size());
+		
+		//State-wise Count
 		for (MissingScadaDataVo missingScadaVo : missingScadaDataVos) {
-			WecMasterVo vo = missingScadaVo.getMasterVo();
-			StateMasterVo stateMasterVo = vo.getEb().getSite().getArea().getState();
-			stateWise.put(stateMasterVo, stateWise.containsKey(stateMasterVo) ? stateWise.get(stateMasterVo) + 1 : 1);
+			IWecMasterVo wec = missingScadaVo.getWec();
+			IStateMasterVo stateMasterVo = wec.getState();
+			stateWiseMissingWecsCount.put(stateMasterVo, stateWiseMissingWecsCount.containsKey(stateMasterVo) ? stateWiseMissingWecsCount.get(stateMasterVo) + 1 : 1);
 		}
 		
-		List<StateMasterVo> stateMasterVos = new StateMasterDao().getStateMasterVos();
-		Collections.sort(stateMasterVos, StateMasterVoComparator.NAME);
+//		logger.debug("kjdfs");
 		
-		for (StateMasterVo vo : stateMasterVos) {
-			stateWise.put(vo, stateWise.containsKey(vo) ? stateWise.get(vo) : 0);
+		List<IStateMasterVo> states = StateMasterDao.getInstance().getAll();
+		
+		//State with no Missing SCADA Data
+		for (IStateMasterVo state : states) {
+			if(!stateWiseMissingWecsCount.containsKey(state)){
+				stateWiseMissingWecsCount.put(state, 0);
+			}
 		}
+//		logger.debug("kjdfs");
 		
 		return this;
 	}
@@ -62,14 +81,11 @@ public class MissingScadaDataReportVo {
 		this.missingScadaDataVos = missingScadaDataVos;
 	}
 
-	public Map<StateMasterVo, Integer> getStateWise() {
-		return stateWise;
+	public Map<IStateMasterVo, Integer> getStateWise() {
+		return stateWiseMissingWecsCount;
 	}
 
-	public void setStateWise(Map<StateMasterVo, Integer> stateWise) {
-		this.stateWise = stateWise;
+	public void setStateWise(Map<IStateMasterVo, Integer> stateWise) {
+		this.stateWiseMissingWecsCount = stateWise;
 	}
-	
-	
 }
-

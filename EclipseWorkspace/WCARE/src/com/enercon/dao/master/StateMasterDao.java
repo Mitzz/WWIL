@@ -11,15 +11,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
 import com.enercon.connection.WcareConnector;
-import com.enercon.global.utility.MethodClass;
-import com.enercon.global.utility.master.WecMasterUtility;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utils.GlobalUtils;
+import com.enercon.model.graph.Graph;
+import com.enercon.model.graph.ICustomerMasterVo;
+import com.enercon.model.graph.ISiteMasterVo;
+import com.enercon.model.graph.IStateMasterVo;
+import com.enercon.model.graph.IWecMasterVo;
+import com.enercon.model.graph.event.StateMasterEvent;
+import com.enercon.model.graph.listener.StateMasterListener;
 import com.enercon.model.master.AreaMasterVo;
 import com.enercon.model.master.CustomerMasterVo;
 import com.enercon.model.master.EbMasterVo;
@@ -30,6 +37,21 @@ import com.enercon.model.master.WecMasterVo;
 public class StateMasterDao implements WcareConnector{
 	
 	private final static Logger logger = Logger.getLogger(StateMasterDao.class);
+//	private final Graph G = Graph.getInstance();
+	
+	private List<StateMasterListener> listeners =  new ArrayList<StateMasterListener>();
+	
+	private static class SingletonHelper{
+		public final static StateMasterDao INSTANCE = new StateMasterDao();
+	}
+	
+	public static StateMasterDao getInstance(){
+		return SingletonHelper.INSTANCE;
+	}
+	
+	private StateMasterDao(){
+		
+	}
 	
 	public static Set<String> getStateIdsBasedOnWECIds(
 			Set<String> wecIds) throws SQLException {
@@ -54,20 +76,7 @@ public class StateMasterDao implements WcareConnector{
 			return stateIds;
 		}
 		finally{
-			try{
-				if(preparedStatement != null){
-					preparedStatement.close();
-				}
-				if(resultSet != null){
-					resultSet.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(preparedStatement, resultSet, connection);
 		}
 		
 	}
@@ -95,20 +104,7 @@ public class StateMasterDao implements WcareConnector{
 			return stateName;
 		}
 		finally{
-			try{
-				if(preparedStatement != null){
-					preparedStatement.close();
-				}
-				if(resultSet != null){
-					resultSet.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(preparedStatement, resultSet, connection);
 		}
 		
 	}
@@ -136,20 +132,7 @@ public class StateMasterDao implements WcareConnector{
 			return stateIdNameMapping;
 		}
 		finally{
-			try{
-				if(preparedStatement != null){
-					preparedStatement.close();
-				}
-				if(resultSet != null){
-					resultSet.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(preparedStatement, resultSet, connection);
 		}
 		
 	}
@@ -180,20 +163,7 @@ public class StateMasterDao implements WcareConnector{
 			return stateIds;
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 	}
 	
@@ -232,21 +202,9 @@ public class StateMasterDao implements WcareConnector{
 
 			return areaStateVo;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return areaStateVo;
 
@@ -281,7 +239,7 @@ public class StateMasterDao implements WcareConnector{
 				prepStmt = conn.prepareStatement(query);
 				rs = prepStmt.executeQuery();
 				
-				System.out.println("Done");
+				logger.debug("Done");
 				while (rs.next()) {
 					stateId = rs.getString("S_state_ID");
 					stateName = rs.getString("S_state_name");
@@ -290,35 +248,19 @@ public class StateMasterDao implements WcareConnector{
 					vo.setName(stateName);
 					stateMasterVos.add(vo);
 				}
-	    	
-			
-
-			if (prepStmt != null) {
-				prepStmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
 
 			return stateMasterVos;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 
 	}
+	
+	public List<IStateMasterVo> getAll() throws SQLException{
+		List<IStateMasterVo> states = new ArrayList<IStateMasterVo>(Graph.getInstance().getStatesM().values());
+		return states;
+	}
+	
 	
 	public List<StateMasterVo> get(CustomerMasterVo customer) throws SQLException{
 		List<StateMasterVo> stateMasterVosList = new ArrayList<StateMasterVo>();
@@ -421,42 +363,167 @@ public class StateMasterDao implements WcareConnector{
 
 			return stateMasterVosList;
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 
 	}
 	
+	public List<IStateMasterVo> getAll(ICustomerMasterVo customer){
+		return Graph.getInstance().getCustomersM().get(customer.getId()).getStates();
+	}
+	
 	public static void main(String[] args) {
-		CustomerMasterVo customer = new CustomerMasterVo("0905000002");
+		
+	}
+
+	public List<IStateMasterVo> getActive(ICustomerMasterVo customer) {
+		List<IStateMasterVo> states = getAll(customer);
+		
+		Set<IStateMasterVo> activeStatesS = new HashSet<IStateMasterVo>();
+		for(IStateMasterVo state: states){
+			for(IWecMasterVo wec: state.getWecs()){
+				if(wec.getStatus().equals("1") && wec.getCustomer().equals(customer)){
+					activeStatesS.add(state);
+				}
+			}
+		}
+		List<IStateMasterVo> activeStates = new ArrayList<IStateMasterVo>(activeStatesS);
+		return activeStates;
+	}
+
+	public IStateMasterVo get(String id) {
+		return Graph.getInstance().getStatesM().get(id);
+	}
+	
+	public boolean exist(com.enercon.model.graph.StateMasterVo vo) throws SQLException{
+		Connection conn = null;
+		String query = "";
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
 		
 		try {
-			new StateMasterDao().get(customer);
+			conn = wcareConnector.getConnectionFromPool();
 			
-			List<StateMasterVo> states = customer.getStates();
-			logger.debug("Start");
-			for (StateMasterVo stateMasterVo : states) {
-				logger.debug("State Name: " + stateMasterVo.getName());
-				List<WecMasterVo> wecs = stateMasterVo.getWecs();
-				logger.debug(WecMasterUtility.getWecIds(wecs).size());
+			query = "SELECT count(1) as Count FROM TBL_STATE_MASTER WHERE S_STATE_NAME = ?";
+			prepStmt = conn.prepareStatement(query);
+			prepStmt.setObject(1, vo.getName());
+			
+			rs = prepStmt.executeQuery();
+			rs.next();
+			return rs.getInt("count") == 1;
+		} finally {
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+		}
+	}
+	
+	public boolean create(com.enercon.model.graph.StateMasterVo vo1) throws SQLException, CloneNotSupportedException {
+		
+		Connection conn = null;
+		String sqlQuery = "";
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		com.enercon.model.graph.StateMasterVo vo = (com.enercon.model.graph.StateMasterVo) vo1.clone();
+		try{
+			conn = wcareConnector.getConnectionFromPool();
+			sqlQuery = "Insert into TBL_STATE_MASTER(S_STATE_ID,S_STATE_NAME,S_CREATED_BY, " +
+					   "S_LAST_MODIFIED_BY,S_SAP_STATE_CODE) " +
+					   "values(?,?,?,?,?) ";
+			
+			prepStmt = conn.prepareStatement(sqlQuery);
+			prepStmt.setObject(1, vo.getId());
+			prepStmt.setObject(2, vo.getName());
+			prepStmt.setObject(3, vo.getCreatedBy() );
+			prepStmt.setObject(4, vo.getModifiedBy());
+			prepStmt.setObject(5, vo.getSapCode());
+		
+			int rowInserted = prepStmt.executeUpdate();
+			
+			logger.debug("rowInserted: " + rowInserted);
+			if(rowInserted == 1){
+				StateMasterEvent event = new StateMasterEvent();
+				event.setCreate(true);
+				event.setState(vo);
+				fireStateMasterEvent(event);
 			}
-			logger.debug("End");
+			return (rowInserted == 1);
+		}
+		finally{
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+		}
+	}
 
-			wcareConnector.shutDown();
-		} catch (SQLException e) {
-			logger.error(e.getMessage());
+	public boolean updateForMaster(IStateMasterVo vo1) throws SQLException, CloneNotSupportedException {
+		IStateMasterVo vo = (IStateMasterVo) vo1.clone();
+		
+		SortedMap<String, Object> data = new TreeMap<String, Object>();
+		data.put("S_STATE_NAME", vo.getName());
+		data.put("S_LAST_MODIFIED_BY", vo.getModifiedBy());
+		data.put("S_SAP_STATE_CODE", vo.getSapCode());
+		return partialUpdate(vo, data);
+		
+	}
+	
+	private boolean partialUpdate(IStateMasterVo state, SortedMap<String, Object> data) throws SQLException {
+		logger.debug(data);
+		Connection conn = null;
+		StringBuilder query = new StringBuilder();
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		int paramterCount = data.size();
+		int index = 0;
+		try {
+			conn = wcareConnector.getConnectionFromPool();
+			query.append("UPDATE TBL_STATE_MASTER SET ");
+			
+			for(String column: data.keySet()){
+				query.append(column + " = ?, ");
+			}
+			
+//			query = new StringBuilder(query).deleteCharAt(query.length() - 2);
+			query.append("D_LAST_MODIFIED_DATE = localtimestamp ");
+			query.append("WHERE S_STATE_ID = ? ");
+			logger.debug(state.getId());
+			prepStmt = conn.prepareStatement(new String(query));
+			logger.debug(query);
+			for(String column: data.keySet()){
+				index++;
+				prepStmt.setObject(index, data.get(column));
+			}
+			prepStmt.setObject(paramterCount + 1, state.getId());
+			
+			int rowUpdate = prepStmt.executeUpdate();
+
+			if(rowUpdate == 1) {
+				StateMasterEvent event = new StateMasterEvent();
+				event.setState(state);
+				event.setUpdate(true);
+//				event.setUpdateData(data);
+				fireStateMasterEvent(event);
+			}
+			return (rowUpdate == 1);
+//			return true;
+			
+		} finally {
+			DaoUtility.releaseResources(prepStmt, rs, conn);
+		}
+		
+	}
+
+	public List<IStateMasterVo> associate(List<ISiteMasterVo> sites) throws SQLException {
+		Set<IStateMasterVo> states = new HashSet<IStateMasterVo>();
+		for(ISiteMasterVo site: sites){
+			states.add(site.getState());
+		}
+		return new ArrayList<IStateMasterVo>(states);
+	}
+	
+	public void addStateMasterListener(StateMasterListener listener){
+		listeners.add(listener);
+	}
+	
+	public void fireStateMasterEvent(StateMasterEvent event){
+		for(StateMasterListener listener: listeners){
+			listener.handler(event);
 		}
 	}
 

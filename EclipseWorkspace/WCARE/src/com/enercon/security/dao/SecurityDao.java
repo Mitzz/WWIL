@@ -1,20 +1,23 @@
 package com.enercon.security.dao;
 
-import com.enercon.connection.WcareConnector;
-import com.enercon.global.utils.Diff;
-import com.enercon.global.utils.JDBCUtils;
-import com.enercon.global.utils.SendMail;
-import com.enercon.security.bean.LoginMasterBean;
-import com.enercon.global.utils.CodeGenerate;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
+
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
+import com.enercon.global.utils.Diff;
+import com.enercon.global.utils.SendMail;
+import com.enercon.model.master.TransactionMasterVo;
+import com.enercon.service.CodeGenerateService;
 
 
 public class SecurityDao implements WcareConnector{
@@ -34,8 +37,8 @@ public class SecurityDao implements WcareConnector{
 	public String getPwd(String UserId,String email)throws Exception {
 		String msg = "";
 		String activateMsg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -64,40 +67,19 @@ public class SecurityDao implements WcareConnector{
 				prepStmt.close();
 		
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return msg;
 	}
    
 	public String sentMsg(String email,String UserId,String pwd)throws Exception {
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//	JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -129,40 +111,19 @@ public class SecurityDao implements WcareConnector{
 				
 		
 	   } catch (Exception sqlExp) {
-		sqlExp.printStackTrace();
+		   logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EMAIL_SENDING_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return msg;
 	}
 
 	public String sentActivateMsg(String email,String UserId,String pwd)throws Exception {
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -194,32 +155,11 @@ public class SecurityDao implements WcareConnector{
 				
 		
 	   } catch (Exception sqlExp) {
-		sqlExp.printStackTrace();
+		   logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EMAIL_SENDING_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return msg;
 	}
@@ -227,8 +167,8 @@ public class SecurityDao implements WcareConnector{
 	
 	public String getCustinf(String UserId)throws Exception {
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -246,32 +186,11 @@ public class SecurityDao implements WcareConnector{
 				prepStmt.close();
 		
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return msg;
 	}
@@ -279,8 +198,8 @@ public class SecurityDao implements WcareConnector{
 	
 	public String getCustfeedback(String UserId)throws Exception {
 		String msg = "";
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		PreparedStatement prepStmt1 = null;
 		ResultSet rs = null;
@@ -321,32 +240,11 @@ public class SecurityDao implements WcareConnector{
 		    	prepStmt1.close();
 			    
 		} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+			logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(Arrays.asList(prepStmt,prepStmt1) , Arrays.asList(rs,rs1) , conn);
 	}
 	return msg;
 	}
@@ -354,8 +252,8 @@ public class SecurityDao implements WcareConnector{
 	
 	public boolean isPasswordChange(String UserId)throws Exception {
 		
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+	//	JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
@@ -368,39 +266,17 @@ public class SecurityDao implements WcareConnector{
 				rs = prepStmt.executeQuery();
 				if (rs.next()) {
 					count = rs.getInt("CNT");
-					
     			}
 				isPasswordChange = (count == 1) ? true : false;
 				rs.close();
 				prepStmt.close();
 		
 	} catch (SQLException sqlExp) {
-		sqlExp.printStackTrace();
+		logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
 		Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
 		throw exp;
 	} finally {
-		try {
-			if (prepStmt != null)
-				prepStmt.close();
-			if (rs != null)
-				rs.close();
-			if (conn != null) {
-				conn.close();
-				conn = null;
-
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		} catch (Exception e) {
-			prepStmt = null;
-			rs = null;
-			if (conn != null) {
-				conn.close();
-				conn = null;
-				conmanager.closeConnection();
-				conmanager = null;
-			}
-		}
+		DaoUtility.releaseResources(prepStmt, rs, conn);
 	}
 	return isPasswordChange;
 	}
@@ -479,14 +355,13 @@ public class SecurityDao implements WcareConnector{
     
     public String insertLoginHistory(String loginID, String password, 
                                       String sroleID,String ipadd,String iphost) throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+    	//JDBCUtils conmanager = new JDBCUtils();
+    	Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         String loginRoleHistoryId = null;
         try {
-            String tblSeq = "TBL_LOGIN_HISTORY";
-            String LOGRoleHistoryId = CodeGenerate.NewCodeGenerate(tblSeq);
+            String LOGRoleHistoryId = CodeGenerateService.getInstance().getId("TBL_LOGIN_HISTORY");
             loginRoleHistoryId = LOGRoleHistoryId;
 
             String sqlQuery_InsertLoginRoleHistory = SecuritySQLC.INSERT_LOGIN_ROLE_HISTORY;
@@ -505,39 +380,18 @@ public class SecurityDao implements WcareConnector{
             //             conn = null;
 
         } catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (prepStmt != null)
-                    prepStmt.close();
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-                
-            } catch (Exception e) {
-                prepStmt = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	 DaoUtility.releaseResources(prepStmt, rs, conn);
         }
         return loginRoleHistoryId;
     }
     //sa
     public List getAllcustomer(String sRoleID) throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+    	//JDBCUtils conmanager = new JDBCUtils();
+    	Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         List tranList = new ArrayList();
@@ -559,39 +413,18 @@ public class SecurityDao implements WcareConnector{
             prepStmt.close();
             rs.close();
         } catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (prepStmt != null) {
-                    prepStmt.close();
-                }
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                prepStmt = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(prepStmt, rs, conn);
         }
         return tranList;
     }
     
     public String getNewsList() throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+    	//JDBCUtils conmanager = new JDBCUtils();
+    	Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         String newsList = "";
@@ -608,42 +441,25 @@ public class SecurityDao implements WcareConnector{
             prepStmt.close();
             rs.close();
         } catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (prepStmt != null) {
-                    prepStmt.close();
-                }
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                prepStmt = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(prepStmt, rs, conn);
         }
         return newsList;
     }
     
     public List getAllTransactions(String sRoleID) throws Exception {
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+    	//JDBCUtils conmanager = new JDBCUtils();
+    	Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         ResultSet rs = null;
         List tranList = new ArrayList();
+        
+        List<TransactionMasterVo> transactionVos = new ArrayList<TransactionMasterVo>();
+        TransactionMasterVo transactionVo = null;
+        
         String sqlQuery = SecuritySQLC.GET_TRANSACTION_DETAILS;
         try {
             prepStmt = conn.prepareStatement(sqlQuery);
@@ -651,6 +467,7 @@ public class SecurityDao implements WcareConnector{
             rs = prepStmt.executeQuery();
             int i = 0;
             while (rs.next()) {
+            	
                 Vector tranVector = new Vector();
                 tranVector.add(rs.getString("S_TRANSACTION_ID"));
                 tranVector.add(rs.getString("S_TRANSACTION_NAME"));
@@ -678,39 +495,18 @@ public class SecurityDao implements WcareConnector{
             prepStmt.close();
             rs.close();
         } catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (prepStmt != null) {
-                    prepStmt.close();
-                }
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                prepStmt = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(prepStmt, rs, conn);
         }
         return tranList;
     }
     
 	public static String getHTMLTransaction(String roleID){
     	//mcn.inClassMethod();
-        JDBCUtils conmanager = new JDBCUtils();
+        //JDBCUtils conmanager = new JDBCUtils();
         Connection conn = null;
         PreparedStatement sUnder1PrepareStmt = null;
         ResultSet sUnder1ResultSet = null;
@@ -721,7 +517,7 @@ public class SecurityDao implements WcareConnector{
         PreparedStatement myPS3 = null;
         ResultSet myrs3 = null;
 		try {
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			/*String myQ1 = "SELECT distinct(s_under_1) FROM TBL_ROLE_TRAN_MAPPING B,TBL_TRANSACTION A WHERE B.S_ROLE_ID = ? AND A.S_TRANSACTION_ID = B.S_TRANSACTION_ID";*/
 			
 			/*String myQ1 = "SELECT A.s_under_1 FROM TBL_ROLE_TRAN_MAPPING B left join TBL_TRANSACTION A on A.S_TRANSACTION_ID = B.S_TRANSACTION_ID where B.S_ROLE_ID = ?" +
@@ -817,72 +613,73 @@ public class SecurityDao implements WcareConnector{
 	        System.out.println("htmlcontent:" + htmlDirectContent);
 	        return new String(htmlDirectContent);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			if(sUnder1PrepareStmt != null){
+			DaoUtility.releaseResources(Arrays.asList(sUnder1PrepareStmt,sUnder2NullPrepare,sUnder2PrepareStmt,myPS3) , Arrays.asList(sUnder1ResultSet,sUnder2NullResult,sUnder2ResultSet,myrs3) , conn);
+			/*if(sUnder1PrepareStmt != null){
 				try {
 					sUnder1PrepareStmt.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(sUnder2PrepareStmt != null){
 				try {
 					sUnder2PrepareStmt.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(sUnder1PrepareStmt != null){
 				try {
 					sUnder2PrepareStmt.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(sUnder2NullPrepare != null){
 				try {
 					sUnder2NullPrepare.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(sUnder1ResultSet != null){
 				try {
 					sUnder1ResultSet.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(sUnder2ResultSet != null){
 				try {
 					sUnder2ResultSet.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(myrs3 != null){
 				try {
 					myrs3.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(sUnder2NullResult != null){
 				try {
 					sUnder2NullResult.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
 			}
 			if(conn != null){
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 				}
-			}
+			}*/
 			//mcn.outClass();
 		}
 		return null;
@@ -892,8 +689,8 @@ public class SecurityDao implements WcareConnector{
     
     public String UpdatePwd() throws Exception {
     	String msg="";
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+       // JDBCUtils conmanager = new JDBCUtils();
+        Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -917,40 +714,19 @@ public class SecurityDao implements WcareConnector{
         	prepStmt.close();
         	rs.close();
         } catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (prepStmt != null) {
-                    prepStmt.close();
-                }
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                prepStmt = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
         }
         return msg;
     }
    
     public String getSecAjaxDetails(String item,String action,String UserId) throws Exception{
     	StringBuffer xml = new StringBuffer();
-    	JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+    	//JDBCUtils conmanager = new JDBCUtils();
+        Connection conn = wcareConnector.getConnectionFromPool();
         PreparedStatement ps = null;
         PreparedStatement ps1 = null;
         PreparedStatement ps2 = null;
@@ -1109,38 +885,11 @@ public class SecurityDao implements WcareConnector{
         	
         	
         }catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (ps != null) ps.close();
-                if (ps1 != null) ps1.close();
-                if (ps2 != null) ps2.close();
-                if (rs != null) rs.close();
-                if (rs1 != null) rs1.close();
-                if (rs2 != null) rs2.close();
-                if (conn != null) 
-                {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                ps = null;
-                ps1 = null;
-                ps2 = null;
-                rs = null;
-                rs1 = null;
-                rs2 = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(Arrays.asList(ps1,ps2,ps) , Arrays.asList(rs,rs1,rs2) , conn);
         }
         return xml.toString();
     }
@@ -1157,8 +906,8 @@ public class SecurityDao implements WcareConnector{
 	}
     public String MonthSalaryTransfer() throws Exception {
     	String msg="";
-        JDBCUtils conmanager = new JDBCUtils();
-        Connection conn = conmanager.getConnection();
+        //JDBCUtils conmanager = new JDBCUtils();
+        Connection conn =  wcareConnector.getConnectionFromPool();
         PreparedStatement prepStmt = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -1184,35 +933,11 @@ public class SecurityDao implements WcareConnector{
             prepStmt.close();
         	msg = "update success";
         } catch (SQLException sqlExp) {
-            sqlExp.printStackTrace();
+        	logger.error("\nClass: " + sqlExp.getClass() + "\nMessage: " + sqlExp.getMessage() + "\n", sqlExp);
             Exception exp = new Exception("EXECUTE_QUERY_ERROR", sqlExp);
             throw exp;
         } finally {
-            try {
-                if (prepStmt != null) {
-                    prepStmt.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (rs != null)
-                    rs.close();
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            } catch (Exception e) {
-                prepStmt = null;
-                rs = null;
-                if (conn != null) {
-                	conn.close();
-                	conn = null;
-                	
-                    conmanager.closeConnection();conmanager = null;
-                }
-            }
+        	DaoUtility.releaseResources(Arrays.asList(prepStmt,ps) , Arrays.asList(rs) , conn);
         }
         return msg;
     }

@@ -3,6 +3,8 @@ package com.enercon.global.utils;
 import com.enercon.security.controller.*;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
+
 import java.util.List;
 import java.util.Iterator;
 import java.io.File;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.*;
 public class UploadFile extends HttpServlet
 {
+	private final static Logger logger = Logger.getLogger(UploadFile.class);
 	private static final long serialVersionUID = 1L;
 	private ServletContext application;
 	public void upload(HttpServletRequest request, 
@@ -61,7 +64,7 @@ public class UploadFile extends HttpServlet
         }
 	}catch(Exception ex)
 	{
-		System.out.println("file exception "+ex);
+		logger.error("\nClass: " + ex.getClass() + "\nMessage: " + ex.getMessage() + "\n", ex);
 	}
 
 	}

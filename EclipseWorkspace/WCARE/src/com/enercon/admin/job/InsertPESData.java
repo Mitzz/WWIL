@@ -6,50 +6,38 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utility.DateUtility;
-import com.enercon.global.utils.JDBCUtils;
 
-public class InsertPESData implements Job{
-	
+public class InsertPESData implements Job,WcareConnector{
+	private final static Logger logger = Logger.getLogger(InsertPESData.class);
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		insertPESData();
 		//uploadScadaMissedData();
 	}
 	
 	private void uploadScadaMissedData() {
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			uploadMissedDataOfScada(conn);
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 
@@ -67,7 +55,7 @@ public class InsertPESData implements Job{
 			}
 		}
 		catch(SQLException e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -77,13 +65,13 @@ public class InsertPESData implements Job{
 				}
 			}
 			catch(Exception e){
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
 
 	private void insertPESData() {
-		JDBCUtils conmanager = new JDBCUtils();
+		//JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
@@ -91,30 +79,16 @@ public class InsertPESData implements Job{
 		java.sql.Date yesterdayDateValueInSQL = DateUtility.getYesterdayDateInSQL();
 		
 		try{
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			insertParameterDateWiseIntoWECReading(conn, yesterdayDateValueInSQL);
 			//insertParameterDateWiseIntoWECReading(conn, yesterdayDateValueInSQL);
 		}
 		catch(Exception e){
 			//MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				//MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 	}
 	
@@ -134,7 +108,7 @@ public class InsertPESData implements Job{
 			}
 		}
 		catch(SQLException e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -144,7 +118,7 @@ public class InsertPESData implements Job{
 				}
 			}
 			catch(Exception e){
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
@@ -168,7 +142,7 @@ public class InsertPESData implements Job{
 			}
 		}
 		catch(SQLException e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -178,7 +152,7 @@ public class InsertPESData implements Job{
 				}
 			}
 			catch(Exception e){
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
@@ -203,7 +177,7 @@ public class InsertPESData implements Job{
 			}
 		}
 		catch(SQLException e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -213,7 +187,7 @@ public class InsertPESData implements Job{
 				}
 			}
 			catch(Exception e){
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}

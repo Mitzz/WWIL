@@ -88,7 +88,7 @@
 			<td class = "data" width=10%>Missing Days</td>
 			<td class = "data" width=18%>Technical No</td>
 		</tr>
-		<c:forEach items="${missingScadaReport.missingScadaDataVos}" var="element">
+		<c:forEach items="${missingScadaReport.missingScadaDataVos}" var="vo">
 		<c:set var = "srNo" value="${srNo + 1}"/>
 		<c:choose>
     		<c:when test="${srNo % 2 == 0}">
@@ -100,14 +100,14 @@
 		</c:choose>
 		<tr class="${class}">
 			<td class="data right">${srNo}</td>
-			<td class="data left">${element.masterVo.stateName}</td>
-			<td class="data left">${element.masterVo.areaName}</td>
-			<td class="data left">${element.masterVo.siteName}</td>
-			<td class="data right">${element.masterVo.locationNo}</td>
-			<td class="data right">${element.masterVo.plantNo}</td>
-			<td class="data left">${element.masterVo.name}</td>
-			<td class="data right">${element.noOfDaysMissing}</td>
-			<td class="data right">${element.masterVo.technicalNo}</td>
+			<td class="data left">${vo.wec.state.name}</td>
+			<td class="data left">${vo.wec.area.name}</td>
+			<td class="data left">${vo.wec.site.name}</td>
+			<td class="data right">${vo.wec.plant.locationNo}</td>
+			<td class="data right">${vo.wec.plant.plantNo}</td>
+			<td class="data left">${vo.wec.name}</td>
+			<td class="data right">${vo.noOfDaysMissing}</td>
+			<td class="data right">${vo.wec.technicalNo}</td>
 		</tr>
 		</c:forEach>
 	</table>

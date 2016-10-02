@@ -5,12 +5,14 @@ import java.text.ParseException;
 import java.util.Map;
 import java.util.Set;
 
-import com.enercon.dao.WecDataDao;
-import com.enercon.model.report.IWecParameterVo;
-import com.enercon.model.summaryreport.Parameter;
+import org.apache.log4j.Logger;
+
+import com.enercon.dao.WecParameterDataDao;
+import com.enercon.model.parameter.wec.IWecParameterVo;
+import com.enercon.model.parameter.wec.Parameter;
 
 public class DayWecParameterVoWecWiseEvaluator<Key, Value extends Map<String, IWecParameterVo>> implements MapValueEvaluatorWorker<Key, Value>{
-
+	private final static Logger logger = Logger.getLogger(DayWecParameterVoWecWiseEvaluator.class);
 	private Key key;
 	private Set<String> wecIds;
 	private String date;
@@ -34,15 +36,15 @@ public class DayWecParameterVoWecWiseEvaluator<Key, Value extends Map<String, IW
 			IWecParameterVo parameterVo = new DayWecParameterVoEvaluator<String, IWecParameterVo>(null, null, null).evaluate();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 	}
 	
 	public <T extends Map<String, IWecParameterVo>> T evaluate() throws SQLException, ParseException{
 		T parameter = null; 
-		parameter = new WecDataDao().getWecWiseWecParameterVo(date, date, wecIds, parameters);
+		parameter = WecParameterDataDao.getInstance().getWecWise(date, date, wecIds, parameters);
 		return parameter;
 	}
 

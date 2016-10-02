@@ -1,25 +1,32 @@
 package com.enercon.customer.dao;
 
-import com.enercon.global.utils.JDBCUtils;
-import java.sql.*;
-import java.text.*;
-import java.util.*;
-
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-// import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 
-public class CustomerDaoNew {
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
+
+
+
+public class CustomerDaoNew implements WcareConnector {
 	
-	// private static Logger logger = Logger.getLogger(CustomerDaoNew.class);
+	 private static Logger logger = Logger.getLogger(CustomerDaoNew.class);
 
 	public CustomerDaoNew() {
 	}
 	
 	public List getInitialYearGen(String custid, String fdate, String tdate, String type, String rtype) throws Exception {
 		
-			JDBCUtils conmanager = new JDBCUtils();
-			Connection conn = conmanager.getConnection();
+		    //JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 			
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			java.util.Date fd = format.parse(fdate);
@@ -70,42 +77,17 @@ public class CustomerDaoNew {
 				calls.close();
 			}
 			catch(SQLException e){
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 			finally {
-				try {
-					if (calls != null) {
-						calls.close();
-					}
-					if (rsproc != null)
-						rsproc.close();
-					if (conn != null) 
-					{
-						conn.close();
-						conn = null;
-
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				} catch (Exception e) {
-					calls = null;
-					rsproc = null;
-					if (conn != null) 
-					{
-						conn.close();
-						conn = null;
-
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				}
+				DaoUtility.releaseResources(calls, rsproc, conn);
 			} 
 		return getCustList;
 	}
 	public List getInitialYearDailyGen(String custid, String fdate, String tdate, String type, String rtype) throws Exception {
 		
-			JDBCUtils conmanager = new JDBCUtils();
-			Connection conn = conmanager.getConnection();
+			//JDBCUtils conmanager = new JDBCUtils();
+			Connection conn = wcareConnector.getConnectionFromPool();
 			
 			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			java.util.Date fd = format.parse(fdate);
@@ -159,35 +141,10 @@ public class CustomerDaoNew {
 				calls.close();
 			}
 			catch(SQLException e){
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 			finally {
-				try {
-					if (calls != null) {
-						calls.close();
-					}
-					if (rsproc != null)
-						rsproc.close();
-					if (conn != null) 
-					{
-						conn.close();
-						conn = null;
-	
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				} catch (Exception e) {
-					calls = null;
-					rsproc = null;
-					if (conn != null) 
-					{
-						conn.close();
-						conn = null;
-	
-						conmanager.closeConnection();
-						conmanager = null;
-					}
-				}
+				DaoUtility.releaseResources(calls, rsproc, conn);
 			} 
 		return getCustList;
 	}
@@ -202,11 +159,12 @@ public class CustomerDaoNew {
 		tillDate = format.parse(ardate);
 		toDate = new java.sql.Date(tillDate.getTime());
 		
-		try{
+		
 		PreparedStatement pst = null;	
 		ResultSet rs = null;
-		JDBCUtils conmanager = new JDBCUtils();
-		Connection conn = conmanager.getConnection();
+		//JDBCUtils conmanager = new JDBCUtils();
+		Connection conn = wcareConnector.getConnectionFromPool();
+		try{
 		String sqlQuery = CustomerSQLCNew.GET_TOTAL_UNPUBLISHED_DATA;
 		pst = conn.prepareStatement(sqlQuery);
 		pst.setDate(1, toDate);		
@@ -217,7 +175,9 @@ public class CustomerDaoNew {
 			ttlUnpublishedData = rs.getInt("CNT");
 		}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+		}finally{
+			DaoUtility.releaseResources(pst, rs, conn);
 		}
 		
 	return ttlUnpublishedData;

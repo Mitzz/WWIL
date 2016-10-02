@@ -3,19 +3,30 @@ package com.enercon.model.master;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginMasterVo extends MasterVo {
+import com.enercon.model.graph.ICustomerMasterVo;
+import com.enercon.struts.form.CommonFormVo;
+import com.fasterxml.jackson.annotation.JsonFilter;
+
+@JsonFilter("loginMasterVo")
+public class LoginMasterVo extends CommonFormVo {
 
 	private String id;
 	private String userId;
 	private String password;
 	private String loginType;
-	private RoleMasterVo role;
 	private String loginDescription;
 	private String active;
 	private String remarks;
 	private String emailId;
 	private String emailStatus;
-	private List<CustomerMasterVo> customers = new ArrayList<CustomerMasterVo>();
+	private String customerId;
+	
+	private RoleMasterVo role;
+	private List<ICustomerMasterVo> customers = new ArrayList<ICustomerMasterVo>();
+	
+	public LoginMasterVo() {
+		// TODO Auto-generated constructor stub
+	}
 
 	private LoginMasterVo(LoginMasterVoBuilder builder) {
 		super();
@@ -29,23 +40,24 @@ public class LoginMasterVo extends MasterVo {
 		this.remarks = builder.remarks;
 		this.emailId = builder.emailId;
 		this.emailStatus = builder.emailStatus;
-		this.createdBy = builder.createdBy;
-		this.createdAt = builder.createdAt;
-		this.modifiedBy = builder.modifiedBy;
-		this.modifiedAt = builder.modifiedAt;
+		setCreatedBy(builder.getCreatedBy());
+		setCreatedAt(builder.getCreatedAt());
+		setModifiedBy(builder.getModifiedBy());
+		setModifiedAt(builder.getModifiedAt());
 		this.customers = builder.customers;
+		this.customerId = builder.customerId;
 	}
 
-	@Override
-	public String toString() {
-		return "LoginMasterVo [id=" + id + ", userId=" + userId + ", password="
-				+ password + ", loginType=" + loginType + ", role=" + role
-				+ ", loginDescription=" + loginDescription + ", active="
-				+ active + ", remarks=" + remarks + ", emailId=" + emailId
-				+ ", emailStatus=" + emailStatus + ", createdBy=" + createdBy
-				+ ", createdAt=" + createdAt + ", modifiedBy=" + modifiedBy
-				+ ", modifiedAt=" + modifiedAt + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "LoginMasterVo [id=" + id + ", userId=" + userId + ", password="
+//				+ password + ", loginType=" + loginType + ", role=" + role
+//				+ ", loginDescription=" + loginDescription + ", active="
+//				+ active + ", remarks=" + remarks + ", emailId=" + emailId
+//				+ ", emailStatus=" + emailStatus + ", createdBy=" + createdBy
+//				+ ", createdAt=" + createdAt + ", modifiedBy=" + modifiedBy
+//				+ ", modifiedAt=" + modifiedAt + "]";
+//	}
 
 	public String getId() {
 		return id;
@@ -127,13 +139,7 @@ public class LoginMasterVo extends MasterVo {
 		this.emailStatus = emailStatus;
 	}
 
-	public List<CustomerMasterVo> getCustomers() {
-		return customers;
-	}
 
-	public void setCustomers(List<CustomerMasterVo> customers) {
-		this.customers = customers;
-	}
 
 	public static class LoginMasterVoBuilder extends MasterVo {
 		private String id;
@@ -146,14 +152,19 @@ public class LoginMasterVo extends MasterVo {
 		private String remarks;
 		private String emailId;
 		private String emailStatus;
-		private List<CustomerMasterVo> customers = new ArrayList<CustomerMasterVo>();
+		private String customerId;
+		private List<ICustomerMasterVo> customers = new ArrayList<ICustomerMasterVo>();
 
 		public LoginMasterVoBuilder(String id) {
 			this.id = id;
 		}
 		
-		public LoginMasterVoBuilder customers(List<CustomerMasterVo> customers) {
+		public LoginMasterVoBuilder customers(List<ICustomerMasterVo> customers) {
 			this.customers = customers;
+			return this;
+		}
+		public LoginMasterVoBuilder customerId(String customerId) {
+			this.customerId = customerId;
 			return this;
 		}
 
@@ -229,8 +240,26 @@ public class LoginMasterVo extends MasterVo {
 		}
 	}
 
-	public void addCustomer(CustomerMasterVo customer){
+	public void addCustomer(ICustomerMasterVo customer){
 		customers.add(customer);
 	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public List<ICustomerMasterVo> getCustomers() {
+		return customers;
+	}
+
+	public void setCustomers(List<ICustomerMasterVo> customers) {
+		this.customers = customers;
+	}
+	
+	
 	
 }

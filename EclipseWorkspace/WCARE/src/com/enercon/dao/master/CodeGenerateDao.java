@@ -1,5 +1,7 @@
 package com.enercon.dao.master;
 
+import static com.enercon.connection.WcareConnector.wcareConnector;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,11 +9,10 @@ import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 
+import com.enercon.dao.DaoUtility;
 import com.enercon.model.master.CodeGenerateVo;
 
-import static com.enercon.connection.WcareConnector.*;
-
-public class CodeGenerateDao {
+public class CodeGenerateDao{
 	
 	private final static Logger logger = Logger.getLogger(CodeGenerateDao.class);
 	
@@ -44,7 +45,7 @@ public class CodeGenerateDao {
     	}
 	}
 
-	public CodeGenerateVo get(String tableName, String sequenceCode) throws SQLException {
+	public CodeGenerateVo retrieve(String tableName, String sequenceCode) throws SQLException {
 		validate(tableName, sequenceCode);
 		CodeGenerateVo vo = null;
 
@@ -80,16 +81,7 @@ public class CodeGenerateDao {
 
 			return vo;
 		} finally {
-
-			try{
-				wcareConnector.returnConnectionToPool(connection);
-				if(ps != null) ps.close();
-				if(rs != null) rs.close();
-			} 
-			catch(Exception e){
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(ps, rs, connection);
 		}
 
 		
@@ -118,23 +110,10 @@ public class CodeGenerateDao {
 			ps.setString(2, vo.getSequenceCode());
 			
 			int insertRowCount = ps.executeUpdate();
-
-			if(insertRowCount == 1){
-				return true;
-			} else {
-				return false;
-			}
+			return insertRowCount == 1;
 			
 		} finally {
-
-			try{
-				wcareConnector.returnConnectionToPool(connection);
-				if(ps != null) ps.close();
-			} 
-			catch(Exception e){
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(ps, connection);
 		}
 
 	}
@@ -162,22 +141,10 @@ public class CodeGenerateDao {
 			
 			int insertRowCount = ps.executeUpdate();
 
-			if(insertRowCount == 1){
-				return true;
-			} else {
-				return false;
-			}
+			return insertRowCount == 1;
 			
 		} finally {
-
-			try{
-				wcareConnector.returnConnectionToPool(connection);
-				if(ps != null) ps.close();
-			} 
-			catch(Exception e){
-				logger.error(e.getMessage());
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(ps, connection);
 		}
 	}
 }

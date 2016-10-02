@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Set;
 
-import com.enercon.dao.WecDataDao;
+import com.enercon.dao.WecParameterDataDao;
 import com.enercon.model.summaryreport.Month;
 import com.enercon.model.summaryreport.Year;
 
@@ -24,12 +24,14 @@ public class MonthMAEvaluator<Key extends Month, Value extends Number> extends M
 
 	@Override
 	public Value getWorker1() throws SQLException, ParseException {
-		return new WecDataDao().getMA(getWecIds(), getMonth(), getYear());
+//		return new WecDataDao().getMA(getWecIds(), getMonth(), getYear());
+		return null;
 	}
 
 	@Override
 	public Value getWorker2() throws SQLException, ParseException{
-		return new WecDataDao().getMA(getWecIds(), getFromDate(), getToDate());
+//		return new WecDataDao().getMA(getWecIds(), getFromDate(), getToDate());
+		return null;
 	}
 	
 }

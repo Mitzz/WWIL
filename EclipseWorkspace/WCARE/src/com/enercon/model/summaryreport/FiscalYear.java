@@ -9,7 +9,7 @@ import com.enercon.global.utility.NumberUtility;
 
 public enum FiscalYear{
 	
-	FY200809(2008), FY200708(2007), FY200607(2006),	FY200506(2005), FY200405(2004), FY200910(2009),FY201011(2010), FY201112(2011), FY201213(2012),	FY201314(2013), FY201415(2014), FY201516(2015);
+	FY200809(2008), FY200708(2007), FY200607(2006),	FY200506(2005), FY200405(2004), FY200910(2009),FY201011(2010), FY201112(2011), FY201213(2012),	FY201314(2013), FY201415(2014), FY201516(2015), FY201617(2016);
 	
 	private final static Logger logger = Logger.getLogger(FiscalYear.class);
 	
@@ -38,6 +38,7 @@ public enum FiscalYear{
 			case 2013 : return FiscalYear.FY201314;
 			case 2014 : return FiscalYear.FY201415;	
 			case 2015 : return FiscalYear.FY201516;
+			case 2016 : return FiscalYear.FY201617;
 			default   : logger.error("Fiscal Year '" + fiscalYear + "-" + (fiscalYear + 1) + "' is not defined"); throw new IllegalArgumentException("Fiscal Year '" + fiscalYear + "-" + (fiscalYear + 1) + "' is not defined");
 		}
 	}
@@ -74,5 +75,6 @@ public enum FiscalYear{
 		return "FY " + NumberUtility.getLastDigit(getValue(), 2) + "-" + NumberUtility.getLastDigit(getValue() + 1, 2) + "";
 	}
 	
+
 	
 }

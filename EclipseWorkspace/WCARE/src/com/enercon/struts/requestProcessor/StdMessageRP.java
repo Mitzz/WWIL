@@ -17,8 +17,6 @@ public class StdMessageRP extends Action{
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		logger.debug("Enter");
-		
 		return mapping.findForward("success");
 
 	}

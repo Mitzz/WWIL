@@ -1,6 +1,8 @@
 package com.enercon.global.utility;
 
 import java.io.BufferedReader;
+
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,20 +14,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
+import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.global.utils.JDBCUtils;
 
+import static com.enercon.connection.WcareConnector.wcareConnector;
+
 public class DatabaseUtility {
-	
+	private final static Logger logger = Logger.getLogger(DatabaseUtility.class);
 	/**
 	 *Gets the result of an SQL query into HTML file 
 	 */
 	public static void getSQLQueryResultInHTMLFile() {
 
-		JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -38,7 +46,7 @@ public class DatabaseUtility {
 		try {
 			fos = new PrintWriter(new BufferedWriter(new FileWriter(
 					fileWriterPath)), true);
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = "SELECT * FROM TBL_ROLE";
 			prepStmt = conn.prepareStatement(sqlQuery);
 
@@ -65,20 +73,15 @@ public class DatabaseUtility {
 			content.append("\t</body>\n" + "</html>\n");
 			fos.println(new String(content));
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 				if (fos != null) {
 					fos.close();
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
@@ -90,7 +93,6 @@ public class DatabaseUtility {
 	 *Name of the File is the Fumction Name  
 	 */
 	public static void storingAllUserFunctionSourceInFile(){
-		JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -113,7 +115,7 @@ public class DatabaseUtility {
 			/*fos = new PrintWriter(new BufferedWriter(new FileWriter(fileWriterPath)), true);*/
 			
 			/*SQL Query Part*/
-			conn = conmanager.getConnection();
+			conn = wcareConnector.getConnectionFromPool();
 			sqlQuery = 	"Select OBJECT_NAME " + 
 						"From User_Objects " + 
 						"Where Upper(Object_Type) = 'FUNCTION' " ;
@@ -140,19 +142,11 @@ public class DatabaseUtility {
 			//return null;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
-				if(conn != null){
-					conn.close();
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
+				DaoUtility.releaseResources(Arrays.asList(prepStmt, prepStmt1), Arrays.asList(rs, rs1), conn);
 				if (fileReader != null) {
 					fileReader.close();
 				}
@@ -161,7 +155,7 @@ public class DatabaseUtility {
 				}
 			}
 			catch(Exception e){
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
@@ -209,7 +203,7 @@ public class DatabaseUtility {
 				fos.println();
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
 				if (conn != null) {
@@ -228,7 +222,7 @@ public class DatabaseUtility {
 					fos.close();
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 		// return null;
@@ -349,9 +343,9 @@ public class DatabaseUtility {
 		}
 
 		catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
 				if (schema != null) {
@@ -363,7 +357,7 @@ public class DatabaseUtility {
 				}
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 
@@ -482,9 +476,9 @@ public class DatabaseUtility {
 		}
 
 		catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
 				if (schema != null) {
@@ -496,7 +490,7 @@ public class DatabaseUtility {
 				}
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 
@@ -548,7 +542,7 @@ public class DatabaseUtility {
 			
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -564,7 +558,7 @@ public class DatabaseUtility {
 				
 			}
 			catch(Exception e){
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 		
@@ -573,7 +567,6 @@ public class DatabaseUtility {
 	
 	public static void getSQLQueryResultInExcelFile(String sqlQuery, String filePath) {
 
-		JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
@@ -585,7 +578,7 @@ public class DatabaseUtility {
 		try {
 			fos = new PrintWriter(new BufferedWriter(new FileWriter(fileWriterPath)), true);
 			
-			conn = conmanager.getConnection();
+			conn = WcareConnector.wcareConnector.getConnectionFromPool();
 			prepStmt = conn.prepareStatement(sqlQuery);
 
 			rs = prepStmt.executeQuery();
@@ -614,24 +607,16 @@ public class DatabaseUtility {
 			
 			fos.println(new String(content));
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
-				if (conn != null) {
-					conn.close();
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
+				DaoUtility.releaseResources(prepStmt, rs, conn);
 				if (fos != null) {
 					fos.close();
 				}
 				
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	
@@ -645,7 +630,6 @@ public class DatabaseUtility {
 	 */
 	public static void getSQLQueryResultInHTMLFile(String sqlQuery, String filePath) {
 
-		JDBCUtils conmanager = new JDBCUtils();
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
@@ -657,7 +641,7 @@ public class DatabaseUtility {
 		try {
 			fos = new PrintWriter(new BufferedWriter(new FileWriter(fileWriterPath)), true);
 			
-			conn = conmanager.getConnection();
+			conn = WcareConnector.wcareConnector.getConnectionFromPool();
 			prepStmt = conn.prepareStatement(sqlQuery);
 
 			rs = prepStmt.executeQuery();
@@ -686,7 +670,7 @@ public class DatabaseUtility {
 			
 			fos.println(new String(content));
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
 				if (conn != null) {
@@ -703,7 +687,7 @@ public class DatabaseUtility {
 				}
 				
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	
@@ -762,7 +746,7 @@ public class DatabaseUtility {
 			content.append("-->");
 			fos.println(new String(content));
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
 				if (conn != null) {
@@ -778,7 +762,7 @@ public class DatabaseUtility {
 					fos.close();
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	
@@ -918,7 +902,7 @@ public class DatabaseUtility {
 				}*/
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
 			try {
 				if (conn != null) {
@@ -937,7 +921,7 @@ public class DatabaseUtility {
 					fos.close();
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
@@ -1006,7 +990,7 @@ public class DatabaseUtility {
 			//return null;
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -1021,7 +1005,7 @@ public class DatabaseUtility {
 				}
 			}
 			catch(Exception e){
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 
@@ -1054,7 +1038,7 @@ public class DatabaseUtility {
 			
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
 			try{
@@ -1069,7 +1053,7 @@ public class DatabaseUtility {
 				}
 			}
 			catch(Exception e){
-				System.out.println(e.getMessage());
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
 		}
 	}
@@ -1092,7 +1076,7 @@ public class DatabaseUtility {
 				columnNames[i - 1] = metaData.getColumnName(i);
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		return columnNames;
 	}

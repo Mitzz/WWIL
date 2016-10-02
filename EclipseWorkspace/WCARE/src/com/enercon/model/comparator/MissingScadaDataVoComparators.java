@@ -11,7 +11,7 @@ public class MissingScadaDataVoComparators {
 	private static Comparator<MissingScadaDataVo> salpw(){
 		return new Comparator<MissingScadaDataVo>(){
 			public int compare(MissingScadaDataVo o1, MissingScadaDataVo o2) {
-				return WecMasterVoComparator.sortSALPW(o1.getMasterVo(), o2.getMasterVo());
+				return WecMasterVoComparator.sortSALPW(o1.getWec(), o2.getWec());
 			}
 		};
 	}

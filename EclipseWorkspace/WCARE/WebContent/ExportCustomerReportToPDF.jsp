@@ -32,7 +32,7 @@ response.addHeader("Content-Disposition", "attachment; filename=\""	+ file + "\"
 Document document=new Document();
 PdfWriter.getInstance(document,response.getOutputStream());
 document.open();
-Image img=Image.getInstance("am.GIF");
+//Image img=Image.getInstance("am.GIF");
 
 response.setHeader("Pragma", "no-cache");
 response.getOutputStream().flush();
@@ -147,7 +147,7 @@ table.setWidthPercentage(100f);
 
 //header data table
 
-PdfPCell cell = new PdfPCell(img);
+PdfPCell cell = new PdfPCell();
 cell.setColspan (8);
 cell.setHorizontalAlignment (Element.ALIGN_CENTER);
 //cell.setBackgroundColor (new Color (128, 200, 128));
@@ -161,14 +161,23 @@ if(type.equals("D")){
 	cell.setBackgroundColor (new Color (128, 200, 128));
 	cell.setPadding (01.2f);
 	table.addCell (cell);
-}else{
+}else if(type.equals("M")){
 	cell = new PdfPCell (new Paragraph ("Monthly Generation Report",FontFactory.getFont(FontFactory.COURIER, 15, Font.BOLD)));
 	cell.setColspan (8);
 	cell.setHorizontalAlignment (Element.ALIGN_CENTER);
 	cell.setBackgroundColor (new Color (128, 200, 128));
 	cell.setPadding (01.2f);
 	table.addCell (cell);	
+}else if(type.equals("Y")){
+	cell = new PdfPCell (new Paragraph ("Yearly Generation Report",FontFactory.getFont(FontFactory.COURIER, 15, Font.BOLD)));
+	cell.setColspan (8);
+	cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+	cell.setBackgroundColor (new Color (128, 200, 128));
+	cell.setPadding (01.2f);
+	table.addCell (cell);	
 }
+
+
 }
 document.add(table);
 
@@ -247,7 +256,7 @@ if (type.equals("D")) {
 	cell.setBackgroundColor (new Color (255, 200, 0));
 	cell.setPadding (01.2f);
 	table.addCell (cell);
-}else{
+}else if (type.equals("M")){
 	cell = new PdfPCell (new Paragraph ("Month",FontFactory.getFont(FontFactory.COURIER, 10, Font.BOLD)));
 	cell.setHorizontalAlignment (Element.ALIGN_CENTER);
 	cell.setBackgroundColor (new Color (255, 200, 0));
@@ -260,6 +269,24 @@ if (type.equals("D")) {
 	cell.setBackgroundColor (new Color (255, 200, 0));
 	cell.setPadding (01.2f);
 	table.addCell (cell);
+}else if (type.equals("Y")){
+	cell = new PdfPCell (new Paragraph ("Year",FontFactory.getFont(FontFactory.COURIER, 10, Font.BOLD)));
+	cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+	cell.setBackgroundColor (new Color (255, 200, 0));
+	cell.setPadding (01.2f);
+	table.addCell (cell);
+	
+	int yearInt = Integer.parseInt(year);
+	yearInt = yearInt+1; 
+	  
+	cell = new PdfPCell (new Paragraph (year+"-"+yearInt,FontFactory.getFont(FontFactory.COURIER, 10, Font.BOLD)));
+	cell.setColspan (2);
+	cell.setHorizontalAlignment (Element.ALIGN_CENTER);
+	cell.setBackgroundColor (new Color (255, 200, 0));
+	cell.setPadding (01.2f);
+	table.addCell (cell);
+
+
 }
 
 if(v.get(8).toString()!="0")

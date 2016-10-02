@@ -9,19 +9,22 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import com.enercon.connection.WcareConnector;
+import com.enercon.dao.DaoUtility;
 import com.enercon.dao.master.WecMasterDao;
 import com.enercon.global.utility.DateUtility;
 import com.enercon.global.utility.DebuggerUtility;
-import com.enercon.global.utility.MethodClass;
 import com.enercon.global.utils.GlobalUtils;
 import com.enercon.sqlQuery.AllQueries;
 
 public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConnector{
+	
+	private final static Logger logger = Logger.getLogger(WECMetaInfo.class);
+	
 	private static DecimalFormat df2 = new DecimalFormat("###.##");
 	
 	private static String S_WEC_ID = ""  ;
@@ -52,6 +55,7 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 	private static long EXTERNALSD =  0 ;
 	private static long WECLOADRST = 0 ;
 	private static long CUSTOMERSCOPE=0;
+	
 	public static List<Object> getManyWECsTotalForBetweenDays(ArrayList<String> wecIds, String fromReadingDate, String toReadingDate) {
 		ArrayList<Object> wecTotalInfo = new ArrayList<Object>();
 	
@@ -93,9 +97,11 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, fromReadingDate);
 			prepStmt.setString(2, toReadingDate);
+			DaoUtility.displayQueryWithParameter(45,sqlQuery, wecIdsInString,fromReadingDate,toReadingDate);
 			rs = prepStmt.executeQuery();
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(45, rs);
 				recordCount = new BigDecimal(rs.getString("TOTAL_WEC")).intValueExact();;
 				//S_WECSHORT_DESCR	=	 rs.getString("S_WECSHORT_DESCR");
 				//S_EB_ID	=	 rs.getString("S_EB_ID");
@@ -157,25 +163,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			wecTotalInfo.add(CUSTOMERSCOPE);
 			
 			return wecTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-					 
-					 
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	}
@@ -221,9 +212,11 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			prepStmt = conn.prepareStatement(sqlQuery);
 			prepStmt.setString(1, fromReadingDate);
 			prepStmt.setString(2, toReadingDate);
+			DaoUtility.displayQueryWithParameter(37,sqlQuery,wecIdsInString,fromReadingDate,toReadingDate);
 			rs = prepStmt.executeQuery();
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(37, rs);
 				recordCount = new BigDecimal(rs.getString("TOTAL_WEC")).intValueExact();;
 				//S_WECSHORT_DESCR	=	 rs.getString("S_WECSHORT_DESCR");
 				//S_EB_ID	=	 rs.getString("S_EB_ID");
@@ -287,33 +280,15 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecTotalInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-					 
-					 
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	}
 	
 	public static List<Object> getOneWECTotalForBetweenDaysMPR(String wecId, String fromReadingDate, String toReadingDate) {
 		ArrayList<Object> wecTotalInfo = new ArrayList<Object>();
-	
-		
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -330,9 +305,11 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			prepStmt.setString(1, wecId);
 			prepStmt.setString(2, fromReadingDate);
 			prepStmt.setString(3, toReadingDate);
+			DaoUtility.displayQueryWithParameter(32, sqlQuery, wecId,fromReadingDate,toReadingDate);
 			rs = prepStmt.executeQuery();
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(32, rs);
 				recordCount = new BigDecimal(rs.getString("total_wec")).intValue();
 				if(recordCount == 0){
 					S_WECSHORT_DESCR = WecMasterDao.getWECDescriptionBasedOnWECId(wecId);
@@ -410,26 +387,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecTotalInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-				 
-				 
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	}
@@ -459,9 +420,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			prepStmt = conn.prepareStatement(oneWECTotalForBetweenDaysQuery);
 			prepStmt.setString(1, fromReadingDate);
 			prepStmt.setString(2, toReadingDate);
-			
+			DaoUtility.displayQueryWithParameter(71, oneWECTotalForBetweenDaysQuery, fromReadingDate, toReadingDate);
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
+				DaoUtility.getRowCount(71, rs);
 				recordCount = rs.getInt("Total_WEC");
 				if(recordCount == 0){
 					if(checkManyWECTranferredStatus(wecIds, conn)){
@@ -486,22 +448,9 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -545,8 +494,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			prepStmt = conn.prepareStatement(manyWECsWECWiseTotalForBetweenDaysQuery);
 			prepStmt.setString(1, fromReadingDate);
 			prepStmt.setString(2, toReadingDate);
+			DaoUtility.displayQueryWithParameter(69, manyWECsWECWiseTotalForBetweenDaysQuery, fromReadingDate,toReadingDate);
 			rs = prepStmt.executeQuery();
 			while (rs.next()) {
+				DaoUtility.getRowCount(69, rs);
 				recordCount = rs.getInt("Total_WEC");
 				if(recordCount == 0){
 					if(isWECTranferred(S_WEC_ID, conn)){
@@ -571,23 +522,9 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 
 			return manyWECsWECWiseTotal;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return manyWECsWECWiseTotal;
 	}
@@ -595,7 +532,7 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 	public static List<Object> getOneWECTotalForBetweenDays(String wecId, String fromReadingDate, String toReadingDate) {
 		ArrayList<Object> wecTotalInfo = new ArrayList<Object>();
 	
-		
+		logger.debug("enter");
 		Connection conn = null;
 		String sqlQuery = "";
 		PreparedStatement prepStmt = null;
@@ -612,9 +549,11 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			prepStmt.setString(1, wecId);
 			prepStmt.setString(2, fromReadingDate);
 			prepStmt.setString(3, toReadingDate);
+			DaoUtility.displayQueryWithParameter(38,sqlQuery,wecId,fromReadingDate,toReadingDate);
 			rs = prepStmt.executeQuery();
 			
 			while (rs.next()) {
+				DaoUtility.getRowCount(38, rs);
 				recordCount = new BigDecimal(rs.getString("total_wec")).intValue();
 				if(recordCount == 0){
 					S_WECSHORT_DESCR = WecMasterDao.getWECDescriptionBasedOnWECId(wecId);
@@ -692,26 +631,9 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecTotalInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
-			
+           logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);			
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-				 
-				 
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	}
@@ -734,25 +656,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			return wecTypeCapacity;
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-				if(connection != null){
-					wcareConnector.returnConnectionToPool(connection);
-				}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, connection);
 		}
 		return wecTypeCapacity;
 	}
@@ -764,6 +671,8 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 	 * @return
 	 */
 	public static List<Object> getManyWECTotalForOneDayMeta(ArrayList<String> wecIds, String readingDate){
+		
+		logger.info("++++++++++++++++++Stert");
 		ArrayList<Object> wecInfo = new ArrayList<Object>();
 		String wecIdsInString = GlobalUtils.getStringFromArrayForQuery(wecIds);
 		
@@ -787,9 +696,11 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 					"and D_reading_date = ? " ;
 			prepStmt = conn.prepareStatement(oneWECTotalForBetweenDaysQuery);
 			prepStmt.setString(1, readingDate);
-			
+			DaoUtility.displayQueryWithParameter(3, oneWECTotalForBetweenDaysQuery, readingDate);
 			rs = prepStmt.executeQuery();
+			
 			while (rs.next()) {
+				DaoUtility.getRowCount(3, rs);
 				recordCount = rs.getInt("Total_WEC");
 				if(recordCount == 0){
 					if(checkManyWECTranferredStatus(wecIds, conn)){
@@ -799,36 +710,29 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 					else{
 						wecInfo.add("1");
 					}
-					//GlobalUtils.displayVectorMember(wecInfo);
+//					GlobalUtils.displayVectorMember(wecInfo);
+					logger.info("++++++++++++++++++Abrupt End");
 					return wecInfo;
 				}
 				else{
+//					logger.debug(new Integer[]{0,1,2,3,4,5,7,9,10,11,27});
 					initialiseSpecial26(rs, new Integer[]{0,1,2,3,4,5,7,9,10,11,27});
 					S_WEC_ID = wecIdsInString;
 					addSpecial26ToList(wecInfo);
 					wecInfo.add(recordCount);
-					//GlobalUtils.displayVectorMember(wecInfo);
+//					GlobalUtils.displayVectorMember(wecInfo);
+					
+					logger.info("++++++++++++++++++End 2");
 					return wecInfo;
 				}
 			}
 			
+			logger.info("++++++++++++++++++End");
 			return wecInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -912,22 +816,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			wecInfo.add(WECLOADRST);
 			
 			return wecInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	
@@ -1018,23 +910,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			
 			return wecDateWiseInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecDateWiseInfo;
 	
@@ -1120,22 +999,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 				wecOneDayInfo = new ArrayList<Object>();
 			}
 			return wecDateWiseInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecDateWiseInfo;
 	
@@ -1241,24 +1108,11 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecTotalInfo;
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	
@@ -1351,25 +1205,13 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecTotalInfo;
 		}
-		catch (Exception e) {MethodClass.displayMethodClassName();
-			System.out.println("Exception In getOneWECTotalForOneMonth");
-			e.printStackTrace();
+		catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
+			//System.out.println("Exception In getOneWECTotalForOneMonth");
+			
 		}
 		finally{
-			try{
-				if(conn != null){
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	
@@ -1458,30 +1300,15 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			wecTotalInfo.add((fiscalYear - 1) + "-" + fiscalYear);
 			
 			return wecTotalInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
-			System.out.println("------------");
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	}
 	
 	public static String getWECCapacityFromType(String wecType){
-		
 		
 		Connection conn = null;
 		PreparedStatement prepare = null;
@@ -1498,25 +1325,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			return wecDescription;
 		}
 		catch(Exception e){
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepare != null) {
-					prepare.close();
-				}
-				if (resultSet != null) {
-					resultSet.close();
-				}
-			} 
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepare, resultSet, conn);
 		}
 		return wecDescription;
 	}
@@ -1528,9 +1340,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 		try {
 			prepStmt = conn.prepareStatement(getOneWECDataFromWECMasterBasedOnWECIdQuery);
 			prepStmt.setString(1, wecId);
-			
+			DaoUtility.displayQueryWithParameter(35, getOneWECDataFromWECMasterBasedOnWECIdQuery, wecId);
 			rs = prepStmt.executeQuery();
 			if(rs.next()){
+				DaoUtility.getRowCount(35, rs);
 				remark = rs.getString("S_Remarks") == null ? "Machine Tranferred" : rs.getString("S_Remarks");
 			}
 			else{
@@ -1539,22 +1352,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			return remark;
 			
 		} catch (SQLException e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-			if(prepStmt != null){
-				prepStmt.close();
-			}
-			if(rs != null){
-				rs.close();
-			}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs);
 		}
 		return remark;
 	}
@@ -1565,9 +1366,11 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 		try {
 			prepStmt = conn.prepareStatement(getWECTranferStatus);
 			prepStmt.setString(1, wecId);
+			DaoUtility.displayQueryWithParameter(34, getWECTranferStatus, wecId);
 			int status = -1;
 			rs = prepStmt.executeQuery();
 			while(rs.next()){
+				DaoUtility.getRowCount(34, rs);
 				status = Integer.parseInt(rs.getString("S_STATUS"));
 			}
 			if(status == 9){
@@ -1578,22 +1381,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			}
 			
 		} catch (SQLException e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs);
 		}
 		return false;
 	}
@@ -1701,25 +1492,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 				wecTotalInfo = new ArrayList<Object>();
 			}
 			return w;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-					 
-					 
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return w;
 	}
@@ -1830,23 +1606,9 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			wecTotalInfo.add(recordCount);
 			return wecTotalInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn); 
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecTotalInfo;
 	}
@@ -2041,23 +1803,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 				wecTotalInfo = new ArrayList<Object>();
 			}
 			return w;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);	
 		}
 		return w;
 	}
@@ -2114,22 +1863,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			}
 			
 			return wecInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -2186,22 +1923,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			}
 			
 			return wecInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -2257,22 +1982,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			}
 			
 			return wecInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -2338,22 +2051,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			}
 			
 			return wecInfo;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -2420,22 +2121,9 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -2490,22 +2178,9 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			
 			return wecInfo;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return wecInfo;
 	}
@@ -2576,23 +2251,9 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			//System.out.println("s:--------" + w.size());
 			return w;
 		} catch (Exception e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);  
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return w;
 	}
@@ -2656,22 +2317,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			//GlobalUtils.displayVectorMember(w);
 			//System.out.println("s:--------" + w.size());
 			return w;
-		} catch (Exception e) {MethodClass.displayMethodClassName();
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		} finally {
-			try {
-				if (conn != null) {
-					wcareConnector.returnConnectionToPool(conn);
-				}
-				if (prepStmt != null) {
-					prepStmt.close();
-				}
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (Exception e) {MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs, conn);
 		}
 		return w;
 	}
@@ -2690,8 +2339,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 		ResultSet rs = null;
 		try {
 			prepStmt = conn.prepareStatement(checkManyWETranferredStatusQuery);
+			DaoUtility.displayQueryWithParameter(4, checkManyWETranferredStatusQuery, null);
 			rs = prepStmt.executeQuery();
 			while(rs.next()){
+				DaoUtility.getRowCount(4, rs);
 				wecStatus.add(rs.getInt("S_STATUS"));
 			}
 			
@@ -2702,22 +2353,10 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 			}
 			return true;
 		} catch (SQLException e) {
-			MethodClass.displayMethodClassName();
-			e.printStackTrace();
+			logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 		}
 		finally{
-			try{
-				if(prepStmt != null){
-					prepStmt.close();
-				}
-				if(rs != null){
-					rs.close();
-				}
-			}
-			catch(Exception e){
-				MethodClass.displayMethodClassName();
-				e.printStackTrace();
-			}
+			DaoUtility.releaseResources(prepStmt, rs);
 		}
 		return false;
 	}
@@ -2810,8 +2449,7 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 		else CUSTOMERSCOPE = new BigDecimal(rs.getString("CUSTOMERSCOPE") == null? "-120" : rs.getString("CUSTOMERSCOPE")).longValue()/60;
 	}
 	catch(Exception e){
-		MethodClass.displayMethodClassName();
-		e.printStackTrace();
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 	}
 
 	}
@@ -2877,8 +2515,7 @@ public class WECMetaInfo extends DebuggerUtility implements AllQueries,WcareConn
 		
 	}
 	catch(Exception e){
-		MethodClass.displayMethodClassName();
-		e.printStackTrace();
+		logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 	}
 
 	}

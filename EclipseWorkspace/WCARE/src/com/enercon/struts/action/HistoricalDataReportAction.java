@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -21,7 +22,8 @@ import com.enercon.reports.pojo.GridBifurcationReportVo;
 import com.enercon.struts.form.HistoricalDataReportForm;
 public class HistoricalDataReportAction extends Action{
 
-
+	 private final static Logger logger = Logger.getLogger(HistoricalDataReportAction.class);
+	 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form,
 			HttpServletRequest request, HttpServletResponse response){
@@ -59,7 +61,7 @@ public class HistoricalDataReportAction extends Action{
  				    historicalDataReportVos.addAll(ReportDao.getWecTotalWecWiseBetweenDaysforHistoricalData(key, value)); 
  				}
  			} catch (ParseException e) {
- 				e.printStackTrace();
+ 				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
 			}
  		}
 		if(reportForm.getReportTypeSelection().equals("Y")){
@@ -71,7 +73,7 @@ public class HistoricalDataReportAction extends Action{
  				    historicalDataReportVos.addAll(ReportDao.getWecTotalWecWiseBetweenDaysforHistoricalData( key, value)); 
  				}
 			} catch (ParseException e) {
- 				e.printStackTrace();
+				logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
  			}
  		}
 	request.setAttribute("ReportData", historicalDataReportVos);

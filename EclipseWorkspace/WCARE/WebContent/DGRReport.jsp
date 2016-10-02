@@ -1,4 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<%@page import="com.enercon.admin.util.JSPErrorLogger"%>
+<%@page import="org.apache.log4j.Logger"%>
 <%
     response.setHeader("Cache-Control", "no-cache"); //Forces caches to obtain a new copy of the page from the origin server
     response.setHeader("Cache-Control", "no-store"); //Directs caches not to store the page under any circumstance
@@ -12,6 +14,8 @@
 <%@ page import="java.text.*" %>
 <%@page import="com.enercon.security.utils.SecurityUtils"%>
 <%@page import="com.enercon.admin.dao.WcareDao"%>
+<%!  private final static Logger logger = Logger.getLogger(JSPErrorLogger.class); %>
+<%!  private final static String jspName = "DGRReport.jsp->"; %>
 <html>
     <head>
         <%
@@ -59,6 +63,7 @@
             StringBuffer buffer = new StringBuffer();
             SecurityUtils secUtil = new SecurityUtils();
             String got = "0";
+            logger.debug(jspName + "Login Type: " + session.getAttribute("LoginType"));
             if (session.getAttribute("LoginType").equals("E")) {
                 custid = AdminUtil.fillMaster("TBL_CUSTOMER_MASTER", Customeridtxt);
             } else {

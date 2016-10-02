@@ -9,6 +9,8 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 public class ExcelWriter {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
@@ -20,6 +22,8 @@ public class ExcelWriter {
 	private final short black = IndexedColors.BLACK.getIndex();
 	private final short mediumGrey = IndexedColors.GREY_50_PERCENT.getIndex();
 	
+	private final short LIGHT_CORNFLOWER_BLUE = IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex();
+	
 	public XSSFCellStyle CENTERALIGN_WHITEFONT_DARKGREYBACKGROUND = null;
 	public XSSFCellStyle LEFTALIGN_WHITEFONT_DARKGREYBACKGROUND = null;
 	public XSSFCellStyle RIGHTALIGN_WHITEFONT_DARKGREYBACKGROUND = null;
@@ -29,6 +33,9 @@ public class ExcelWriter {
 	public XSSFCellStyle RIGHTALIGN_BLACKFONT_WHITEBACKGROUND = null;
 	public XSSFCellStyle RIGHTALIGN_BLACKFONT_MEDIUMGREYBACKGROUND = null;
 	public XSSFCellStyle LEFTALIGN_BLACKFONT_MEDIUMGREYBACKGROUND = null;
+	public XSSFCellStyle CENTERALIGN_BLACKFONT_LIGHTBLUEBACKGROUND = null;
+	public XSSFCellStyle LEFTALIGN_BLACKFONT_LIGHTBLUEBACKGROUND = null;
+	public XSSFCellStyle RIGHTALIGN_BLACKFONT_LIGHTBLUEBACKGROUND = null;
 	
 	public ExcelWriter(String sheetName){
 
@@ -41,6 +48,9 @@ public class ExcelWriter {
 	}
 	
 	private void intializeStyle() {
+		CENTERALIGN_BLACKFONT_LIGHTBLUEBACKGROUND = getCellStyle(CellStyle.ALIGN_CENTER, black, LIGHT_CORNFLOWER_BLUE);
+		LEFTALIGN_BLACKFONT_LIGHTBLUEBACKGROUND = getCellStyle(CellStyle.ALIGN_LEFT, black, LIGHT_CORNFLOWER_BLUE);
+		RIGHTALIGN_BLACKFONT_LIGHTBLUEBACKGROUND = getCellStyle(CellStyle.ALIGN_RIGHT, black, LIGHT_CORNFLOWER_BLUE);
 		CENTERALIGN_WHITEFONT_DARKGREYBACKGROUND = getCellStyle(CellStyle.ALIGN_CENTER, white, darkGrey);
 		LEFTALIGN_WHITEFONT_DARKGREYBACKGROUND = getCellStyle(CellStyle.ALIGN_LEFT, white, darkGrey);
 		RIGHTALIGN_WHITEFONT_DARKGREYBACKGROUND = getCellStyle(CellStyle.ALIGN_RIGHT, white, darkGrey);
@@ -160,10 +170,16 @@ public class ExcelWriter {
 	}
 
 	public void data(int row, int column, Number data) {
+		sheet.autoSizeColumn(column);
 		sheet.getRow(row).getCell(column).setCellValue(data.doubleValue());
 	}
 
 	public void data(int row, int column, Object value) {
+		sheet.autoSizeColumn(column);
 		sheet.getRow(row).getCell(column).setCellValue(value.toString());
+	}
+
+	public void setColumnWidth(int columnIndex, int width) {
+		sheet.setColumnWidth(columnIndex, width);
 	}
 }

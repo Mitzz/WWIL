@@ -7,8 +7,11 @@ import java.util.Calendar;
 import java.util.TimeZone;
 import java.security.*;
 
+import org.apache.log4j.Logger;
+
 public class Diff
 {
+	private final static Logger logger = Logger.getLogger(Diff.class);
     public static int printDiff(String sdate1, String sdate2, String fmt, TimeZone tz)
     {
         SimpleDateFormat df = new SimpleDateFormat(fmt);
@@ -23,7 +26,7 @@ public class Diff
         }
         catch (ParseException pe)
         {
-            pe.printStackTrace();
+        	logger.error("\nClass: " + pe.getClass() + "\nMessage: " + pe.getMessage() + "\n", pe);
         }
 
         Calendar cal1 = null; 
@@ -96,7 +99,7 @@ public class Diff
          }
          catch (java.security.NoSuchAlgorithmException e) {
           //  System.out.println("Rats, MD5 doesn't exist");
-            System.out.println(e.toString());
+        	 logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
          }
     	return newpwd;
     }
@@ -111,7 +114,7 @@ public class Diff
           }
           catch (java.security.NoSuchAlgorithmException e) {
            //  System.out.println("Rats, MD5 doesn't exist");
-             System.out.println(e.toString());
+        	  logger.error("\nClass: " + e.getClass() + "\nMessage: " + e.getMessage() + "\n", e);
              return null;
           }
     	return newpwd;

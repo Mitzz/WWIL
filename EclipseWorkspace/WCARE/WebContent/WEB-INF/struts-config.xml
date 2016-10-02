@@ -68,7 +68,30 @@
   	  		<form-bean scope="request" name="SummaryReportForm" type="com.enercon.struts.form.GridBifurcationReportForm" />
   	
   			<!-- Reform -->
-  			<form-bean scope="request" name="StdMessageForm" type="com.enercon.struts.form.StdMessageForm" />  		
+  			<form-bean scope="request" name="StdMessageForm" type="com.enercon.model.master.StandardMessageMasterVo" />
+  			<form-bean scope="request" name="MessageDetailForm" type="com.enercon.struts.form.MessageDetailVo" />
+  			<form-bean scope="request" name="StateMasterForm" type="com.enercon.model.graph.StateMasterVo" />
+  			<form-bean scope="request" name="AreaMasterForm" type="com.enercon.model.graph.AreaMasterVo" />  		
+  			<form-bean scope="request" name="SubstationMasterForm" type="com.enercon.model.master.SubstationMasterVo" />
+  			<form-bean scope="request" name="FeederMasterForm" type="com.enercon.model.master.FeederMasterVo" />
+  			<form-bean scope="request" name="SiteMasterForm" type="com.enercon.model.graph.SiteMasterVo" />
+  			<form-bean scope="request" name="CustomerMasterForm" type="com.enercon.model.graph.CustomerMasterVo" />
+  			<form-bean scope="request" name="EbMasterForm" type="com.enercon.model.graph.EbMasterVo" />
+  			<form-bean scope="request" name="WecMasterForm" type="com.enercon.model.graph.WecMasterVo" />
+  			<form-bean scope="request" name="WecTypeMaster" type="com.enercon.model.master.WecTypeMasterVo" />
+  			<form-bean scope="request" name="RemarkMasterForm" type="com.enercon.model.master.RemarkMasterVo" />
+  			<form-bean scope="request" name="FederMasterForm" type="com.enercon.model.master.FederMasterVo" />
+  			<form-bean scope="request" name="LoginDetailForm" type="com.enercon.model.table.LoginDetailVo" />
+
+  			
+  			<form-bean scope="request" name="ManageCustomerLoginForm" type="com.enercon.model.CustomerLoginVo" />
+  			
+  			
+  			<form-bean scope="request" name="ManageTransferEbForm" type="com.enercon.model.transfer.TransferEbVo" />
+  			<form-bean scope="request" name="ManageTransferWecForm" type="com.enercon.model.transfer.TransferWecVo" />
+  			<form-bean scope="request" name="WecReadingForm" type="com.enercon.model.table.WecReadingVo" />
+  			<form-bean scope="request" name="EbReadingForm" type="com.enercon.model.table.EbReadingVo" />
+  			
   </form-beans>
   
   <global-exceptions />
@@ -481,6 +504,274 @@
 			<action scope="request" path="/StdMessageN" name="StdMessageForm" parameter="method" type="com.enercon.struts.action.StdMessageAction" input="/jsppages/StdMessageN.jsp" validate="true">
 				<forward name="success" path="/jsppages/StdMessageN.jsp" />
 			</action>
+			
+			<action path="/PostMessageRP" type="com.enercon.struts.requestProcessor.PostMessageRP"> 
+				<forward name="success" path="/jsppages/PostMessageN.jsp" />
+			</action>
+			<action scope="request" path="/PostMessageN" name="MessageDetailForm" parameter="method" type="com.enercon.struts.action.MessageDetailAction" input="/jsppages/PostMessageN.jsp" validate="false">
+				<forward name="success" path="/PostMessageRP.do" />
+			</action>
+			
+			<action path="/dgrByDay" type="com.enercon.struts.requestProcessor.DGRByDayRP">
+				<forward name="success" path="/jsppages/DGRByDay.jsp" />
+			</action>
+			
+			<action path="/dgrWec" type="com.enercon.struts.action.DgrWecAction">
+				<forward name="success" path="/jsppages/DgrWec.jsp" />
+			</action>
+			
+			<action path="/mprWecType" type="com.enercon.struts.action.MprAction">
+				<forward name="success" path="/jsppages/MprWecType.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/graph" type="com.enercon.struts.action.GraphAction">
+				<!-- <forward name="success" path="/jsppages/MprWecType.jsp" /> -->
+				<forward name="success" path="/Blank.jsp" />
+			</action>
+			
+			<action path="/monthDateWise" type="com.enercon.struts.action.MonthDateWiseAction">
+				<forward name="success" path="/jsppages/monthDateWise/MonthDateWise.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/monthDateWiseCumulative" type="com.enercon.struts.action.MonthDateWiseCumulativeAction">
+				<forward name="success" path="/jsppages/monthDateWise/MonthDateWiseCumulative.jsp" />
+				<!-- <forward name="success" path="/jsppages/DGRByDay.jsp" /> -->
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/monthDateWiseDetail" type="com.enercon.struts.action.MonthDateWiseDetailAction">
+				<forward name="success" path="/jsppages/monthDateWise/MonthDateWiseDetail.jsp" />
+			</action>
+			
+			<!-- Month Machine Wise -->
+			<action path="/monthMachineWise" type="com.enercon.struts.action.MonthMachineWiseAction">
+				<forward name="success" path="/jsppages/monthMachineWise/MonthMachineWise.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/monthMachineWiseCumulative" type="com.enercon.struts.action.MonthMachineWiseCumulativeAction">
+				<forward name="success" path="/jsppages/monthMachineWise/MonthMachineWiseCumulative.jsp" />
+			</action>
+			
+			<action path="/monthMachineWiseDetail" type="com.enercon.struts.action.MonthMachineWiseDetailAction">
+				<forward name="success" path="/jsppages/monthMachineWise/MonthMachineWiseDetail.jsp" />|
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/wecDateWise" type="com.enercon.struts.action.WecDateWiseAction">
+				<forward name="success" path="/jsppages/monthMachineWise/WecDateWise.jsp" />
+			</action>
+			
+			<action path="/monthMachineWiseAllMachine" type="com.enercon.struts.action.MonthMachineWiseAllMachineAction">
+				<forward name="success" path="/jsppages/monthMachineWise/MonthMachineWiseAllMachine.jsp" />
+			</action>
+			
+			<!-- Year - Wec Wise Start -->
+			<action path="/yearWecWise" type="com.enercon.struts.action.YearWecWiseAction">
+				<forward name="success" path="/jsppages/yearWecWise/YearWecWise.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/yearWecWiseCumulative" type="com.enercon.struts.action.YearWecWiseCumulativeAction">
+				<forward name="success" path="/jsppages/yearWecWise/YearWecWiseCumulative.jsp" />
+				<!-- <forward name="success" path="/jsppages/DGRByDay.jsp" /> -->
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/yearWecWiseDetail" type="com.enercon.struts.action.YearWecWiseDetailAction">
+				<forward name="success" path="/jsppages/yearWecWise/YearWecWiseDetail.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" />| -->
+			</action>
+			
+			<action path="/wecMonthWise" type="com.enercon.struts.action.WecMonthWiseAction">
+				<forward name="success" path="/jsppages/yearWecWise/WecMonthWise.jsp" />
+			</action>
+			
+			<action path="/yearWecWiseAllMachine" type="com.enercon.struts.action.YearWecWiseAllMachineAction">
+				<forward name="success" path="/jsppages/yearWecWise/YearWecWiseAllMachine.jsp" />
+			</action>
+			
+			<!-- Year - Wec Wise End -->
+			
+			<!-- Year - Site Wise Start -->
+			<action path="/yearSiteWise" type="com.enercon.struts.action.YearSiteWiseAction">
+				<forward name="success" path="/jsppages/yearSiteWise/YearSiteWise.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/yearSiteWiseCumulative" type="com.enercon.struts.action.YearSiteWiseCumulativeAction">
+				<forward name="success" path="/jsppages/yearSiteWise/YearSiteWiseCumulative.jsp" />
+				<!-- <forward name="success" path="/jsppages/DGRByDay.jsp" /> -->
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<action path="/yearSiteWiseSiteDetail" type="com.enercon.struts.action.YearSiteWiseSiteDetailAction">
+				<forward name="success" path="/jsppages/yearSiteWise/YearSiteWiseSiteDetail.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" />| -->
+			</action>
+			
+			<!-- Year - Site Wise End -->
+			
+			<!-- State Master -->
+			<action path="/stateMaster" type="com.enercon.struts.requestProcessor.ManageStateMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageStateMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageStateMaster" name="StateMasterForm" parameter="method" type="com.enercon.struts.action.ManageStateMaster" input="/jsppages/master/ManageStateMaster.jsp" validate="false">
+				<forward name="success" path="/stateMaster.do" />
+			</action>
+			
+			<!-- Area Master -->
+			<action path="/areaMaster" type="com.enercon.struts.requestProcessor.ManageAreaMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageAreaMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageAreaMaster" name="AreaMasterForm" parameter="method" type="com.enercon.struts.action.ManageAreaMaster" input="/jsppages/master/ManageAreaMaster.jsp" validate="false">
+				<forward name="success" path="/areaMaster.do" />
+			</action>
+			
+			<!-- Substation Master -->
+			<action path="/substationMaster" type="com.enercon.struts.requestProcessor.ManageSubstationMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageSubstationMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageSubstationMaster" name="SubstationMasterForm" parameter="method" type="com.enercon.struts.action.ManageSubstationMaster" input="/jsppages/master/ManageSubstationMaster.jsp" validate="false">
+				<forward name="success" path="/substationMaster.do" />
+			</action>
+			
+			<!-- Feeder Master -->
+			<action path="/feederMaster" type="com.enercon.struts.requestProcessor.ManageFeederMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageFeederMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageFeederMaster" name="FeederMasterForm" parameter="method" type="com.enercon.struts.action.ManageFeederMaster" input="/jsppages/master/ManageFeederMaster.jsp" validate="false">
+				<forward name="success" path="/feederMaster.do" />
+			</action>
+			
+			<!-- Site Master -->
+			<action path="/siteMaster" type="com.enercon.struts.requestProcessor.ManageSiteMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageSiteMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageSiteMaster" name="SiteMasterForm" parameter="method" type="com.enercon.struts.action.ManageSiteMaster" input="/jsppages/master/ManageSiteMaster.jsp" validate="false">
+				<forward name="success" path="/siteMaster.do" />
+			</action>
+			
+			<!-- Customer Master -->
+			<action path="/customerMaster" type="com.enercon.struts.requestProcessor.ManageCustomerMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageCustomerMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageCustomerMaster" name="CustomerMasterForm" parameter="method" type="com.enercon.struts.action.ManageCustomerMaster" input="/jsppages/master/ManageCustomerMaster.jsp" validate="false">
+				<forward name="success" path="/customerMaster.do" />
+			</action>
+			
+			<!-- Feder Master -->
+			<action path="/federMaster" type="com.enercon.struts.requestProcessor.ManageFederMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageFederMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageFederMaster" name="FederMasterForm" parameter="method" type="com.enercon.struts.action.ManageFederMaster" input="/jsppages/master/ManageFederMaster.jsp" validate="false">
+				<forward name="success" path="/federMaster.do" />
+			</action>
+			
+			<!-- Eb Master -->
+			<action path="/ebMaster" type="com.enercon.struts.requestProcessor.ManageEbMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageEbMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageEbMaster" name="EbMasterForm" parameter="method" type="com.enercon.struts.action.ManageEbMaster" input="/jsppages/master/ManageEbMaster.jsp" validate="false">
+				<forward name="success" path="/ebMaster.do" />
+			</action>
+			
+			<!-- WEC Master -->
+			<action path="/wecMaster" type="com.enercon.struts.requestProcessor.ManageWecMasterRP"> 
+				<forward name="success" path="/jsppages/master/ManageWecMaster.jsp" />
+			</action>
+			<action scope="request" path="/manageWecMaster" name="WecMasterForm" parameter="method" type="com.enercon.struts.action.ManageWecMaster" input="/jsppages/master/ManageWecMaster.jsp" validate="false">
+				<forward name="success" path="/wecMaster.do" />
+			</action>
+			
+			<!-- Measuring Point Master-->
+			<action path="/measuringPoint" type="com.enercon.struts.requestProcessor.ManageMeaPointRP"> 
+				<forward name="success" path="/jsppages/master/ManageMeaPoint.jsp" />
+			</action>
+			<action scope="request" path="/manageMeasuringPoint" name="MeasuringPointMasterForm" parameter="method" type="com.enercon.struts.action.ManageMeaPoint" input="/jsppages/master/ManageMeaPoint.jsp" validate="false">
+				<forward name="success" path="/measuringPoint.do" />
+			</action>
+			
+			<!-- Manage Customer Login -->
+			<action path="/customerLogin" type="com.enercon.struts.requestProcessor.ManageCustomerLoginRP"> 
+				<forward name="success" path="/jsppages/master/ManageCustomerLogin.jsp" />
+			</action>
+			<action scope="request" path="/manageCustomerLogin" name="ManageCustomerLoginForm" type="com.enercon.struts.action.ManageCustomerLogin" input="/jsppages/master/ManageCustomerLogin.jsp" validate="false">
+				<forward name="success" path="/customerLogin.do" />
+			</action>
+			
+			<!-- Manage Wec Type -->
+			<action path="/wecTypeMaster" type="com.enercon.struts.requestProcessor.ManageWecTypeRP"> 
+				<forward name="success" path="/jsppages/master/ManageWecType.jsp" />
+			</action>
+			<action scope="request" path="/manageWecType" name="WecTypeMaster" parameter="method" type="com.enercon.struts.action.ManageWecType" input="/jsppages/master/ManageWecType.jsp" validate="false">
+				<forward name="success" path="/wecTypeMaster.do" />
+			</action>
+			
+			<!-- Manage  remarks -->
+			<action path="/remarkMaster" type="com.enercon.struts.requestProcessor.ManageRemarksRP"> 
+				<forward name="success" path="/jsppages/master/ManageRemarks.jsp" />
+			</action>
+			<action scope="request" path="/manageRemarks" name="RemarkMasterForm" parameter="method"  type="com.enercon.struts.action.ManageRemarks" input="/jsppages/master/ManageRemarks.jsp" validate="false">
+				<forward name="success" path="/remarkMaster.do" />
+			</action>
+			
+			<!-- Manage Site remarks -->
+			<action path="/siteRemarks" type="com.enercon.struts.requestProcessor.ManageSiteRemarksRP"> 
+				<forward name="success" path="/jsppages/master/ManageSiteRemarks.jsp" />
+			</action>
+			<action scope="request" path="/manageSiteRemarks" name="SiteMasterForm"  type="com.enercon.struts.action.ManageSiteRemarks" input="/jsppages/master/ManageSiteRemarks.jsp" validate="false">
+				<forward name="success" path="/siteRemarks.do" />
+			</action>
+			
+			<!-- Transfer EB -->
+			<action path="/transferEb" type="com.enercon.struts.requestProcessor.ManageTransferEbRP"> 
+				<forward name="success" path="/jsppages/transfer/ManageTransferEb.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			<action scope="request" path="/manageTransferEb" name="ManageTransferEbForm" parameter="method" type="com.enercon.struts.action.ManageTransferEb" input="/jsppages/transfer/ManageTransferEb.jsp" validate="false">
+				<forward name="success" path="/transferEb.do" />
+			</action>
+			
+			<!-- Transfer WEC -->
+			<action path="/transferWec" type="com.enercon.struts.requestProcessor.ManageTransferWecRP"> 
+				<forward name="success" path="/jsppages/transfer/ManageTransferWec.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			<action scope="request" path="/manageTransferWec" name="ManageTransferWecForm" parameter="method" type="com.enercon.struts.action.ManageTransferWec" input="/jsppages/transfer/ManageTransferWec.jsp" validate="false">
+				<forward name="success" path="/transferWec.do" />
+			</action>
+			
+			<!-- Delete WEC Data-->
+			<action path="/deleteWec" type="com.enercon.struts.requestProcessor.DeleteWecDataRP"> 
+				<forward name="success" path="/jsppages/table/DeleteWecData.jsp" />
+			</action>
+			<action scope="request" path="/deleteWecData" name="WecReadingForm" parameter="method" type="com.enercon.struts.action.DeleteWecData" input="/jsppages/table/DeleteWec.jsp" validate="false">
+				<forward name="success" path="/deleteWec.do" />
+			</action>
+			
+			<!-- Delete EB Data-->
+			<action path="/deleteEb" type="com.enercon.struts.requestProcessor.DeleteEbDataRP"> 
+				<forward name="success" path="/jsppages/table/DeleteEbData.jsp" />
+			</action>
+			<action scope="request" path="/deleteEbData" name="EbReadingForm" parameter="method" type="com.enercon.struts.action.DeleteEbData" input="/jsppages/table/DeleteEb.jsp" validate="false">
+				<forward name="success" path="/deleteEb.do" />
+			</action>
+			
+			<!-- Activate Customer -->
+			<action path="/activateCustomer" type="com.enercon.struts.requestProcessor.ManageActivateCustomerRP"> 
+				<forward name="success" path="/jsppages/activation/ManageActivateCustomer.jsp" />
+				<!-- <forward name="success" path="/Blank.jsp" /> -->
+			</action>
+			
+			<!-- Manage Login Detail -->
+			<action scope="request" path="/manageLoginDetail" name="LoginDetailForm" parameter="method" type="com.enercon.struts.action.ManageLoginDetail" input="/jsppages/master/ManageCustomerMaster.jsp" validate="false">
+				<forward name="success" path="/customerMaster.do" />
+			</action>
+			
+			
 			
   </action-mappings>
   
