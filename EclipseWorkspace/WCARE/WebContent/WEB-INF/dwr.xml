@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC
+    "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"
+    "http://getahead.org/dwr/dwr30.dtd">
+
+<dwr>
+  <allow>
+  	<!-- Inward one level Included -->
+  	<convert converter="bean" match="com.enercon.model.graph.StateMasterVo">
+	  	<param name="exclude" value="sites, ebs, wecs, customers, plants, areas"/>
+	</convert>
+	<convert converter="bean" match="com.enercon.model.graph.AreaMasterVo">
+	  	<param name="exclude" value="ebs, wecs, customers, plants, sites"/>
+	</convert>
+	<convert converter="bean" match="com.enercon.model.graph.SiteMasterVo">
+	  	<param name="exclude" value="state, ebs, wecs, customers, plants"/>
+	</convert>
+	<convert converter="bean" match="com.enercon.model.graph.EbMasterVo">
+	  	<param name="exclude" value="state, wecs, customers, plants, area"/>
+	</convert>
+	<convert converter="bean" match="com.enercon.model.graph.WecMasterVo">
+	  	<param name="exclude" value="state, site, area"/>
+	</convert>
+	<convert converter="bean" match="com.enercon.model.graph.CustomerMasterVo">
+	  	<param name="exclude" value="states, sites, wecs, plants, areas"/>
+	</convert>
+	
+	<convert converter="bean" match="com.enercon.model.graph.PlantMasterVo">
+	  	<param name="exclude" value="states, sites, wecs, areas, customers"/>
+	</convert>
+	
+    <create creator="new" javascript="StateMasterResource">
+      <param name="class" value="com.enercon.resource.StateMasterResource"/>
+    </create>
+    <create creator="new" javascript="AreaMasterResource">
+      <param name="class" value="com.enercon.resource.AreaMasterResource"/>
+    </create>
+    <create creator="new" javascript="SiteMasterResource">
+      <param name="class" value="com.enercon.resource.SiteMasterResource"/>
+    </create>
+    <!-- <create creator="new" javascript="EbMasterService">
+      <param name="class" value="com.enercon.service.EbMasterService"/>
+    </create> -->
+    <create creator="new" javascript="WecMasterResource">
+      <param name="class" value="com.enercon.resource.WecMasterResource"/>
+    </create>
+    <create creator="new" javascript="CustomerMasterResource">
+      <param name="class" value="com.enercon.resource.CustomerMasterResource"/>
+    </create>
+  </allow>
+  
+</dwr>
